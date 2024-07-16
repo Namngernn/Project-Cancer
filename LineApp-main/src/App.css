@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100;200;300;400;600&display=swap');
+
+body {
+  font-family: "Sarabun", sans-serif;
+  background-color: #F9F9F9;
+}
+
+.bt-blue{
+  @apply p-3 rounded-full w-full text-white bg-blue700 border-collapse hover:bg-blue600 duration-300 hover:drop-shadow-lg
+}
+
+.box-sd{
+  @apply bg-white drop-shadow-md shadow-gray-200 px-8 py-2 rounded-lg flex justify-around items-center space-x-7 
+}
+
+.bt2-blue{
+  @apply p-3 rounded-full text-blue700 border-collapse hover:text-blue600 duration-300 hover:drop-shadow-lg border-2 border-blue700 hover:border-blue500
+}
+
+.sarabun-thin {
+  font-family: "Sarabun", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.sarabun-extralight {
+  font-family: "Sarabun", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.sarabun-light {
+  font-family: "Sarabun", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.sarabun-regular {
+  font-family: "Sarabun", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.sarabun-semibold {
+  font-family: "Sarabun", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
