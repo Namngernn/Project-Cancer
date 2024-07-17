@@ -1,9 +1,8 @@
 <template>
   <div class="navbar">
     <nav class="container">
-      <div>
-        <div class="row">
-          <div class="col-9">
+        <div class="row container0">
+          <div class="col-10 ">
             <ul class="nav nav-underline">
               <li class="nav-item" @click="goToRegis()" v-if="user.type == 'nurse'">
                 <a class="nav-link" href="#" style="color: #ffffff;">ลงทะเบียนผู้ป่วย</a>
@@ -26,7 +25,7 @@
               </li>
             </ul>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button @click="logOut()" class="btn btn-light me-md-2" type="button" style=" margin-top: 15px; margin-bottom: 10px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -41,8 +40,8 @@
             </div>
           </div>
         </div>
-      </div>
     </nav>
+
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none;">
         <div class="card" style="margin: 20px;">
@@ -732,8 +731,14 @@ export default {
   .container {
     display: flex;
     justify-content: space-between;
+    /* background-color: white; */
     align-items: center;
   }
+  .container0 {
+    /* background-color: green; */
+    width: 100%;
+  }
+  
   .nav-link {
     font-size: 14px;
   }
