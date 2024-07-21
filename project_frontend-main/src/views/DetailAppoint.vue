@@ -3,7 +3,7 @@
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-10">
             <ul class="nav nav-underline">
               <li
                 v-if="user.type == 'nurse'"
@@ -57,7 +57,7 @@
               </li>
             </ul>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
