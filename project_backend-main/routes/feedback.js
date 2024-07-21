@@ -17,7 +17,7 @@ router.post('/feedback/:HN/:appoint_no', async function (req, res, next) {
     const conn = await pool.getConnection()
     await conn.beginTransaction()
     try {
-        const [row, _] = await conn.query('insert into feedback (date, side_effect, HN, appointId) values (?, ?, ?, ?)', [date, sideEffect, HN, rows[0].appointId])
+        const [row, _] = await conn.query('insert into feedback (sendAt, sideEfflevel, appointId) values (?, ?, ?)', [date, sideEffect, rows[0].appointId])
         conn.commit()
         res.send('บันทึกเสร็จสิ้น')
     } catch (error) {
@@ -31,7 +31,7 @@ router.post('/feedback/:HN/:appoint_no', async function (req, res, next) {
 router.get('/feedback/:HN', async function (req, res, next) {
     let HN = req.params.HN
     try {
-        const [row, _] = await pool.query('select * from feedback where HN = ?', HN)
+        const [row, _] = await pool.query('SELECT f.* FROM feedback f JOIN appointment a ON f.appointId = a.appointId WHERE a.HN = ?', HN)
         res.json(row)
     } catch (error) {
         console.log(error)
@@ -75,12 +75,12 @@ router.post(`/newFeedback`, async function (req, res, next) {
 //add note
 router.post(`/noteFeedback`, async function (req, res, next){
     const sideEffectLevel = req.body.sideEffectLevel
-    const nurseNote = req.body.nurseNote
+    // const nurseNote = req.body.nurseNote
     const feedbackId = req.body.feedbackId
     const conn = await pool.getConnection()
     await conn.beginTransaction()
     try {
-        await conn.query(`update feedback set sideEffectLevel = ?, nurseNote = ? where feedbackId = ?`, [sideEffectLevel, nurseNote, feedbackId])
+        await conn.query(`update feedback set sideEfflevel = ? where feedbackId = ?`, [sideEffectLevel, feedbackId])
         conn.commit()
         res.send('save')
     } catch (error) {
