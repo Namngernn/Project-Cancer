@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AutoComplete, Input, Checkbox } from 'antd';
+import { createFeedbackHNAppoint_no } from '../../api/feedback';
 const { TextArea } = Input;
 
 const onChange = (e) => {
@@ -9,6 +10,7 @@ const onChange = (e) => {
 
 const AddEffects = () => {
   // textarea
+
   const [options, setOptions] = useState([]);
   const handleSearch = (value) => {
     setOptions(
@@ -32,6 +34,14 @@ const AddEffects = () => {
   };
   const onSelect = (value) => {
     console.log('onSelect', value);
+  };
+
+  const handleSubmit = () =>{
+    createFeedbackHNAppoint_no('000001', 1, 'สวัสดีจ้า', '2024-04-29 08:00:00').then(
+      (response) => {
+        alert(response.data)
+      }
+    );
   };
 
   return (
@@ -67,7 +77,7 @@ const AddEffects = () => {
       </div>
       {/* ปุ่ม บันทึกผลข้างเคียง */}
       <div className="flex flex-col md:justify-center md:items-center">
-        <button className='bt-blue mt-20'>บันทึกผลข้างเคียง</button>
+        <button onClick={handleSubmit} className='bt-blue mt-20'>บันทึกผลข้างเคียง</button>
       </div>
       
       
