@@ -1,33 +1,51 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Flex } from 'antd';
-
+// import axios from 'axios';
+import { AxiosClient } from "../../../src/apiClient";
+//หน้าประวัติผลข้างเคียง
 const Effects = () => {
+  const [history, setHistory] = useState([]);
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const response = await  AxiosClient.get(`/feedback/${hn}`);
+                setHistory(response.data);
+            } catch (error) {
+                console.error('Error fetching history:', error);
+            }
+        };
+
+        fetchHistory();
+    }, []);
   return (
     <div className='p-4'>
-      
-      
-        <div className="flex flex-col md:justify-center md:items-center">
-          {/* button */}
-          <Link to={"/Effects/AddEffects"}>
-          <button className='bt-blue'>+ เพิ่มผลค้างเคียง</button>
-          </Link>
-          {/* His Effects */}
-          <div className="pt-6">
-            <h3 className='pb-2'>ประวัติการบันทึกผลข้างเคียง</h3>
-            {/* กล่อง Loop ที่นี่*/}
-            <div className="box-sd">
+    
+      <div className="pt-6">
+      <h3 className='pb-2'>ประวัติการบันทึกผลข้างเคียง</h3>
+        {history.length > 0 ? (
+          history.map((record, index) => (
+            <div key={record.id} className="box-sd">
               <div className="text-center text-blue700 shadow-sm">
                 <p className='text-sm'>บันทึกครั้งที่</p>
-                <h2 className='text-5xl'>6</h2>
+                <h2 className='text-5xl'>{index + 1}</h2>
               </div>
-              <div className="">
-                <h3 className='text-md'>วันที่ 17 มกราคม 2567</h3>
+              <div>
+                <h3 className='text-md'>
+                  วันที่ {new Date(record.record_date).toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </h3>
+                <p>{record.patientSideEffect}</p>
               </div>
             </div>
-          </div>
-        </div>
-      
+          ))
+        ) : (
+          <p>ไม่พบประวัติการบันทึกผลข้างเคียง</p>
+        )}
+    </div>   
     </div>
   )
 }
