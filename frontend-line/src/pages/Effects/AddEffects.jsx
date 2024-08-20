@@ -21,7 +21,6 @@ const { TextArea } = Input;
 const AddEffects = () => {
   const [selectedEffects, setSelectedEffects] = useState([]);
   const [customEffect, setCustomEffect] = useState('');
-  // const [options, setOptions] = useState([]);
   const navigateHistory = useNavigate(); //navigateไปหน้าประวัติ
 
   const onChange = (e) => {
@@ -32,17 +31,6 @@ const AddEffects = () => {
         setSelectedEffects(selectedEffects.filter(effect => effect !== value));
     }
 };
-
-//   const handleSearch = (value) => {
-//     setOptions(value ? [{ value }] : []);
-// };
-
-//   const handleKeyPress = (e) => {
-//     if (e.key === 'Enter') {
-//         setSelectedEffects([...selectedEffects, customEffect]);
-//         setCustomEffect('');
-//     }
-// };
 
 const handleCheckboxChange = (effect) => {
   setSelectedEffects((prev) =>
@@ -58,7 +46,7 @@ const handleCheckboxChange = (effect) => {
     const sendAt = formatDateToCustomFormat(new Date()); //Format date"YYYY-MM-DD HH:MM:SS"
     const hn = '000001'; // ตัวอย่างค่า HN
 
-    // ตรวจสอบค่าที่จะส่งไปยัง API
+    // เช็คค่า
     console.log('HN:', hn);
     console.log('Patient Side Effect:', patientSideEffect);
     console.log('Send At:', sendAt);
@@ -116,7 +104,7 @@ const handleCheckboxChange = (effect) => {
         <label>
           <input
               type="checkbox"
-              value="ใจสั่น / หอมเหนื่อยง่าย"
+              value="ใจสั่น / หอบเหนื่อยง่าย"
               onChange={() => handleCheckboxChange('ใจสั่น / หอบเหนื่อยง่าย')}
           />ใจสั่น / หอมเหนื่อยง่าย</label>
         <label>
@@ -138,24 +126,6 @@ const handleCheckboxChange = (effect) => {
                value={customEffect}
                onChange={(e) => setCustomEffect(e.target.value)}
            />
-
-        {/* <Checkbox onChange={onChange} className=''>อื่นๆ โปรดระบุ</Checkbox> */}
-            {/* <AutoComplete
-                 className='ml-5 mt-2'
-                 options={options}
-                 style={{ width: 200 }}
-                 onSelect={(value) => setCustomEffect(value)}
-                 onSearch={handleSearch}
-                 >
-              <TextArea
-                  placeholder="โปรดระบุผลข้างเคียง"
-                  className="custom"
-                  style={{ height: 50 }}
-                  onKeyPress={handleKeyPress}
-                  value={customEffect}
-                  onChange={(e) => setCustomEffect(e.target.value)}
-                  />
-            </AutoComplete> */}
         </div>
           <button className='bt-blue mt-20' type="submit">บันทึกผลข้างเคียง</button>
       </form>
