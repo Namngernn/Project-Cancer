@@ -1,5 +1,5 @@
 const express = require("express");
-const pool = require("../config").default;
+const pool = require("../config");
 const app = express();
 const cors = require("cors");
 const bcrypt = require("bcrypt");

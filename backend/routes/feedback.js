@@ -6,19 +6,7 @@ const cors = require("cors");
 app.use(cors());
 
   let sideEfrouter = express.Router();
-
-//ฝั่ง line
-// ดึงข้อมูลประวัติผลข้างเคียง
-// router.get('/effectsHistory', async (req, res) => {
-//   try {
-//       const [rows] = await pool.query('SELECT feedbackId, record_date, patientSideEffect FROM feedback ORDER BY record_date DESC');
-//       res.json(rows);
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'An error occurred while fetching effects history.' });
-//   }
-// });
-
+/////////////////Line App///////////////////
 //ผู้ป่วยบันทึกผลข้างเคียง
 router.post("/feedback/:HN", async function (req, res, next) {
   const HN = req.params.HN;
@@ -31,7 +19,7 @@ router.post("/feedback/:HN", async function (req, res, next) {
   if (!sideEffect || !date) {
     return res.status(400).send("Invalid data");
   }
-//บันทึกเข้าการนัดหมายครั้งล่าสุด
+  //เลือกการนัดหมายครั้งล่าสุด
   try {
     const [maxAppointRows] = await pool.query(
       "SELECT MAX(appointId) AS max_appointId FROM appointment WHERE HN = ?",
@@ -44,13 +32,12 @@ router.post("/feedback/:HN", async function (req, res, next) {
 
     const conn = await pool.getConnection();
     await conn.beginTransaction();
-
+    //บันทึกเข้า
     try {
       await conn.query(
         "INSERT INTO feedback (sendAt, patientSideEffect, appointId) VALUES (?, ?, ?)",
         [date, sideEffect, maxAppointRows[0].max_appointId]
       );
-
       await conn.commit();
       res.send("Feedback added successfully");
     } catch (error) {
@@ -67,20 +54,6 @@ router.post("/feedback/:HN", async function (req, res, next) {
 });
 
 //ดูประวัติผลข้างเคียง
-router.get("/feedback/:HN", async function (req, res, next) {
-  let HN = req.params.HN;
-  try {
-    const [row, _] = await pool.query(
-      "select * from feedback where HN = ?",
-      HN
-    );
-    res.json(row);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-///////////////////////////
 router.get("/selectedFeedback/:appointId", async function (req, res, next) {
   let appointId = req.params.appointId;
   try {

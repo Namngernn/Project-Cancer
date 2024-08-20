@@ -1,4 +1,4 @@
-// import { AxiosClient } from "../apiClient";
+import { AxiosClient } from '../apiClient';
 //บันทึกผลข้างเคียง
 export async function createFeedbackHN(hn, patientSideEffect, sendAt) {
     return AxiosClient.post(`/feedback/${hn}`, {
@@ -7,10 +7,7 @@ export async function createFeedbackHN(hn, patientSideEffect, sendAt) {
     });
 }
 
-export async function getFeedbacks(hn){
-    return AxiosClient.get(`/feedback/${hn}`)
-}
-
+//ดึงมาหน้าประวัติผลข้างเคียง
 export async function getSelectedFeedback(appointId){
     return AxiosClient.get(`/selectedFeedback/${appointId}`)
 }
