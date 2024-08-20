@@ -2,9 +2,9 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AutoComplete, Input, Checkbox, Button } from 'antd';
-import { AxiosClient } from "../../../src/apiClient";
+import { AxiosClient } from '../../apiClient';
 
-//funcเปลี่ยนformat date
+//funcเปลี่ยนformat date ไม่แน่ใจว่าต้องเอาไปไว้ไหนแปะไว้ตรงนี้ก่อน
 function formatDateToCustomFormat(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -22,7 +22,7 @@ const AddEffects = () => {
   const [selectedEffects, setSelectedEffects] = useState([]);
   const [customEffect, setCustomEffect] = useState('');
   // const [options, setOptions] = useState([]);
-  const navigate = useNavigate(); //navigateไปหน้าประวัติ
+  const navigateHistory = useNavigate(); //navigateไปหน้าประวัติ
 
   const onChange = (e) => {
     const value = e.target.value;
@@ -68,9 +68,11 @@ const handleCheckboxChange = (effect) => {
           sideEffect: patientSideEffect,
           date: sendAt,
       });
+      alert('บันทึกผลข้างเคียงสำเร็จ');
       console.log('Effect added:', response.data);
-      navigate('/effects');
+      navigateHistory('/effects');
   } catch (error) {
+    alert('บันทึกผลข้างเคียงไม่สำเร็จ');
       console.error('Error adding effect:', error);
   }
   };

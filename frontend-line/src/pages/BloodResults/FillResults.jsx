@@ -1,37 +1,75 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const FillResults = () => {
+  const [files, setFiles] = useState([]);
+  const [progress, setProgress] = useState({ started: false, pc: 0 });
+  const [msg, setMsg] = useState(null);
+  const [username, setUsername] = useState('');
+
+  // COOKIES
+  useEffect(() => {
+    const user = Cookies.get('userName');
+    if (user) {
+      setUsername(user);
+    }
+  }, []);
+
+  function handleUpload() {
+    if (files.length === 0) {
+      setMsg("No file selected");
+      return;
+    }
+
+    const fd = new FormData();
+    // ส่งไฟล์ทั้งหมดที่เลือก
+    files.forEach((file) => {
+      fd.append('images', file);
+    });
+    // ใช้ username เป็น IDcard
+    fd.append('IDcard', username);
+
+    setMsg("Uploading...");
+    setProgress({ started: true, pc: 0 });
+
+    axios.post('http://localhost:8080/uploadBloodResult', fd, {
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setProgress({ started: true, pc: percentCompleted });
+      },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then(res => {
+      setMsg("Upload Successful");
+      console.log(res.data);
+    })
+    .catch(err => {
+      setMsg(`Upload failed: ${err.response ? err.response.data : err.message}`);
+      console.log(err);
+    });
+  }
+
   return (
     <div>
-      <div className="flex flex-col items-center justify-center md:justify-center md:items-center">
-      <div className="mt-4"></div>
-      {/* ปุ่มเลือกรูป / ถ่ายรูป */}
-      <div className="w-full flex justify-around sm:justify-between sm:w-1/2 md:1/3">
-        <button className='bt2-blue w-5/12 m-2 sm:text-sm'>เลือกรูปภาพ</button>
-        <button className='bt2-blue w-5/12 m-2 sm:text-sm'>ถ่ายรูป</button>
-      </div>
-
-      {/* แสดงรูป */}
-      <div className="flex justify-center items-center h-full pt-12">
-        <img src="/ing/bloodrs.png" alt="" className='sm:w-96'/>
-      </div>
-
-      {/* ที่กรองออกจากรูปมาเป็น text input */}
-      {/* <div className="box-sd m-2">
-        <h1>dddddd</h1>
-      </div> */}
-
-
-
-      {/* ปุ่มส่งผลเลือด */}
-      <Link to={"/BloodResults/DisplayBloodResults"}>
-        <button className='bg-blue700 border-collapse hover:bg-blue600 duration-300 hover:drop-shadow-lg w-full m-2 p-3 rounded-full  mt-20 text-white'>ส่งผลเลือด</button>
-      </Link>
+      <h1>{username}</h1>
+      <input
+        type="file"
+        multiple
+        onChange={(e) => setFiles(Array.from(e.target.files))}
+      />
+      <button
+        className='bg-blue-700 border-collapse hover:bg-blue-600 duration-300 hover:drop-shadow-lg w-11/12 m-2 p-3 rounded-full mt-20 text-white'
+        onClick={handleUpload}
+      >
+        ส่งผลเลือด
+      </button>
+      {progress.started && <progress max="100" value={progress.pc}></progress>}
+      {msg && <span>{msg}</span>}
     </div>
-    </div>
-    
-  )
+  );
 }
 
-export default FillResults
+export default FillResults;
