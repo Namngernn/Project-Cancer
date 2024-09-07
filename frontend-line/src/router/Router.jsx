@@ -14,6 +14,7 @@ import FillResults from "../pages/BloodResults/FillResults";
 import AddEffects from "../pages/Effects/AddEffects";
 import DisplayBloodResults from "../pages/BloodResults/DisplayBloodResults";
 import DisplayOtherResults from "../pages/BloodResults/DisplayOtherResults";
+import DetailEffect from "../pages/Effects/DetailEffect";
 
 const router = createBrowserRouter([
     {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
         {
           path: "/Effects",
           element: <Effects/>
+        },
+        {
+          path: "/DetailEffect",
+          element: <DetailEffect/>
         },
         {
           path: "/PatientManual",
