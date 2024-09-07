@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="item_label">เวลา</string>
+    <string name="IDcard">เลขประจำตัวประชาชน</string>
+    <string name="required">ต้องการ</string>
+    <string name="password">รหัสผ่าน</string>
+    <string name="confirmpassword">ยืนยันรหัสผ่าน</string>
+    <string name="submit">ลงทะเบียน</string>
+    <string name="email">อีเมล</string>
+    <string name="requiredat">ระบุอีเมล</string>
+    <string name="phone">เบอร์โทรศัพท์</string>
+    <string name="requiredPhone">ระบุเบอร์โทรศัพท์</string>
+    <string name="require">จำเป็น</string>
+    <string name="newpassword">รหัสผ่านใหม่</string>
+    <string name="confirmnewpassword">ยืนยันรหัสผ่านใหม่</string>
+</resources>
