@@ -93,8 +93,6 @@ router.post(`/newFeedback`, async function (req, res, next) {
   }
 });
 
-
-
 //add note
 router.post(`/noteFeedback`, async function (req, res, next) {
   const sideEffectLevel = req.body.sideEffectLevel;
