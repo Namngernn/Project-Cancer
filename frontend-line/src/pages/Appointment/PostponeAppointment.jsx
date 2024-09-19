@@ -43,7 +43,7 @@ const PostponeAppointment = () => {
 
   useEffect(() => {
     if (username) {
-      fetch(`http://localhost:8080/PatientAppointment2/${username}/${appointId}`)
+      fetch(`http://localhost:3000/PatientAppointment2/${username}/${appointId}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -89,7 +89,7 @@ const PostponeAppointment = () => {
   }
 
   const handleSubmit = () => {
-    fetch(`http://localhost:8080/PatientPostpone/${appointId}`, {
+    fetch(`http://localhost:3000/PatientPostpone/${appointId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

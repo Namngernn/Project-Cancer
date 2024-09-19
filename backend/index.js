@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 
 // ingadd
-app.set("port", 8080);
+app.set("port", 3000);
 const port = app.get("port")
 app.get("/", function (req, res) {
   res.send("hello world");
@@ -19,6 +19,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+
 
 app.use(cors());
 app.use(express.json());
@@ -51,8 +53,6 @@ app.use(express.static("uploads"));
 // server.listen(3000, function () {
 //     console.log('Example app listening on port 3000')
 // })
-
-
 
 // ingadd
 app.listen(port, function () {

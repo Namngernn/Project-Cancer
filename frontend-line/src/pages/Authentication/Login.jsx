@@ -46,7 +46,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/login2', userData)
+      const response = await axios.post('http://localhost:3000/login2', userData)
       if (response.status === 200){
         localStorage.setItem('userName', userName);
         Cookies.set('userName', userName, { expires: 7 }); // Set cookie with expiration of 7 days
@@ -58,10 +58,6 @@ const Login = () => {
       alert("Username or password incorrect");
     }
   }
-
-
-
-
 
   
   return (
