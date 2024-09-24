@@ -17,8 +17,8 @@ const formatThaiDate = (dateString) => {
 //หน้าประวัติผลข้างเคียง
 const Effects =  () => {
   const [history, setHistory] = useState([]);
-  const HN = '000001';
-  const appointId = 31;
+  const HN = '444444'; //test user
+  const appointId = 33; //test user
   useEffect(() => {
     const fetchHistory = async () => {
         try {

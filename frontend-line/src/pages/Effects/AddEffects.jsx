@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AutoComplete, Input, Checkbox, Button } from 'antd';
 import { AxiosClient } from '../../apiClient';
 
-//funcเปลี่ยนformat date ไม่แน่ใจว่าต้องเอาไปไว้ไหนแปะไว้ตรงนี้ก่อน
+//func เปลี่ยน format date 
 function formatDateToCustomFormat(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -44,7 +44,7 @@ const handleCheckboxChange = (effect) => {
     event.preventDefault();
     const patientSideEffect = [...selectedEffects, customEffect].filter(Boolean).join(', ');
     const sendAt = formatDateToCustomFormat(new Date()); //Format date"YYYY-MM-DD HH:MM:SS"
-    const hn = '000001'; // ตัวอย่างค่า HN
+    const hn = '444444'; // ตัวอย่างค่า HN
 
     // เช็คค่า
     console.log('HN:', hn);
@@ -58,7 +58,7 @@ const handleCheckboxChange = (effect) => {
       });
       alert('บันทึกผลข้างเคียงสำเร็จ');
       console.log('Effect added:', response.data);
-      navigateHistory('/effects');
+      navigateHistory('/Effects');
   } catch (error) {
     alert('บันทึกผลข้างเคียงไม่สำเร็จ');
       console.error('Error adding effect:', error);

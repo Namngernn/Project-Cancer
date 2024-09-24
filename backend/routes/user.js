@@ -92,7 +92,11 @@ router.post("/login2", async function (req, res, next) {
     );
     if (row.length != 0) {
       if (await bcrypt.compare(psw, row[0].psw)) {
-        res.json(row[0]);
+        const [patient] = await pool.query(
+          `select * from patient where IDcard = ? `,
+          [row[0].userName]
+        );
+        res.json(patient[0]);
       } else {
         res.send("ชื่อผู้ใช้งาน หรือรหัสผ่านไม่ถูกต้อง");
       }

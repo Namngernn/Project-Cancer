@@ -1,33 +1,41 @@
 <template>
-  <div class="navbar">
-    <nav class="container">
-        <div class="row container0">
-          <div class="col-10 ">
+  <div class="row g-0 text-center">
+    <nav style="background-color: #1C2939;">
+      <div class="container">
+        <div class="row">
+          <div class="col-9">
             <ul class="nav nav-underline">
-              <li class="nav-item" @click="goToRegis()" v-if="user.type == 'nurse'">
+              <li class="nav-item" @click="goToRegis()" v-if="user.type == 'nurse'"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">ลงทะเบียนผู้ป่วย</a>
               </li>
-              <li class="nav-item" @click="goTonewHome()">
+              <li class="nav-item" @click="goTonewHome()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">ผลเลือด</a>
               </li>
-              <li class="nav-item" @click="goTonewAppoint()">
+              <li class="nav-item" @click="goTonewAppoint()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">นัดหมาย</a>
               </li>
-              <li class="nav-item" @click="goToPatient()">
+              <li class="nav-item" @click="goToPatient()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">ประวัติการรักษา</a>
               </li>
-              <li class="nav-item" @click="goToMedFor()">
+
+              <li class="nav-item" @click="goToMedFor()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link active" aria-current="page" href="#"
                   style="color: #ffffff; font-size: large;">สูตรยาเคมีบำบัด</a>
               </li>
-              <li class="nav-item" @click="goToguideBook()">
+              <li class="nav-item" @click="goToguideBook()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">คู่มือผู้ป่วย</a>
               </li>
             </ul>
           </div>
-          <div class="col-2">
+          <div class="col-3">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button @click="logOut()" class="btn btn-light me-md-2" type="button" style=" margin-top: 15px; margin-bottom: 10px;">
+              <button @click="logOut()" class="btn btn-light me-md-2" type="button" style="margin-top: 15px; margin-bottom: 10px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                   class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
                   <path fill-rule="evenodd"
@@ -40,8 +48,8 @@
             </div>
           </div>
         </div>
+      </div>
     </nav>
-
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none;">
         <div class="card" style="margin: 20px;">
@@ -365,26 +373,22 @@ export default {
       editPeriod: null
     }
   },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
   mounted() {
     let userId = this.$route.params.userId
-    axios.get(`http://localhost:3000/user/${userId}`).then((response) => {
+    axios.get(`http://localhost:8080/user/${userId}`).then((response) => {
       this.user = response.data[0]
     }).catch((error) => {
       console.log(error)
     })
-    axios.get(`http://localhost:3000/formula`).then((response) => {
+    axios.get(`http://localhost:8080/formula`).then((response) => {
       this.posts = response.data;
     }).catch((error) => {
       console.log(error);
     });
-    axios.get(`http://localhost:3000/formula/medicine`).then((response) => {
+    axios.get(`http://localhost:8080/formula/medicine`).then((response) => {
       this.medicine = response.data;
     })
-    axios.get(`http://localhost:3000/AllFormula_Medicine`).then((response) => {
+    axios.get(`http://localhost:8080/AllFormula_Medicine`).then((response) => {
       this.formula_medicine = response.data;
     }).catch((error) => {
       console.log(error)
@@ -422,7 +426,7 @@ export default {
         medId: this.deleteSelectedMed.medId,
         formulaId: this.deleteSelectedMed.formulaId
       }
-      axios.post(`http://localhost:3000/deleteMedFromFormula`, data).then((response) => {
+      axios.post(`http://localhost:8080/deleteMedFromFormula`, data).then((response) => {
         Swal.fire({
           title: "สำเร็จ",
           text: "ลบยาเคมีออกจากสูตรยาสำเร็จ",
@@ -494,7 +498,7 @@ export default {
           numberOfRound: this.addNumberOfRound,
           period: this.addPeriod
         }
-        axios.post(`http://localhost:3000/addFormula`, data).then((response) => {
+        axios.post(`http://localhost:8080/addFormula`, data).then((response) => {
           Swal.fire({
           title: "สำเร็จ",
           text: response.data,
@@ -520,7 +524,7 @@ export default {
       this.$router.push(`/appointmentView/${this.$route.params.userId}`)
     },
     overlayModmed(formula) {
-      axios.get(`http://localhost:3000/medicine/${formula.formulaId}`).then((response) => {
+      axios.get(`http://localhost:8080/medicine/${formula.formulaId}`).then((response) => {
         this.selectedFormula = response.data[0]
         this.editMedName = this.selectedFormula.formulaName
         this.editNumberOfRound = this.selectedFormula.numberOfRound
@@ -539,7 +543,7 @@ export default {
           medicine: this.selectMed
         }
         const formulaId = this.selectedFormula.formulaId
-        axios.post(`http://localhost:3000/updateFormula/${formulaId}`, data).then((response) => {
+        axios.post(`http://localhost:8080/updateFormula/${formulaId}`, data).then((response) => {
           this.editMed = response.data
           this.selectMed = []
         }).catch((error) => {
@@ -562,7 +566,7 @@ export default {
     sortColumn() {
       if (this.sortFormula != 'เรียงลำดับตาม ID') {
         const data = { sortFormula: this.sortFormula }
-        axios.post(`http://localhost:3000/sortFormula`, data).then((response) => {
+        axios.post(`http://localhost:8080/sortFormula`, data).then((response) => {
           this.posts = response.data[0];
         }).catch((error) => {
           console.log(error)
@@ -571,7 +575,7 @@ export default {
     },
     searchFormula() {
       const data = { search: this.search }
-      axios.post(`http://localhost:3000/searchFormula`, data).then((response) => {
+      axios.post(`http://localhost:8080/searchFormula`, data).then((response) => {
         if (response.data == 'ไม่พบสูตรยาที่ค้นหา') {
           Swal.fire({
             title: "",
@@ -587,7 +591,7 @@ export default {
     },
     goYesDelete(selectedFormula) {
       const formulaName = selectedFormula.formulaName
-      axios.delete(`http://localhost:3000/deleteFormula/${formulaName}`).then((response) => {
+      axios.delete(`http://localhost:8080/deleteFormula/${formulaName}`).then((response) => {
         Swal.fire({
           title: "สำเร็จ",
           text: response.data,
@@ -638,8 +642,7 @@ export default {
       return value.split(" ").splice(0, 10).join(" ") + '...';
     }
   }
-}}
-
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -650,103 +653,5 @@ export default {
 
 .g1 {
   margin-right: 20px;
-}
-
-.navbar {
-  background-color: #1C2939;
-  padding: 10px 0;
-}
-
-.navbar-nav {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-item {
-  margin: 10px 20px 10px 0;
-}
-
-.nav-link {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-.nav-link.active {
-  font-size: large;
-}
-
-.logout-btn {
-  margin-top: 15px;
-  margin-bottom: 10px;
-}
-
-.navbar-toggler {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-}
-
-
-@media (max-width: 768px) {
-  .navbar-toggler {
-    display: block;
-  }
-
-  .navbar-collapse {
-    display: none;
-  }
-
-  .navbar-collapse.show {
-    display: block;
-  }
-
-  .navbar-nav {
-    flex-direction: column;
-  }
-
-  .nav-item {
-    margin: 10px 0;
-  }
-
-  .logout-btn {
-    width: 100%;
-    margin-top: 10px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .nav-link {
-    font-size: 14px;
-  }
-
-  .logout-btn {
-    font-size: 14px;
-  }
-}
-
-@media (min-width: 1025px) {
-  .container {
-    display: flex;
-    justify-content: space-between;
-    /* background-color: white; */
-    align-items: center;
-  }
-  .container0 {
-    /* background-color: green; */
-    width: 100%;
-  }
-  
-  .nav-link {
-    font-size: 14px;
-  }
-  .navbar-nav {
-    flex-grow: 1;
-  }
-  .logout-btn {
-    font-size: 14px;
-  }
 }
 </style>

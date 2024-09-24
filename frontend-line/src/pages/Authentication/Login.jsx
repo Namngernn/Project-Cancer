@@ -50,7 +50,9 @@ const Login = () => {
       if (response.status === 200){
         localStorage.setItem('userName', userName);
         Cookies.set('userName', userName, { expires: 7 }); // Set cookie with expiration of 7 days
+        Cookies.set('HN', response.data.HN, { expires: 7 });
         alert("login success");
+        console.log(response.data)
         navigate('/');
       }
     } catch (error) {

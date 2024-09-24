@@ -449,6 +449,8 @@ export default {
       this.$router.replace("/");
     },
     openQR(f) {
+      console.log("kdsjkskd");
+      console.log(f);
       this.selectedFormula = f;
       this.img = "http://localhost:3000/" + f.QRcode;
     },

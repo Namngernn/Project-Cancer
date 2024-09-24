@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { Input, Radio } from 'antd';
+import axios from 'axios';
 
 const PostponeAppointment = () => {
   const [username, setUsername] = useState('');
+  const [userIdLine, setUserIdLine] = useState('');
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,6 +24,8 @@ const PostponeAppointment = () => {
   const onChangenewAppointDate = (e) => {
     setNewAppointDate(e.target.value);
   };
+
+  
 
   // Format date in db
   function formatDateForValue(date) {
@@ -69,6 +73,23 @@ const PostponeAppointment = () => {
     }
   }, [appointments]);
 
+   // LINE
+  useEffect(() => {
+    const fetchUserIdLine = async () => {
+      console.log(username)
+      try {
+        const response = await axios.get(`http://localhost:3000/useridline/${username}`);
+        console.log(response.data[0].UserIdLine);
+        if (response.data) {
+          setUserIdLine(response.data[0].UserIdLine);
+        }
+      } catch (error) {
+        console.error("Error fetching UserIdLine:", error);
+      }
+    };
+    fetchUserIdLine();
+  }, [username]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -89,7 +110,7 @@ const PostponeAppointment = () => {
   }
 
   const handleSubmit = () => {
-    fetch(`http://localhost:3000/PatientPostpone/${appointId}`, {
+    fetch(`http://localhost:3000/PatientPostpone/${appointId}/${userIdLine}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -111,12 +132,14 @@ const PostponeAppointment = () => {
         console.error('Error:', error);
       });
   };
-
+  
   return (
     <div>
       <div className="p-4 space-y-12">
         <div className="">
           <h2 className="text-lg">นัดหมายเดิม</h2>
+          <h1>User ID Line: {userIdLine}</h1>
+          <h1>UserName: {username}</h1>
           {appointments.map((appointment) => (
             <div key={appointment.appointId} className="pt-2">
               <h3 className="text-md">{new Date(appointment.appointDate).toLocaleDateString('th-TH', {

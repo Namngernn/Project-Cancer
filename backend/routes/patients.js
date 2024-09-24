@@ -1090,4 +1090,40 @@ router.post("/sortGuideBook", async function (req, res, next) {
   }
 });
 
+//นงเพิ่ม ดึงQRคู่มือแสดงที่ไลน์
+router.get(`/PatientManual/:HN`, async (req, res) => {
+  let HN = req.params.HN; 
+
+  try {
+    // Query เพื่อดึง formulaId ที่เกี่ยวข้องกับผู้ป่วยจาก HN
+    const [formulaRows] = await pool.query(
+      `SELECT formulaId FROM treatment WHERE HN = ?`,
+      [HN]
+    );
+
+    // ตรวจสอบว่าผู้ป่วยมีการใช้สูตรยาหรือไม่
+    if (formulaRows.length === 0) {
+      return res.status(404).json({ message: "No treatment found for this patient" });
+    }
+
+    // ดึงข้อมูล QR code จาก guidebook โดยใช้ formulaId ที่ได้จาก treatment
+    const formulaId = formulaRows[0].formulaId; 
+    
+    const [guidebookRows] = await pool.query(
+      `SELECT guidebookId, QRcode FROM guidebook WHERE formulaId = ?`,
+      [formulaId]
+    );
+
+    // ตรวจสอบว่ามีข้อมูลคู่มือหรือไม่
+    if (guidebookRows.length === 0) {
+      return res.status(404).json({ message: "No guidebook found for this formula" });
+    }
+
+    // ส่งข้อมูล QR code กลับไปที่ Frontend
+    res.json(guidebookRows);
+  } catch (error) {
+    console.error("Error fetching patient manual:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 exports.router = router;

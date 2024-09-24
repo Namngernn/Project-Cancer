@@ -6,7 +6,8 @@ const cors = require("cors");
 app.use(cors());
 
   let sideEfrouter = express.Router();
-/////////////////Line App///////////////////
+
+// Line app
 //ผู้ป่วยบันทึกผลข้างเคียง
 router.post("/feedback/:HN", async function (req, res, next) {
   const HN = req.params.HN;

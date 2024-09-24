@@ -138,6 +138,7 @@
               <div class="row g-0">
                 <div class="col-4">
                   <b>ชนิดมะเร็ง</b> :
+                  <!-- มีบัค -->
                   <div v-for="i in patient.cancer" :key="i.cancerId">
                     {{ i.cancerType }} ระยะที่ {{ i.cancerState }}
                   </div>
@@ -571,7 +572,7 @@
                                   v-if="selectedFeedback.sideEfflevel != null"
                                 >
                                   <button
-                                    v-if="user.type == 'nurse'"
+                                    v-if="user.type == 'nurse' || user.type == 'doctor'"
                                     type="button"
                                     class="btn btn-warning"
                                     @click="this.edit = true"
