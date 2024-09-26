@@ -343,14 +343,6 @@ router.get("/exportPatients", async function (req, res, next) {
   }
 });
 
-
-
-
-
-
-
-
-
 //ผลเลือด ของพี่ ส่งแบบ array ไฟล์แรก UPDATE IN DATABASE
 // router.post(
 //   "/uploadBloodResult",
@@ -496,78 +488,9 @@ router.post(
   }
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//////////////////////////////////
 /////////////// new //////////////
+//////////////////////////////////
 function padWithLeadingZeros(num, totalLength) {
   return String(num).padStart(totalLength, "0");
 }
@@ -1090,18 +1013,17 @@ router.post("/sortGuideBook", async function (req, res, next) {
   }
 });
 
-//นงเพิ่ม ดึงQRคู่มือแสดงที่ไลน์
+//นงเพิ่ม ดึง QR คู่มือแสดงที่ front-line
 router.get(`/PatientManual/:HN`, async (req, res) => {
   let HN = req.params.HN; 
 
   try {
-    // Query เพื่อดึง formulaId ที่เกี่ยวข้องกับผู้ป่วยจาก HN
+    // Query ดึง formulaId ผู้ป่วยจาก HN
     const [formulaRows] = await pool.query(
       `SELECT formulaId FROM treatment WHERE HN = ?`,
       [HN]
     );
 
-    // ตรวจสอบว่าผู้ป่วยมีการใช้สูตรยาหรือไม่
     if (formulaRows.length === 0) {
       return res.status(404).json({ message: "No treatment found for this patient" });
     }
@@ -1110,19 +1032,39 @@ router.get(`/PatientManual/:HN`, async (req, res) => {
     const formulaId = formulaRows[0].formulaId; 
     
     const [guidebookRows] = await pool.query(
-      `SELECT guidebookId, QRcode FROM guidebook WHERE formulaId = ?`,
+      `SELECT guidebookId, QRcode, pdf FROM guidebook WHERE formulaId = ?`,
       [formulaId]
     );
 
-    // ตรวจสอบว่ามีข้อมูลคู่มือหรือไม่
     if (guidebookRows.length === 0) {
       return res.status(404).json({ message: "No guidebook found for this formula" });
     }
 
-    // ส่งข้อมูล QR code กลับไปที่ Frontend
     res.json(guidebookRows);
   } catch (error) {
     console.error("Error fetching patient manual:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+//นงเพิ่ม ดึง ชื่อสูตรยา แสดงที่ front-line
+router.get(`/getFormulaName/:HN`, async (req, res) => {
+  const HN = req.params.HN;
+
+  try {
+    // เชื่อมตาราง treatment และ formula ใช้ HN และ formulaId
+    const [formulaNameRows] = await pool.query(
+      `SELECT f.formulaName FROM treatment t JOIN formula f ON t.formulaId = f.formulaId WHERE t.HN = ?`,
+      [HN]
+    );
+
+    if (formulaNameRows.length === 0) {
+      return res.status(404).json({ message: "No formula found for this HN" });
+    }
+
+    res.json(formulaNameRows[0]);
+  } catch (error) {
+    console.error("Error fetching formula name:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
