@@ -19,6 +19,7 @@ const Effects =  () => {
   const [history, setHistory] = useState([]);
   const HN = '444444'; //test user
   const appointId = 33; //test user
+
   useEffect(() => {
     const fetchHistory = async () => {
         try {
@@ -45,7 +46,7 @@ const Effects =  () => {
                 <h3 className='text-md'>
                   วันที่ {formatThaiDate(record.sendAt)}
                 </h3>
-                {/* <p>{record.patientSideEffect}</p> */}
+                <p>{record.patientSideEffect}</p>
               </div>
             </div>
           ))
