@@ -83,3 +83,62 @@ body {
 .grid-item p {
   font-size: 1.2rem;
 }
+
+/* จัดlaout */
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.entry-left {
+  flex: 0 0 90px; /* ขนาดคงที่ของคอลัมน์บันทึกครั้งที่ */
+  text-align: center;
+}
+
+.entry-right {
+  flex-grow: 1;
+  padding-left: 20px; /* เว้นระยะระหว่างบันทึกครั้งที่กับข้อมูล */
+}
+
+h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.text-blue700 {
+  color: #2c3e50; /* สีข้อความ */
+}
+
+.text-sm {
+  font-size: 14px;
+}
+
+.text-4xl {
+  font-size: 36px;
+}
+
+.text-md {
+  font-size: 18px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.box-sd {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+  color: #666;
+}
+

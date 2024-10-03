@@ -1028,19 +1028,18 @@ router.get(`/PatientManual/:HN`, async (req, res) => {
       return res.status(404).json({ message: "No treatment found for this patient" });
     }
 
-    // ดึงข้อมูล QR code จาก guidebook โดยใช้ formulaId ที่ได้จาก treatment
+    // ดึงข้อมูล pdf จาก guidebook โดยใช้ formulaId ที่ได้จาก treatment
     const formulaId = formulaRows[0].formulaId; 
     
     const [guidebookRows] = await pool.query(
-      `SELECT guidebookId, QRcode, pdf FROM guidebook WHERE formulaId = ?`,
+      `SELECT pdf FROM guidebook WHERE formulaId = ?`,
       [formulaId]
     );
 
     if (guidebookRows.length === 0) {
       return res.status(404).json({ message: "No guidebook found for this formula" });
     }
-
-    res.json(guidebookRows);
+    res.json({ pdf: guidebookRows[0].pdf });
   } catch (error) {
     console.error("Error fetching patient manual:", error);
     res.status(500).json({ message: "Internal server error" });
