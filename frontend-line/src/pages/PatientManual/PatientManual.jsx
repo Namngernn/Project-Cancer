@@ -127,9 +127,9 @@ const PatientManual = () => {
         const matchedFormula = formulaNameTH.find(item => item.formulaName === data.formulaName);
         
         if (matchedFormula) {
-          setFormulaName(matchedFormula.formulaName); // เก็บชื่อสูตรยาที่ตรงกัน
-          setFormulaNameTHDisplay(matchedFormula.formulaNameTH); // เก็บชื่อสูตรยาภาษาไทย
-          setMedicineName(matchedFormula.medicine); // เก็บชื่อยาทั้งหมดในสูตรนั้น
+          setFormulaName(matchedFormula.formulaName);
+          setFormulaNameTHDisplay(matchedFormula.formulaNameTH);
+          setMedicineName(matchedFormula.medicine);
         } else {
           setFormulaNameTHDisplay('ไม่พบสูตรยาที่ตรงกัน');
           setMedicineName([]);
@@ -148,14 +148,14 @@ const PatientManual = () => {
   
   return (
   <div className="flex flex-col p-10 space-y-4">
-    {/* Header */}
+    {/* Header เสร็จ */}
     <div className="mb-6 text-center">
       <h1 className="text-5xl font-bold text-center">{formulaName}</h1>
       <h2 className="mt-2 text-xl font-semibold">การปฏิบัติตัวสำหรับผู้ป่วยที่ได้รับ</h2>
       <h2 className="text-xl font-semibold">ยาเคมีบำบัดสูตร: {formulaNameTHDisplay}</h2>
     </div>
     
-    {/* Section เหมือนกัน */}
+    {/* หมือนกัน */}
     <div className="mb-4">
       <h1 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         เคมีบำบัดคืออะไร
@@ -166,7 +166,7 @@ const PatientManual = () => {
       </p>
     </div>
     
-    {/* Section ชื่อยา-ไม่เหมือนกัน*/}
+    {/* ชื่อยา-ไม่เหมือนกัน เสร็จ */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         ยาเคมีบำบัดที่ท่านได้รับครั้งนี้ประกอบด้วย 
@@ -184,7 +184,7 @@ const PatientManual = () => {
       </div>
     </div>
 
-    {/* Section ตารางรับยา-รอถามจารว่าต้องแมพข้อมูลมาใส่มั้ย??????? */}
+    {/* ตารางรับยา-รอถามจารว่าต้องแมพข้อมูลมาใส่มั้ย??????? */}
     <div className="mb-6">
       <p className="text-lg font-bold text-center text-gray-900">
         จำนวน ...... รอบ
@@ -207,7 +207,7 @@ const PatientManual = () => {
       </table>
     </div>
 
-    {/* Section Side effects ไม่เหมือนกัน */}
+    {/* Side effects ไม่เหมือนกัน */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         อาการข้างเคียงที่อาจเกิดขึ้นจากการได้รับยา
@@ -223,7 +223,7 @@ const PatientManual = () => {
       </ul>
     </div>
 
-    {/* Section */}
+    {/* ต่างกันนิดหน่อย ยังไม่ได้ทำ */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
           การดูแลตนเองทั่วไปในช่วงที่ได้รับยาเคมีบำบัด
@@ -237,7 +237,7 @@ const PatientManual = () => {
       </ul>
     </div>
 
-    {/* Section */}
+    {/* ต่างกันนิดหน่อย ยังไม่ได้ทำ */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         การปฏิบัติตัวเมื่อเกิดอาการข้างเคียงต่างๆ
@@ -328,7 +328,7 @@ const PatientManual = () => {
       </ul>
     </div>     
 
-    {/* Section */}
+    {/* ต่าง */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-red300 bg-red300 inline-block px-4 py-2">
           อาการผิดปกติที่ต้องรีบมาพบแพทย์
@@ -344,12 +344,12 @@ const PatientManual = () => {
         <p className="mt-2 font-bold text-base text-gray-900">*** หากบ้านไกลสามารถไปพบแพทย์ใกฃ้บ้านได้และให้โทรมาแจ้งที่โรงพยาบาลมะเร็งชลบุรีในแผนกที่ท่านรักษาตัวอยู่ ถึงอาการผิดปกติที่เกิดขึ้น</p>
     </div>
 
-    {/* Section กรอบให้กำลังใจ5555 เหมือนกัน */}
+    {/* กรอบให้กำลังใจ5555 เหมือนกัน */}
     <div className="border border-black rounded-md p-4 bg-gray-50 text-sm text-center">
       <p>“อาการข้างเคียงทั้งหมดที่กล่าวมานั้น เกิดขึ้นในผู้ป่วยบางรายและเกิดมากน้อยแตกต่างกันไป ผู้ป่วยอาจไม่มี อาการข้างเคียงดังกล่าวเลยก็ได้ การให้ยาเคมีบำบัดไม่น่ากลัวอย่างที่คิด และสามารถป้องกันหรือบรรเทาอาการข้างเคียงต่างๆได้”</p>
     </div>
 
-    {/* Section schedule เหมือนกัน */}
+    {/* ตารางอาหาร เหมือนกัน */}
     <div className="mb-6">
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         ตัวอย่างรายการอาหารสำหรับผู้ป่วยที่ได้รับยำเคมีบำบัด (อาหารธรรมดา) พลังงาน 1,800 - 2,000 กิโลแคลอรี่ต่อวัน
@@ -395,7 +395,7 @@ const PatientManual = () => {
         <p className="mt-2 font-bold text-base text-gray-900">*** ผู้ป่วยสามารถปรับเเปลี่ยนรายการอาหารได้ตามความต้องการและสามารถเสริมนม/ น้ำเต้าหู้/ น้ำผลไม้ต่างๆ ได้ระหว่างมื้ออาหาร</p>
     </div>
     
-    {/* Section Hospital Info เหมือนกัน */}
+    {/* Hospital Info เหมือนกัน */}
     <div className="border border-black rounded-md p-4 bg-gray-50 text-sm text-center">
       <p>โรงพยาบาลมะเร็งชลบุรี โทร: 038-455632-6</p>
       <p>ต่อ 191, 173 (เคมีบำบัด)</p>
@@ -406,12 +406,12 @@ const PatientManual = () => {
       <a href="http://www.ccc.in.th" className="text-blue-500">www.ccc.in.th</a>
     </div>
 
-    {/* Section version เหมือนกัน*/}
+    {/* version เหมือนกัน*/}
     <div className="mt-6 text-xs text-center">
       <p>Version 1/2561</p>
     </div>
 
-    {/* Section โหลดรูป */}        
+    {/* โหลดรูป เสร็จ */}        
     {manualData ? (
       <div className="p-10 text-center">
         {manualData.pdf ? (
