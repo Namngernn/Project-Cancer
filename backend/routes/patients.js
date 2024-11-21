@@ -457,18 +457,23 @@ router.post(
         row[0].treatmentId
       );
 
+      // SELECT max(roundBrId) FROM bloodresult;
+      const [row3, f3] = await pool.query(
+        `SELECT max(roundBrId) AS maxRoundBrId FROM bloodresult`
+      );
+      
       if (row1[0].status === "อนุมัติรับยา") {
         res.send("Cannot send");
       } else if (row1[0].status !== "อนุมัติรับยา") {
         const conn = await pool.getConnection();
         await conn.beginTransaction();
         try {
-          // เพิ่มไฟล์ทั้งหมด (รวมถึงไฟล์แรก)
+          // เพิ่มไฟล์ทั้งหมด
           for (const file of files) {
             const filename = "images/" + file.filename;
             await conn.query(
-              `INSERT INTO bloodresult (picture, status, doctorId, treatmentId, date) VALUES (?, 'รออนุมัติผลเลือด', ?, ?, ?)`,
-              [filename, row2[0].doctorId, row[0].treatmentId, date]
+              `INSERT INTO bloodresult (picture, status, doctorId, treatmentId, date, roundBrId) VALUES (?, 'รออนุมัติผลเลือด', ?, ?, ?, ?)`,
+              [filename, row2[0].doctorId, row[0].treatmentId, date, row3[0].maxRoundBrId+1]
             );
           }
           await conn.commit();
@@ -1028,7 +1033,7 @@ router.get(`/PatientManual/:HN`, async (req, res) => {
       return res.status(404).json({ message: "No treatment found for this patient" });
     }
 
-    // ดึงข้อมูล pdf จาก guidebook โดยใช้ formulaId ที่ได้จาก treatment
+    // ดึงข้อมูล pdf จาก guidebook ใช้ formulaId ที่ได้จาก treatment
     const formulaId = formulaRows[0].formulaId; 
     
     const [guidebookRows] = await pool.query(
@@ -1065,6 +1070,26 @@ router.get(`/getFormulaName/:HN`, async (req, res) => {
   } catch (error) {
     console.error("Error fetching formula name:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// ING ADD
+router.get(`/check-hn/:newhn`, async function (req, res, next) {
+  const newhn = req.params.newhn; // ดึงค่าจาก route parameter
+  try {
+    const [rows] = await pool.query(
+      `SELECT COUNT(*) AS count FROM patient WHERE HN = ?`,
+      [newhn]
+    );
+
+    // ตรวจสอบผลลัพธ์
+    const exists = rows[0].count > 0;
+
+    // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
+    res.json({ exists });
+  } catch (error) {
+    console.error("Error checking HN:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 exports.router = router;

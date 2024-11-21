@@ -153,6 +153,41 @@ router.get('/process-sideeffects/:feedbackId', async (req, res) => {
   }
 });
 
+// อิงเพิ่มม
+router.get("/selectedappointId/:IDCard", async function (req, res, next) {
+  let IDCard = req.params.IDCard;
+  try {
+    const [row, _] = await pool.query(
+      "SELECT max(appointId) as maxappointId from appointment where IDCard = ?",
+      IDCard
+    );
+    if (row.length != 0) {
+      res.json(row[0].maxappointId);
+    } else {
+      res.send("not found appoint by IDCard");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/selectedFeedback2/:appointId", async function (req, res, next) {
+  let appointId = req.params.appointId;
+  try {
+    const [row, _] = await pool.query(
+      "select * from feedback where appointId = ?",
+      appointId
+    );
+    if (row.length != 0) {
+      res.json(row);
+    } else {
+      res.send("not found");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //////// ของพี่ ///////////
 //add feedback
 router.post(`/newFeedback`, async function (req, res, next) {

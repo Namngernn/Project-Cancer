@@ -3,7 +3,11 @@ const pool = require("../config");
 const app = express();
 const cors = require("cors");
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: '*', // Frontend URL
+  methods: 'GET, POST, PUT, DELETE'
+}));
 
 router = express.Router();
 
@@ -199,6 +203,7 @@ router.get(`/getBloodresult/:brId`, async function (req, res, next) {
   }
 });
 
+
 // ฝั่งโมบายที่อิงเพิ่มเองงงงงงงงงงง
 // เอาชื่อโรคของแต่ละคน อาจจะมีหลายโรค             มะเร็งลำไส้ใหญ่
 // ชื่อโรค ex. มะเร็งลำไส้
@@ -256,7 +261,14 @@ router.get('/doctorid/:idcard', async function (req, res) {
   }
 });
 
-// UPLOAD FILE// 
+
+
+
+// UPLOAD FILE
+// 
+
+
+
 
 // GET ALL DOCtor ingfah do this
 router.get('/doctorr', async function (req, res) {
@@ -271,6 +283,7 @@ router.get('/doctorr', async function (req, res) {
   }
 });
 
+
 // GET INFO PATIENT
 router.get('/patientss/:idcard', async function (req, res) {
   try {
@@ -283,6 +296,8 @@ router.get('/patientss/:idcard', async function (req, res) {
   }
 });
 
+
+
 // ข้อมูลการส่งผลเลือดทั้งหมด
 router.get('/recordbloodresult/:idcard', async function (req, res) {
   try {
@@ -294,5 +309,7 @@ router.get('/recordbloodresult/:idcard', async function (req, res) {
     console.log(error);
   }
 });
+
+
 
 exports.router = router;

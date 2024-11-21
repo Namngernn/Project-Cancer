@@ -1,0 +1,126 @@
+{
+    "replyToken": "{Your Reply Token}",
+    "messages": [
+      {
+        "type": "flex",
+        "altText": "ติดต่อโรงพยาบาลมะเร็งชลบุรี",
+        "contents": {
+            "type": "flex",
+            "altText": "ติดต่อโรงพยาบาลมะเร็งชลบุรี",
+            "contents": {
+              "type": "bubble",
+              "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "ติดต่อโรงพยาบาลมะเร็งชลบุรี",
+                    "weight": "bold",
+                    "size": "lg"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "margin": "lg",
+                    "spacing": "sm",
+                    "contents": [
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "text",
+                            "text": "ติดต่อในวันและเวลาราชการ",
+                            "wrap": true,
+                            "color": "#666666",
+                            "size": "md",
+                            "flex": 5
+                          }
+                        ]
+                      },
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "text",
+                            "text": "เวลา",
+                            "color": "#aaaaaa",
+                            "size": "md",
+                            "flex": 1
+                          },
+                          {
+                            "type": "text",
+                            "text": "08:00 - 16:00 น.",
+                            "wrap": true,
+                            "color": "#666666",
+                            "size": "md",
+                            "flex": 2
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "separator",
+                    "margin": "lg"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "ติดต่อแผนก",
+                        "size": "md",
+                        "margin": "md",
+                        "weight": "bold"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "baseline",
+                        "contents": [
+                          {
+                            "type": "text",
+                            "text": "เคมีบำบัด",
+                            "flex": 1
+                          },
+                          {
+                            "type": "text",
+                            "text": "19",
+                            "flex": 2
+                          }
+                        ],
+                        "margin": "sm"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "footer": {
+                "type": "box",
+                "layout": "vertical",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "button",
+                    "style": "primary",
+                    "height": "sm",
+                    "action": {
+                      "type": "uri",
+                      "label": "เบอร์โทรศัพท์",
+                      "uri": "tel:038-455-6326"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+          
+      }
+    ]
+  }
+  

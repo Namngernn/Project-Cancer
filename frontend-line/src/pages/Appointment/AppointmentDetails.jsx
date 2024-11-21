@@ -34,9 +34,9 @@ const AppointmentDetails = () => {
         {/* มาเพิ่มรูป Avatar ปฎิทิน */}
         <div className='flex flex-col items-center justify-center'>
           <h2 className='text-xl'>ขอเลื่อนนัดหมายแล้ว</h2>
-          {postponeDetail.length > 0 && (
+          {/* {postponeDetail.length > 0 && (
             <h3 className='text-sm text-yellow'>{postponeDetail[0].requestStatus}</h3>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -64,10 +64,10 @@ const AppointmentDetails = () => {
       </div>
 
       <div className='p-7 flex flex-col space-y-2'>
-        <Link to={"/"}><button className='bt-blue'>กลับไปยังหน้าหลัก</button></Link>
+        <Link to={"/"}><button className='p-3 rounded-full w-52 text-white bg-blue700 border-collapse hover:bg-blue600 duration-300 hover:drop-shadow-lg'>กลับไปยังหน้าหลัก</button></Link>
       </div>
     </div>
   );
 }
 
-export default AppointmentDetails
+export default AppointmentDetails;

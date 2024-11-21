@@ -3,7 +3,11 @@ const pool = require("../config");
 const app = express();
 const cors = require("cors");
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: 'https://p6l7k2jx-5173.asse.devtunnels.ms', // Frontend URL
+  methods: 'GET, POST, PUT, DELETE'
+}));
 
 router = express.Router();
 
@@ -65,6 +69,7 @@ router.get("/getComment/:brId", async function (req, res, next) {
 router.get("/doctor/:HN", async function (req, res, next) {
   const HN = req.params.HN;
   try {
+    // ได้ treatmentId
     const [row1, f1] = await pool.query(
       `select max(treatmentId) as treatmentId from treatment where HN = ?`,
       HN

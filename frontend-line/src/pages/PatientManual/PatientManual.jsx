@@ -12,43 +12,43 @@ const PatientManual = () => {
   const [HN, setHN] = useState('');
   const mealPlan = [
     {
-      day: 1,
+      type: 'รายการที่ 1',
       breakfast: ['ข้าวต้มปลา', 'โอวัลติน / นมขนมปัง'],
       lunch: ['ข้าวผัดทะเล', 'กล้วยบวดชี'],
-      dinner: ['ข้าวสวย', 'แกงเขียวหวานไก่', 'ผัดวุ้นเส้น', 'ผลไม้ตามฤดูกาล'],
+      dinner: ['ข้าวสวย', 'แกงเขียวหวานไก่', 'ผัดวุ้นเส้น', 'ผลไม้ตามฤดูกาล']
     },
     {
-      day: 2,
+      type: 'รายการที่ 2',
       breakfast: ['ข้าวต้ม', 'หมูหยอง', 'ผัดกะหล่ำปลีไก่บด'],
       lunch: ['ข้าวสวย', 'ผัดกะเพราไก่', 'ต้มจืดหัวไชเท้าซี่โครงหมู', 'มันต้มน้ำตาล'],
       dinner: ['ข้าวสวย', 'ต้มโคล้งปลาเห็ดฟาง', 'ผัดผักรวม', 'ผลไม้ตามฤดูกาล'],
     },
     {
-      day: 3,
+      type: 'รายการที่ 3',
       breakfast: ['ข้าวต้มตับหมูเลือดหมู', 'น้ำเต้าหู้/ นม'],
       lunch: ['บะหมี่เกี๊ยวหมูแดง', 'แกงบวด ฟักทอง'],
       dinner: ['ข้าวสวย', 'ต้มข่าไก่เห็ดนางฟ้า', 'ปลาทอดผัดพริกหวาน', 'ผลไม้ตามฤดูกาล'],
     },
     {
-      day: 4,
+      type: 'รายการที่ 4',
       breakfast: ['ข้าวต้ม', 'ผัดผักบุ้ง', 'ไข่ตุ๋น', 'โอวัลติน/ นม'],
       lunch: ['ข้าวสวย', 'แกงจืดเต้าหู้ไข่หมูสับ', 'กุ้งผัดพริกแกง', 'ถั่วเขียวต้มน้ำตาล'],
       dinner: ['ข้าวสวย', 'แกงส้มผักรวม', 'หมูรวนเค็ม', 'ผลไม้ตามฤดูกาล'],
     },
     {
-      day: 5,
+      type: 'รายการที่ 5',
       breakfast: ['ข้าวต้มกุ้ง', 'น้ำเต้าหู้/ นม', 'ขนมปังสังขยา'],
       lunch: ['ก๋วยเตี๋ยวหมูลูกชิ้น', 'ลอดช่องน้ำกะทิ'],
       dinner: ['ข้าวสวย', 'แกงจืดมะระยัดไส้', 'ปลานิลนึ่งมะนาว', 'ผลไม้ตามฤดูกาล'],
     },
     {
-      day: 6,
+      type: 'รายการที่ 6',
       breakfast: ['ก๋วยจั๊บ หมูสับ เลือดหมู ตับหมู', 'ผลไม้ตามฤดูกาล'],
       lunch: ['สุกี้หมู', 'แกงบวดมัน'],
       dinner: ['ข้าวสวย', 'ต้มจืดเต้าหู้ไข่ผักกาดขาว', 'ผัดพริกอ่อนตับหมู'],
     },
     {
-      day: 7,
+      type: 'รายการที่ 7',
       breakfast: ['ข้าวต้มขาว', 'ผัดกะหล่ำปลีหมูชิ้น'],
       lunch: ['ก๋วยเตี๋ยวไก่ตุ๋น', 'ขนมบัวลอย'],
       dinner: ['ข้าวสวย', 'แกงส้มผักรวม', 'หมูทอด', 'ผลไม้ตามฤดูกาล'],
@@ -354,44 +354,29 @@ const PatientManual = () => {
       <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
         ตัวอย่างรายการอาหารสำหรับผู้ป่วยที่ได้รับยำเคมีบำบัด (อาหารธรรมดา) พลังงาน 1,800 - 2,000 กิโลแคลอรี่ต่อวัน
       </h2>
-      <table className="mt-2 table-auto w-full border-collapse border border-gray-800">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-400 px-4 py-2">รายการที่</th>
-              <th className="border border-gray-400 px-4 py-2">มื้อเช้า</th>
-              <th className="border border-gray-400 px-4 py-2">มื้อกลางวัน</th>
-              <th className="border border-gray-400 px-4 py-2">มื้อเย็น</th>
-            </tr>
-          </thead>
+    <table className="mt-2 table-auto w-full border-collapse border border-gray-800">
+      <thead>
+          <tr className="bg-gray-200">
+            <td className="border border-gray-400 px-4 py-2">รายการที่</td>
+            {/* <th className="border border-gray-400 px-4 py-2">มื้อเช้า</th>
+            <th className="border border-gray-400 px-4 py-2">มื้อกลางวัน</th>
+            <th className="border border-gray-400 px-4 py-2">มื้อเย็น</th> */}
+          </tr>
+      </thead>
           <tbody>
-            {mealPlan.map((meal) => (
-              <tr key={meal.day}>
-                <td className="border border-gray-400 px-4 py-2 text-center">{meal.day}</td>
-                <td className="border border-gray-400 px-4 py-2">
-                  <ul className="list-disc list-inside">
-                    {meal.breakfast.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  <ul className="list-disc list-inside">
-                    {meal.lunch.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  <ul className="list-disc list-inside">
-                    {meal.dinner.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </td>
+            {mealPlan.map((meal, index) => (
+              <tr key={index}>
+                {/* <td className="border border-gray-400 px-4 py-2 text-center">{meal.type}</td> */}
+                {/* <td className="border border-gray-400 px-4 py-2 text-center">{meal.breakfast.join(', ')}</td>
+                <td className="border border-gray-400 px-4 py-2 text-center">{meal.lunch.join(', ')}</td>
+                <td className="border border-gray-400 px-4 py-2 text-center">{meal.dinner.join(', ')}</td> */}
+                <td className="border border-gray-400 px-4 py-2">มื้อเช้า</td>
+                <td className="border border-gray-400 px-4 py-2">มื้อกลางวัน</td>
+                <td className="border border-gray-400 px-4 py-2">มื้อเย็น</td> 
               </tr>
             ))}
           </tbody>
-        </table>
+    </table>
         <p className="mt-2 font-bold text-base text-gray-900">*** ผู้ป่วยสามารถปรับเเปลี่ยนรายการอาหารได้ตามความต้องการและสามารถเสริมนม/ น้ำเต้าหู้/ น้ำผลไม้ต่างๆ ได้ระหว่างมื้ออาหาร</p>
     </div>
     

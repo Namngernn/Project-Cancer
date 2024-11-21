@@ -27,7 +27,7 @@ const Home = () => {
           <Link to={"/Appointment"} className='grid-item bt-blue'>การนัดหมาย</Link>
           <Link to={"/Contacts"} className='grid-item bt-blue'>ติดต่อโรงพยาบาล</Link>
           <Link to={"/AddEffects"} className='grid-item bt-blue'>ผลข้างเคียง</Link>
-          <Link to={"/PatientManual"} className='grid-item bt-blue'>คู่มือผู้ป่วย</Link> 
+          <Link to={"/PatientManual"} className='grid-item bt-blue'>คู่มือผู้ป่วย</Link>
           <Link className='grid-item bt-blue'>CHAT BOT</Link>
         </div>
       </div>

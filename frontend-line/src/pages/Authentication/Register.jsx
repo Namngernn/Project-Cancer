@@ -16,6 +16,9 @@ const Register = () => {
   };
 
 
+
+
+
   const handleReg = async (event) => {
     event.preventDefault();
     if (!userName.trim()) {
@@ -36,7 +39,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/register2', userData)
+      const response = await axios.post('http://localhost:8080/register2', userData)
 
       if (response.status === 200){
         alert("reg success");

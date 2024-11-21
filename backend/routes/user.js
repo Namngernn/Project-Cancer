@@ -5,7 +5,11 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: 'https://p6l7k2jx-5173.asse.devtunnels.ms', // Frontend URL
+  methods: 'GET, POST, PUT, DELETE'
+}));
 
 router = express.Router();
 
@@ -174,8 +178,42 @@ router.get(`/chemist`, async function (req, res, next) {
   }
 });
 
+// login line เก็บ userId Line ลง database
+router.post("/login34", async function (req, res, next) {
+  let userName = req.body.userName;
+  let UserIdLine = req.body.UserIdLine;
+  try {
+    const [rows, _] = await pool.query(
+      `SELECT * FROM user JOIN treatment ON user.userName = treatment.IDCard WHERE user.userName = ? AND user.type = 'patient';`,
+      [userName]
+    );
+    if (rows.length > 0) {
+      await pool.query(
+        `UPDATE user SET UserIdLine = ? WHERE userName = ?`,
+        [UserIdLine, userName]
+      );
+      res.status(200).json(rows[0]);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error details:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
 
-
+// get userIDLine by userName
+router.get(`/useridline/:userName`, async function (req, res, next) {
+  let userName = req.params.userName;
+  try {
+    const [row, f] = await pool.query(
+      `select UserIdLine from user where userName = ?`, userName
+    );
+    res.json(row);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 
 exports.router = router;

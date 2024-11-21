@@ -73,7 +73,7 @@ const PostponeAppointment = () => {
     }
   }, [appointments]);
 
-   // LINE
+   // LINE fetchUserIdLine
   useEffect(() => {
     const fetchUserIdLine = async () => {
       console.log(username)
@@ -99,7 +99,7 @@ const PostponeAppointment = () => {
     const targetDay = date.getDay(); 
     let count = 0;
   
-    while (count <= 4) {
+    while (count <= 8) {
       if (date.getDay() === targetDay) {
         result.push(new Date(date));
         count++;
@@ -138,8 +138,8 @@ const PostponeAppointment = () => {
       <div className="p-4 space-y-12">
         <div className="">
           <h2 className="text-lg">นัดหมายเดิม</h2>
-          <h1>User ID Line: {userIdLine}</h1>
-          <h1>UserName: {username}</h1>
+          {/* <h1>User ID Line: {userIdLine}</h1>
+          <h1>UserName: {username}</h1> */}
           {appointments.map((appointment) => (
             <div key={appointment.appointId} className="pt-2">
               <h3 className="text-md">{new Date(appointment.appointDate).toLocaleDateString('th-TH', {

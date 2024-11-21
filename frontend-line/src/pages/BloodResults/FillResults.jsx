@@ -59,34 +59,37 @@ const FillResults = () => {
   }
 
   return (
-    <div>
+    // <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+    <div className="">
       {/* <h1>{username}</h1> */}
       <div className="flex items-center justify-center m-4">
+        <label for="file-upload" class="custom-file-upload">
+          เลือกรูปผลเลือด
+        </label>
         <input
           type="file"
+          id="file-upload"
           multiple
           onChange={(e) => setFiles(Array.from(e.target.files))}
         />
       </div>
 
-      <div className="flex  items-center justify-center">
-        {progress.started && <progress max="100" value={progress.pc}></progress>}
-        {msg && <span>{msg}</span>}
+      <div className="flex items-center justify-center flex-col">
+        <div>{progress.started && <progress max="100" value={progress.pc}></progress>}</div>
+        <div>{msg && <div>{msg}</div>}</div>
       </div>
 
 
-
-    <div className="flex items-center justify-center">
-      <button
-        className=' bg-blue-700 border-collapse hover:bg-blue-600 duration-300 hover:drop-shadow-lg w-11/12 m-2 p-3 rounded-full text-white'
-        onClick={handleUpload}
-      >
-        ส่งผลเลือด
-      </button>
+      <div className="flex items-center justify-center">
+        <button
+          className=' bg-blue-700 border-collapse hover:bg-blue-600 duration-300 hover:drop-shadow-lg w-11/12 m-2 p-3 rounded-full text-white'
+          onClick={handleUpload}
+        >
+          ส่งผลเลือด
+        </button>
+      </div>
     </div>
-      
-      
-    </div>
+    // </div>
   );
 }
 

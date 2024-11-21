@@ -44,7 +44,7 @@ const handleCheckboxChange = (effect) => {
     event.preventDefault();
     const patientSideEffect = [...selectedEffects, customEffect].filter(Boolean).join(', ');
     const sendAt = formatDateToCustomFormat(new Date()); //Format date"YYYY-MM-DD HH:MM:SS"
-    const hn = '444444'; // ตัวอย่างค่า HN
+    const hn = '123456'; 
 
     // เช็คค่า
     console.log('HN:', hn);
