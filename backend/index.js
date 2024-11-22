@@ -39,7 +39,9 @@ const appointmentRouter = require("./routes/appointment");
 const bloodResultRouter = require("./routes/bloodresult");
 const feedbackRouter = require("./routes/feedback");
 const userRouter = require("./routes/user");
+const chatbotRouter = require("./routes/chatbot");
 
+app.use(chatbotRouter.router);
 app.use(doctorRouter.router);
 app.use(patientsRouter.router);
 app.use(formulaRouter.router);

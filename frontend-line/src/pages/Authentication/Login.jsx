@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { Input, Button, Checkbox, Form, Typography } from 'antd';
-import liff from '@line/liff';
+import liff from "@line/liff";  
 import Cookies from 'js-cookie';
 
 const onFinish = (values) => {
@@ -29,10 +29,21 @@ const Login = () => {
 
   useEffect(() => {
     const main = async () => {
-      await liff.init({ liffId: "2006367428-DL91peYa" });
-      if (!liff.isLoggedIn()) {
-        liff.login();
-      }
+      console.log("Starting LIFF initialization...");
+      liff.init({ liffId: "2006367428-DL91peYa" })
+        .then(() => {
+          console.log("LIFF initialized successfully");
+        })
+        .catch((err) => {
+          console.error("Error initializing LIFF:", err.message);
+        });
+      
+
+
+      // await liff.init({ liffId: "2006367428-DL91peYa" });
+      // if (!liff.isLoggedIn()) {
+      //   liff.login();
+      // }
 
       const profileData = await liff.getProfile();
       setProfile(profileData);
@@ -58,7 +69,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/login34', userData)
+      const response = await axios.post('http://localhost:3000/login34', userData)
       if (response.status === 200){
         localStorage.setItem('userName', userName);
         localStorage.setItem('HN', response.data.HN);
