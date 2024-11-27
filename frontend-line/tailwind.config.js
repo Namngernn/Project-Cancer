@@ -15,7 +15,8 @@ export default {
         "blue100": "#BEDEEF",
         "blue50": "#E7F3F9",
         "red300": "#FF6260",
-        "Bg100": "#F9F9F9"
+        "Bg100": "#F9F9F9",
+        "blue111": "#1E3A8A"
       }
     },
   },

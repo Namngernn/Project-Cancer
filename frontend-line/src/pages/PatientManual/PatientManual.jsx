@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+import "swiper/css";
+import "swiper/css/pagination";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+
 const PatientManual = () => {
   const [manualData, setManualData] = useState(null);
   const [formulaName, setFormulaName] = useState('');
@@ -33,7 +38,7 @@ const PatientManual = () => {
       type: 'รายการที่ 4',
       breakfast: ['ข้าวต้ม', 'ผัดผักบุ้ง', 'ไข่ตุ๋น', 'โอวัลติน/ นม'],
       lunch: ['ข้าวสวย', 'แกงจืดเต้าหู้ไข่หมูสับ', 'กุ้งผัดพริกแกง', 'ถั่วเขียวต้มน้ำตาล'],
-      dinner: ['ข้าวสวย', 'แกงส้มผักรวม', 'หมูรวนเค็ม', 'ผลไม้ตามฤดูกาล'],
+      dinner: ['ข้าวสวย', 'แกงส้มผักรวม', 'หมูรวนเค็ม'],
     },
     {
       type: 'รายการที่ 5',
@@ -54,6 +59,7 @@ const PatientManual = () => {
       dinner: ['ข้าวสวย', 'แกงส้มผักรวม', 'หมูทอด', 'ผลไม้ตามฤดูกาล'],
     }
   ];
+
   const formulaNameTH = [
     {
       formulaName: 'AC',
@@ -157,7 +163,7 @@ const PatientManual = () => {
     
     {/* หมือนกัน */}
     <div className="mb-4">
-      <h1 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h1 className="text-lg font-bold text-center border-2 border-blue111 rounded-md bg-blue-50 inline-block px-4 py-2">
         เคมีบำบัดคืออะไร
       </h1>
       <p className="mt-4 text-base text-gray-900">
@@ -168,7 +174,7 @@ const PatientManual = () => {
     
     {/* ชื่อยา-ไม่เหมือนกัน เสร็จ */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h2 className="inline-h2">
         ยาเคมีบำบัดที่ท่านได้รับครั้งนี้ประกอบด้วย 
       </h2>
       <div className='mt-4'>
@@ -209,7 +215,7 @@ const PatientManual = () => {
 
     {/* Side effects ไม่เหมือนกัน */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h2 className="inline-h2">
         อาการข้างเคียงที่อาจเกิดขึ้นจากการได้รับยา
       </h2>
       <ul className="mt-4 text-base text-gray-900 list-disc list-inside">
@@ -225,7 +231,7 @@ const PatientManual = () => {
 
     {/* ต่างกันนิดหน่อย ยังไม่ได้ทำ */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h2 className="inline-h2">
           การดูแลตนเองทั่วไปในช่วงที่ได้รับยาเคมีบำบัด
       </h2>
       <ul className="mt-4 text-base text-gray-900 list-disc list-inside">
@@ -239,7 +245,7 @@ const PatientManual = () => {
 
     {/* ต่างกันนิดหน่อย ยังไม่ได้ทำ */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h2 className="inline-h2">
         การปฏิบัติตัวเมื่อเกิดอาการข้างเคียงต่างๆ
       </h2>
       <p className="mt-4 text-lg font-bold text-gray-900 underline">
@@ -330,7 +336,7 @@ const PatientManual = () => {
 
     {/* ต่าง */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-red300 bg-red300 inline-block px-4 py-2">
+      <h2 className="text-lg font-bold text-center border-2 border-red300 rounded-md bg-red300 inline-block px-4 py-2">
           อาการผิดปกติที่ต้องรีบมาพบแพทย์
       </h2>
       <ul className="mt-4 text-base text-gray-900 list-disc list-inside">
@@ -344,43 +350,63 @@ const PatientManual = () => {
         <p className="mt-2 font-bold text-base text-gray-900">*** หากบ้านไกลสามารถไปพบแพทย์ใกฃ้บ้านได้และให้โทรมาแจ้งที่โรงพยาบาลมะเร็งชลบุรีในแผนกที่ท่านรักษาตัวอยู่ ถึงอาการผิดปกติที่เกิดขึ้น</p>
     </div>
 
-    {/* กรอบให้กำลังใจ5555 เหมือนกัน */}
+    {/* กรอบให้กำลังใจ5555 เหมือนกันทุกสูตร */}
     <div className="border border-black rounded-md p-4 bg-gray-50 text-sm text-center">
       <p>“อาการข้างเคียงทั้งหมดที่กล่าวมานั้น เกิดขึ้นในผู้ป่วยบางรายและเกิดมากน้อยแตกต่างกันไป ผู้ป่วยอาจไม่มี อาการข้างเคียงดังกล่าวเลยก็ได้ การให้ยาเคมีบำบัดไม่น่ากลัวอย่างที่คิด และสามารถป้องกันหรือบรรเทาอาการข้างเคียงต่างๆได้”</p>
     </div>
 
-    {/* ตารางอาหาร เหมือนกัน */}
+    {/* ตารางอาหาร เหมือนกันทุกสูตร */}
     <div className="mb-6">
-      <h2 className="text-lg font-bold text-center border-2 border-blue700 bg-blue50 inline-block px-4 py-2">
+      <h2 className="text-base font-bold text-center border-2 border-blue700 rounded-md bg-blue50 inline-block px-4 py-2">
         ตัวอย่างรายการอาหารสำหรับผู้ป่วยที่ได้รับยำเคมีบำบัด (อาหารธรรมดา) พลังงาน 1,800 - 2,000 กิโลแคลอรี่ต่อวัน
       </h2>
-    <table className="mt-2 table-auto w-full border-collapse border border-gray-800">
-      <thead>
-          <tr className="bg-gray-200">
-            <td className="border border-gray-400 px-4 py-2">รายการที่</td>
-            {/* <th className="border border-gray-400 px-4 py-2">มื้อเช้า</th>
-            <th className="border border-gray-400 px-4 py-2">มื้อกลางวัน</th>
-            <th className="border border-gray-400 px-4 py-2">มื้อเย็น</th> */}
-          </tr>
-      </thead>
-          <tbody>
-            {mealPlan.map((meal, index) => (
-              <tr key={index}>
-                {/* <td className="border border-gray-400 px-4 py-2 text-center">{meal.type}</td> */}
-                {/* <td className="border border-gray-400 px-4 py-2 text-center">{meal.breakfast.join(', ')}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{meal.lunch.join(', ')}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{meal.dinner.join(', ')}</td> */}
-                <td className="border border-gray-400 px-4 py-2">มื้อเช้า</td>
-                <td className="border border-gray-400 px-4 py-2">มื้อกลางวัน</td>
-                <td className="border border-gray-400 px-4 py-2">มื้อเย็น</td> 
-              </tr>
-            ))}
-          </tbody>
-    </table>
-        <p className="mt-2 font-bold text-base text-gray-900">*** ผู้ป่วยสามารถปรับเเปลี่ยนรายการอาหารได้ตามความต้องการและสามารถเสริมนม/ น้ำเต้าหู้/ น้ำผลไม้ต่างๆ ได้ระหว่างมื้ออาหาร</p>
     </div>
-    
-    {/* Hospital Info เหมือนกัน */}
+            
+  {/* การ์ด รายการอาหาร */}
+  <div className="meal-plan-container">
+      <Swiper
+        modules={[Pagination]}
+        spaceBetween={50}
+        slidesPerView={1}
+        pagination={{ clickable: true }}
+        style={{ paddingBottom: "30px" }}
+      >
+        {mealPlan.map((plan, index) => (
+          <SwiperSlide key={index}>
+            <div className="meal-card">
+              <h2 className="meal-type">{plan.type}</h2>
+              <div className="meal-list">
+                <h3>มื้อเช้า</h3>
+                <ul>
+                  {plan.breakfast.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="meal-list">
+                <h3>มื้อกลางวัน</h3>
+                <ul>
+                  {plan.lunch.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="meal-list">
+                <h3>มื้อเย็น</h3>
+                <ul>
+                  {plan.dinner.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      <p className="mt-2 font-bold text-base text-gray-900">*** ผู้ป่วยสามารถปรับเเปลี่ยนรายการอาหารได้ตามความต้องการและสามารถเสริมนม/ น้ำเต้าหู้/ น้ำผลไม้ต่างๆ ได้ระหว่างมื้ออาหาร ***</p>
+    </div>
+
+    {/* Hospital Info เหมือนกันทุกสูตร */}
     <div className="border border-black rounded-md p-4 bg-gray-50 text-sm text-center">
       <p>โรงพยาบาลมะเร็งชลบุรี โทร: 038-455632-6</p>
       <p>ต่อ 191, 173 (เคมีบำบัด)</p>

@@ -78,6 +78,27 @@ router.post("/webhook", async (req, res) => {
       }
   
       try {
+        function formatThaiDate(dateString) {
+          const months = [
+              "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+              "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+          ];
+          const days = [
+              "วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ",
+              "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"
+          ];
+  
+          const date = new Date(dateString);
+  
+          const dayName = days[date.getDay()];
+          const day = date.getDate();
+          const month = months[date.getMonth()];
+          const year = date.getFullYear() + 543;
+          const hours = date.getHours().toString().padStart(2, '0');
+          const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+          return `${dayName} ${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
+      }
         const [rows] = await pool.query(
           `SELECT appointDate FROM appointment
            JOIN treatment ON treatment.treatmentId = appointment.treatmentId
@@ -88,11 +109,12 @@ router.post("/webhook", async (req, res) => {
         console.log("Query Result:", rows);
   
         if (rows.length > 0) {
+          const formattedDate = formatThaiDate(rows[0].appointDate);
           res.json({
             fulfillmentMessages: [
               {
                 text: {
-                  text: [`วันนัดของคุณคือ ${rows[0].appointDate}`],
+                  text: [`คุณมีนัดหมายใหม่ ${formattedDate}`],
                 },
               },
             ],
