@@ -9,28 +9,46 @@
                 v-if="user.type == 'nurse'"
                 class="nav-item"
                 @click="goToRegis()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ลงทะเบียนผู้ป่วย</a>
+                <a class="nav-link" href="#" style="color: #ffffff"
+                  >ลงทะเบียนผู้ป่วย</a
+                >
               </li>
               <li
                 class="nav-item"
                 @click="goTonewHome()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
                 <a class="nav-link" href="#" style="color: #ffffff">ผลเลือด</a>
               </li>
               <li
                 class="nav-item"
                 @click="goTonewAppoint()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
                 <a class="nav-link" href="#" style="color: #ffffff">นัดหมาย</a>
               </li>
               <li
                 class="nav-item"
                 @click="goToPatient()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
                 <a
                   class="nav-link active"
@@ -43,16 +61,28 @@
               <li
                 class="nav-item"
                 @click="goToMedFor()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
-                <a class="nav-link" href="#" style="color: #ffffff">สูตรยาเคมีบำบัด</a>
+                <a class="nav-link" href="#" style="color: #ffffff"
+                  >สูตรยาเคมีบำบัด</a
+                >
               </li>
               <li
                 class="nav-item"
                 @click="goToguideBook()"
-                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+                style="
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  padding-right: 20px;
+                "
               >
-                <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
+                <a class="nav-link" href="#" style="color: #ffffff"
+                  >คู่มือผู้ป่วย</a
+                >
               </li>
             </ul>
           </div>
@@ -118,7 +148,8 @@
                 <div class="col-4">
                   <b>ชื่อ-นามสกุล</b>
                   <div>
-                    {{ patient.prefix }}{{ patient.firstName }} {{ patient.lastName }}
+                    {{ patient.prefix }}{{ patient.firstName }}
+                    {{ patient.lastName }}
                   </div>
                 </div>
                 <div class="col-4">
@@ -166,13 +197,17 @@
                   <label v-if="patientDisease.disease != ''">{{
                     patientDisease.disease
                   }}</label>
-                  <label v-if="patientDisease.disease == ''">ไม่มีโรคประจำตัว</label>
+                  <label v-if="patientDisease.disease == ''"
+                    >ไม่มีโรคประจำตัว</label
+                  >
                 </div>
                 <div class="col-2">
                   <b>ยาที่กินประจำ</b>
                 </div>
                 <div class="col">
-                  <label v-if="patientDisease.usualMed == ''">ไม่มียาที่กินประจำ</label>
+                  <label v-if="patientDisease.usualMed == ''"
+                    >ไม่มียาที่กินประจำ</label
+                  >
                   <label v-if="patientDisease.usualMed != ''">{{
                     patientDisease.usualMed
                   }}</label>
@@ -185,7 +220,9 @@
                   <b>ประวัติการแพ้</b>
                 </div>
                 <div class="col">
-                  <label v-if="patient.allergy == 'ไม่เคยแพ้'">ไม่มีประวัติการแพ้</label>
+                  <label v-if="patient.allergy == 'ไม่เคยแพ้'"
+                    >ไม่มีประวัติการแพ้</label
+                  >
                   <label v-if="patient.allergy == 'แพ้'">{{
                     patient.allergyDetail
                   }}</label>
@@ -203,7 +240,11 @@
                 </div>
               </div>
             </div>
-            <div style="margin-top: 80px" v-for="t in treatment" :key="t.treatmentId">
+            <div
+              style="margin-top: 80px"
+              v-for="t in treatment"
+              :key="t.treatmentId"
+            >
               <div class="row">
                 <div class="col-4">
                   <label style="font-size: 1.17rem"
@@ -253,7 +294,11 @@
                     </td>
                     <td>{{ appoint.appoint_no }}</td>
                     <td>
-                      <div class="row" v-for="s in shouldDisplay" :key="s.appointId">
+                      <div
+                        class="row"
+                        v-for="s in shouldDisplay"
+                        :key="s.appointId"
+                      >
                         {{ s.medName }} {{ s.unit }} มก. <br />
                       </div>
                     </td>
@@ -269,7 +314,9 @@
                       <label v-if="appoint.sideEfflevel != null"
                         >ระดับที่ {{ appoint.sideEfflevel }}</label
                       >
-                      <label v-if="appoint.sideEfflevel == null">ยังไม่มีการบันทึก</label>
+                      <label v-if="appoint.sideEfflevel == null"
+                        >ยังไม่มีการบันทึก</label
+                      >
                     </td>
                     <td>{{ appoint.note }}</td>
                   </tr>
@@ -319,7 +366,9 @@
                     </div>
                     <div class="modal-body">
                       <div class="mb-3 row" style="text-align: left">
-                        <label for="inputFirstname" class="col-sm-3 col-form-label"
+                        <label
+                          for="inputFirstname"
+                          class="col-sm-3 col-form-label"
                           >ชื่อ</label
                         >
                         <div class="col-sm-8">
@@ -333,7 +382,9 @@
                         </div>
                       </div>
                       <div class="mb-3 row" style="text-align: left">
-                        <label for="inputFirstname" class="col-sm-3 col-form-label"
+                        <label
+                          for="inputFirstname"
+                          class="col-sm-3 col-form-label"
                           >นามสกุล</label
                         >
                         <div class="col-sm-8">
@@ -353,7 +404,10 @@
                         <div class="col-sm-8">
                           <select class="form-select" v-model="formula">
                             <option value="" disabled>กรุณาเลือกสูตรยา</option>
-                            <option v-for="formula in formulas" :key="formula.formulaId">
+                            <option
+                              v-for="formula in formulas"
+                              :key="formula.formulaId"
+                            >
                               {{ formula.formulaName }}
                             </option>
                           </select>
@@ -365,7 +419,9 @@
                         >
                         <div class="col-sm-8">
                           <select class="form-select" v-model="doctor">
-                            <option value="" disabled>กรุณาเลือกแพทย์ผู้ดูแล</option>
+                            <option value="" disabled>
+                              กรุณาเลือกแพทย์ผู้ดูแล
+                            </option>
                             <option v-for="doc in doctors" :key="doc.doctorId">
                               {{ doc.firstName }} {{ doc.lastName }}
                             </option>
@@ -399,6 +455,12 @@
         </div>
       </div>
     </div>
+
+    <h1>กราฟ</h1>
+    <div class="line-chart-container">
+      <Line :data="datachartweight" :options="optionchartweight" />
+      <Line :data="datacharteffect" :options="optioncharteffect" />
+    </div>
   </div>
 </template>
 
@@ -407,8 +469,31 @@ import axios from "axios";
 import moment from "moment";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "vue-chartjs";
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 export default {
   name: "DetailPatient",
+  components: {
+    Line,
+  },
   data() {
     return {
       patient: [],
@@ -453,6 +538,54 @@ export default {
         "มะเร็งรังไข่",
       ],
       user: [],
+      datachartweight: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'จำนวนผู้ป่วย',
+                        backgroundColor: 'rgba(75,192,192,0.2)',
+                        borderColor: 'rgba(75,192,192,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        fill: true
+                    }
+                ]
+      },
+      datacharteffect: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'จำนวนผู้ป่วย',
+                        backgroundColor: 'rgba(75,192,192,0.2)',
+                        borderColor: 'rgba(75,192,192,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        fill: true
+                    }
+                ]
+      },
+      optionchartweight: {
+        responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'กราฟเส้นแสดงจำนวนผู้ป่วยรายเดือน'
+                    }
+                }
+      },
+      optioncharteffect: {
+        responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'กราฟเส้นแสดงจำนวนผู้ป่วยรายเดือน'
+                    }
+                }
+      },
     };
   },
   mounted() {
@@ -475,7 +608,8 @@ export default {
             this.patient = response.data[i];
           }
         }
-        let page = moment().format("YYYY") - this.patient.birthDate.split("-")[0];
+        let page =
+          moment().format("YYYY") - this.patient.birthDate.split("-")[0];
         this.patient["age"] = page;
         axios
           .get(`http://localhost:3000/appointment/${HN}`)
@@ -539,7 +673,9 @@ export default {
         this.treatment = response.data;
         for (let i = 0; i < this.treatment.length; i++) {
           axios
-            .get(`http://localhost:3000/treatmentDoctor/${this.treatment[i].doctorId}`)
+            .get(
+              `http://localhost:3000/treatmentDoctor/${this.treatment[i].doctorId}`
+            )
             .then((response) => {
               this.treatment[i]["doctorName"] =
                 response.data[0].firstName + " " + response.data[0].lastName;
@@ -710,5 +846,17 @@ export default {
 
 .g1 {
   margin-right: 20px;
+}
+
+.line-chart-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 500px;
+}
+canvas {
+    max-width: 45%;
+    height: 400px !important;
 }
 </style>

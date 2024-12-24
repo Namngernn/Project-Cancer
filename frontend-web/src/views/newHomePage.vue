@@ -1,5 +1,28 @@
 <template>
   <div class="row g-0 text-center">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
@@ -54,6 +77,16 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
               </li>
+              
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:3000/dashboardview" target="_blank" style="color: #ffffff">แดชบอร์ด</a>
+              </li>
+
+
+
             </ul>
           </div>
           <div class="col-3">
@@ -88,15 +121,59 @@
         </div>
       </div>
     </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none">
         <div class="card" style="margin: 20px">
           <div class="card-header" style="background-color: #90eeb7; padding: 20px">
+
+
+
+
+
+
+
+
+
             <nav class="navbar">
               <div class="container-fluid">
+              
+<!-- 1 -->
                 <button
                   type="button"
-                  class="btn btn-light"
+                  class="btn btn-light mb-2 mr-2"
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal"
                   style="background-color: #ffffff; color: #0a6b3a"
@@ -118,6 +195,7 @@
                   </svg>
                   เพิ่มแผนการรักษา
                 </button>
+<!-- Modal -->
                 <div
                   class="modal fade"
                   id="exampleModal"
@@ -253,7 +331,7 @@
                           <div class="col-sm-10">
                             <select class="form-select" v-model="doctor">
                               <option value="" disabled>กรุณาเลือกแพทย์ผู้ดูแล</option>
-                              <option v-for="doc in doctors" :key="doc.doctorId">
+                              <option v-for="doc in doctors" :key="doc.firstName">
                                 {{ doc.firstName }} {{ doc.lastName }}
                               </option>
                             </select>
@@ -279,25 +357,28 @@
                       </div>
                     </div>
                   </div>
+
                 </div>
-                <form class="d-flex" role="search">
+<!-- 2 -->
+                <div class="d-flex mb-2">
                   <input
-                    class="form-control me-2 col-md-4"
+                    class="form-control me-2 d-flex"
                     type="search"
                     placeholder="ค้นหา"
                     aria-label="Search"
                     v-model="selected"
                   />
                   <button
-                    class="btn"
+                    class="btn d-flex"
                     type="button"
                     style="background-color: #34495e; color: white"
                     @click="selectedPatient"
                   >
                     ค้นหา
                   </button>
-                </form>
-                <div class="dropdown">
+                </div>
+<!-- 3 -->
+                <div class="dropdown mb-2">
                   <select class="form-select" v-model="sortBlood" @click="sortBloodInfo">
                     <option disabled>เรียงลำดับตาม HN</option>
                     <option value="1">ชื่อ-นามสกุล จาก ก ถึง ฮ</option>
@@ -309,10 +390,26 @@
                     <option value="7">เฉพาะส่งผลเลือดใหม่อีกครั้ง</option>
                   </select>
                 </div>
+
+
+              
               </div>
             </nav>
-          </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
           <div class="card-body" style="text-align: left; padding: 30px">
             <table class="table">
               <thead>
@@ -328,9 +425,7 @@
                 <tr v-for="p in displayedPosts" :key="p.HN">
                   <td>{{ p.HN }}</td>
                   <td>{{ p.firstName }} {{ p.lastName }}</td>
-                  <td> <div v-for="i in p.cancer" :key="i.HN"> {{ i.cancerType }} ระยะที่ {{ i.cancerState }}
-
-                  </div>
+                  <td> <div v-for="i in p.cancer" :key="i.HN"> {{ i.cancerType }} ระยะที่ {{ i.cancerState }} </div>
                 </td>
 
                   <td>
@@ -398,35 +493,6 @@
           </div>
         </div>
       </div>
-      <!--<button data-bs-target="#exampleModal11" data-bs-toggle="modal">open modal</button>
-      <div
-        class="modal fade"
-        id="exampleModal11"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">...</div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Close
-              </button>
-              <button type="button" class="btn btn-primary" @click="show()">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>-->
     </div>
   </div>
 </template>
@@ -435,19 +501,19 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-var io = require("socket.io-client");
-var socket = io("http://localhost:3000");
-import Toastify from "toastify-js";
+// var io = require("socket.io-client");
+// var socket = io("http://localhost:3000");
+// import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-socket.on("info", (data) => {
-  //console.log(data)
-  Toastify({
-    text: data,
-    duration: 3000,
-    gravity: "bottom",
-    position: "right",
-  }).showToast();
-});
+// socket.on("info", (data) => {
+//   //console.log(data)
+//   Toastify({
+//     text: data,
+//     duration: 3000,
+//     gravity: "bottom",
+//     position: "right",
+//   }).showToast();
+// });
 
 
 export default {
@@ -494,11 +560,11 @@ export default {
       testData: [],
     };
   },
-  created() {
-    this.socket = io.connect("http://localhost:3000");
-  },
+  // created() {
+  //   this.socket = io.connect("http://localhost:3000");
+  // },
   unmounted() {
-    this.socket.disconnect();
+    // this.socket.disconnect();
   },
   mounted() {
     const userId = this.$route.params.userId;
@@ -534,11 +600,11 @@ export default {
     show() {
       this.socket.emit("CH01", "updated status");
     },
-    async showNoti(data) {
-      this.$snotify.success(data);
-      await this.socket.disconnect();
-      console.log(this.socket.connected);
-    },
+    // async showNoti(data) {
+    //   this.$snotify.success(data);
+    //   // await this.socket.disconnect();
+    //   // console.log(this.socket.connected);
+    // },
     deleteFromListCancer(c) {
       let index = this.listCancer.indexOf(c);
       this.listCancer.splice(index, 1);

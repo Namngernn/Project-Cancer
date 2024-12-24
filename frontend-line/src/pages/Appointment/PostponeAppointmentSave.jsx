@@ -13,7 +13,7 @@ const PostponeAppointment = () => {
   const [newAppointments, setNewAppointments] = useState([]);
   const { appointId } = useParams();
   const navigate = useNavigate();
-  const [appointmentCounts, setAppointmentCounts] = useState([]);
+  const [appointmentCount, setAppointmentCount] = useState(null);
 
   // Input values
   const [reason, setReason] = useState('');
@@ -23,8 +23,6 @@ const PostponeAppointment = () => {
 
   const [datecheck, setDateCheck] = useState(null);
   const [doctorId, setDoctorId] = useState(null);
-
-  const [test, setTest] = useState(null);
 
   // Set value newAppointDate
   const onChangenewAppointDate = (e) => {
@@ -52,16 +50,16 @@ const PostponeAppointment = () => {
   }, []);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      if (username) {
-        try {
-          const response = await fetch(`http://localhost:3000/PatientAppointment2/${username}/${appointId}`);
+    if (username) {
+      fetch(`http://localhost:3000/PatientAppointment2/${username}/${appointId}`)
+        .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          const data = await response.json();
+          return response.json();
+        })
+        .then(data => {
           setAppointments(data);
-  
           if (data.length > 0) {
             const firstAppointment = data[0];
   
@@ -72,50 +70,22 @@ const PostponeAppointment = () => {
             const thailandOffset = 7 * 60; // UTC+7 offset in minutes
             const localDate = new Date(appointDate.getTime() + thailandOffset * 60000); // Adjust to Thailand time
   
+
+
             // Format the date in the desired format: "YYYY-MM-DD HH:mm:ss"
             const formattedDate = localDate.toISOString().slice(0, 19).replace('T', ' ');
   
             setDateCheck(formattedDate);  // Set the formatted date
             setDoctorId(firstAppointment.doctorId);  // Set the doctor ID
-  
-            // Initialize an array to hold all appointment counts
-            let newAppointmentCounts = [];
-  
-            // Loop to fetch date and call API for each date 7 days apart
-            for (let i = 1; i <= 8; i++) {
-              const newDate = new Date(localDate);
-              newDate.setDate(localDate.getDate() + i * 7);  // Add 7 days for each iteration
-  
-              const formattedNewDate = newDate.toISOString().slice(0, 19).replace('T', ' ');
-  
-              try {
-                const res = await axios.post('http://localhost:3000/checkdatecanpostpone', {
-                  datecheck: formattedNewDate,
-                  doctorId: firstAppointment.doctorId,
-                });
-  
-                newAppointmentCounts.push({
-                  datecheck: formattedNewDate,
-                  count: res.data.count,
-                });
-              } catch (err) {
-                console.error('Error fetching date:', err);
-              }
-            }
-  
-            setAppointmentCounts(newAppointmentCounts);
           }
-  
           setLoading(false);
-        } catch (error) {
+        })
+        .catch(error => {
           setError(error);
           setLoading(false);
-        }
-      }
-    };
-  
-    fetchAppointments();
-  }, [username, appointId]);
+        });
+    }
+  }, [username]);
 
   useEffect(() => {
     if (appointments.length > 0) {
@@ -168,60 +138,27 @@ const PostponeAppointment = () => {
     return formatDateForValue(appointment);  // ใช้ฟังก์ชัน formatDateForValue ในการแปลงวันที่
   });
 
-  // console.log(formattedAppointments,"formattedAppointments")
+  console.log(formattedAppointments,"formattedAppointments")
 
-  // useEffect(() => {
-  //   const fetchAppointmentData = async () => {
-  //     try {
-  //       const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
-  //         datecheck,
-  //         doctorId
-  //       });
-  //       if (response.data) {
-  //         setAppointmentCount(response.data.count);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error count appoint:", error);
-  //     }
-  //   };
-  //   if(datecheck && doctorId){
-  //     fetchAppointmentData();
-  //   }
-  // }, [datecheck, doctorId]);
+  useEffect(() => {
+    const fetchAppointmentData = async () => {
+      try {
+        const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
+          datecheck,
+          doctorId
+        });
+        if (response.data) {
+          setAppointmentCount(response.data.count);
+        }
+      } catch (error) {
+        console.error("Error count appoint:", error);
+      }
+    };
+    if(datecheck && doctorId){
+      fetchAppointmentData();
+    }
+  }, [datecheck, doctorId]);
 
-//   useEffect(() => {
-//     const fetchAppointmentData = async () => {
-//       // สร้าง array ของ Promise สำหรับแต่ละวันที่เราต้องการเรียก API
-//       const promises = formattedAppointments.map(async (date) => {
-//         try {
-//           const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
-//             datecheck: date,  // ส่ง datecheck เป็นวันที่
-//             doctorId: doctorId // ส่ง doctorId ไปด้วย
-//           });
-//           // ถ้าได้ผลลัพธ์ จะเก็บใน array ที่มี datecheck และ count
-//           return {
-//             datecheck: date,
-//             count: response.data.count
-//           };
-//         } catch (error) {
-//           console.error("Error counting appointment:", error);
-//           return { datecheck: date, count: 0 }; // ถ้า error ให้กำหนด count เป็น 0
-//         }
-//       });
-
-//       // ใช้ Promise.all เพื่อรอให้เรียก API สำหรับทุกๆ วันเสร็จพร้อมกัน
-//       const results = await Promise.all(promises);
-      
-//       // เก็บผลลัพธ์ลงใน state
-//       setAppointmentCounts(results);
-//     };
-
-//     // เรียกใช้ฟังก์ชันเมื่อ datecheck และ doctorId มีค่า
-//     if (datecheck && doctorId) {
-//       fetchAppointmentData();
-//     }
-//   // }, [datecheck, doctorId, formattedAppointments]);
-  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -241,8 +178,6 @@ const PostponeAppointment = () => {
     }
     return result;
   }
-
-  
 
   const handleSubmit = () => {
     fetch(`http://localhost:3000/PatientPostpone/${appointId}/${userIdLine}`, {
@@ -268,14 +203,13 @@ const PostponeAppointment = () => {
       });
   };
   
-  // console.log(appointmentCounts)
   return (
     <div>
       <div className="p-4 space-y-12">
         <div className="">
           <h2 className="text-lg">นัดหมายเดิม{appointments[0].appointDate} {appointments[0].doctorId} {appointments[0].HN}</h2>
-          {datecheck} {doctorId} {test}
-          {/* {appointmentCount}  */}
+          {appointmentCount} {datecheck} {doctorId}
+          
           {/* <h1>User ID Line: {userIdLine}</h1>
           <h1>UserName: {username}</h1> */}
           {appointments.map((appointment) => (
@@ -294,17 +228,6 @@ const PostponeAppointment = () => {
         </div>
         <div className="">
           <h2 className="text-lg">นัดหมายใหม่</h2>
-          <ul>
-            {appointmentCounts
-              .filter((appointment) => appointment.count < 5)
-              // .slice(1)
-              .map((appointment) => (
-                <li key={appointment.datecheck}>
-                  Date: {appointment.datecheck} - Count: {appointment.count}
-                </li>
-              ))}
-          </ul>
-
           <Radio.Group onChange={onChangenewAppointDate} value={newAppointDate}>
             {newAppointments.length > 0 ? (
               newAppointments.slice(1).map((date, index) => (

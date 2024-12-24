@@ -80,6 +80,7 @@ const Appointment = () => {
             </Link>
           </div>
         )}
+
         {/* นัดหมายที่ผ่านมาแล้ว */}
         {pastAppointments.length > 0 && (
           <div className='pt-6'>

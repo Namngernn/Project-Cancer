@@ -379,15 +379,13 @@
                           <select
                             class="form-select"
                             v-model="sortAppoint"
-                            @click="sortAppointInfo"
+                            @change="sortPosts($event)"
                           >
                             <option disabled>เรียงลำดับตามการนัดหมายล่าสุด</option>
                             <option value="1">เรียงลำดับตามการนัดหมายล่าสุด</option>
                             <option value="2">ชื่อ-นามสกุล จาก ก ถึง ฮ</option>
                             <option value="3">ชื่อ-นามสกุล จาก ฮ ถึง ก</option>
                             <option value="4">เรียงลำดับตาม HN</option>
-                            <option value="5">วันที่ส่งผลเลือด ก่อน-หลัง</option>
-                            <option value="6">วันที่ส่งผลเลือด หลัง-ก่อน</option>
                           </select>
                         </div>
                       </div>
@@ -403,8 +401,11 @@
                       v-for="(appoint, index) in posts"
                       :key="index"
                     >
+
+
+
                       <div
-                        v-if="appoint.thaiAppointDate == 'ครบรอบการรับยาแล้ว'"
+                        
                         class="col-md-12 p-3 ps-md-4 bd-callout bd-callout-success"
                         style="
                           background-color: white;
@@ -413,16 +414,16 @@
                         "
                       >
                         <div class="col-md-12">
-                          <div class="row">
-                            <p class="col-md-2">
-                              {{ appoint.thaiAppointDate }} {{ appoint.thaiTime }} |
+                          <div class="row" style="display: flex; justify-content: center;  text-align: center; align-items: center;">
+                            <p class="col-md-3">
+                              {{ appoint.thaiAppointDate }} {{ appoint.thaiTime }} 
                             </p>
-                            <p class="col-md-2">HN {{ appoint.HN }} |</p>
-                            <p class="col-md-2">
-                              {{ appoint.firstName }} {{ appoint.lastName }} |
+                            <p class="col-md-2">HN {{ appoint.HN }}</p>
+                            <p class="col-md-3">
+                              {{ appoint.firstName }} {{ appoint.lastName }} 
                             </p>
-                            <p class="col-md-2">{{ appoint.cancerType }} |</p>
-                            <p class="col-md-2">สูตรยา {{ appoint.formulaName }} |</p>
+                            
+                            <p class="col-md-2">สูตรยา {{ appoint.formulaName }}</p>
                             <button
                               type="button"
                               class="btn"
@@ -431,6 +432,7 @@
                                 background-color: #34495e;
                                 color: white;
                                 width: 100px;
+                                height: 50px;
                               "
                             >
                               เพิ่มเติม
@@ -451,102 +453,11 @@
                           </div>
                         </div>
                       </div>
-                      <div
-                        v-else-if="appoint.thaiAppointDate != 'ยังไม่ได้นัดหมาย'"
-                        class="col-md-12 p-3 ps-md-4 bd-callout bd-callout-info"
-                        style="
-                          background-color: white;
-                          color: black;
-                          border-left: 0.5rem solid rgb(13 202 240 / 50%);
-                        "
-                      >
-                        <div class="col-md-12">
-                          <div class="row">
-                            <p class="col-md-2">
-                              {{ appoint.thaiAppointDate }} {{ appoint.thaiTime }} |
-                            </p>
-                            <p class="col-md-2">HN {{ appoint.HN }} |</p>
-                            <p class="col-md-2">
-                              {{ appoint.firstName }} {{ appoint.lastName }} |
-                            </p>
-                            <p class="col-md-2">{{ appoint.cancerType }} |</p>
-                            <p class="col-md-2">สูตรยา {{ appoint.formulaName }} |</p>
-                            <button
-                              type="button"
-                              class="btn"
-                              @click="goToDetailapp(appoint)"
-                              style="
-                                background-color: #34495e;
-                                color: white;
-                                width: 100px;
-                              "
-                            >
-                              เพิ่มเติม
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                class="bi bi-chevron-right"
-                                viewBox="0 0 16 16"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        v-else-if="appoint.thaiAppointDate == 'ยังไม่ได้นัดหมาย'"
-                        class="col-md-12 p-3 ps-md-4 bd-callout bd-callout-warning"
-                        style="
-                          background-color: white;
-                          color: black;
-                          border-left: 0.5rem solid rgb(255 193 7 / 50%);
-                        "
-                      >
-                        <div class="col-md-12">
-                          <div class="row">
-                            <p class="col-md-2">
-                              {{ appoint.thaiAppointDate }} {{ appoint.thaiTime }} |
-                            </p>
-                            <p class="col-md-2">HN {{ appoint.HN }} |</p>
-                            <p class="col-md-2">
-                              {{ appoint.firstName }} {{ appoint.lastName }} |
-                            </p>
-                            <p class="col-md-2">{{ appoint.cancerType }} |</p>
-                            <p class="col-md-2">สูตรยา {{ appoint.formulaName }} |</p>
-                            <button
-                              type="button"
-                              class="btn"
-                              @click="goToDetailapp(appoint)"
-                              style="
-                                background-color: #34495e;
-                                color: white;
-                                width: 100px;
-                              "
-                            >
-                              เพิ่มเติม
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                class="bi bi-chevron-right"
-                                viewBox="0 0 16 16"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+
+
+
+
+                      
                     </div>
 
                     <nav aria-label="Page navigation example">
@@ -592,8 +503,18 @@
         </div>
       </div>
     </div>
+
+
+
+
+    <h1>CALENDAR EIEI KWAI</h1>
+    <a class="nav-link" href="http://localhost:8081/calendarappointment" >CALENDAR</a>
+
+
   </div>
 </template>
+
+
 
 <script>
 import axios from "axios";
@@ -772,6 +693,31 @@ export default {
       });
   },
   methods: {
+    sortPosts(event) {
+      const sortType = event.target.value;
+
+      // จัดเรียงข้อมูลใน this.posts ตามประเภทที่เลือก
+      switch (sortType) {
+        case "1": // การนัดหมายล่าสุด
+          this.posts.sort((a, b) => new Date(b.appointDate) - new Date(a.appointDate));
+          break;
+
+        case "2": // ชื่อ-นามสกุล จาก ก ถึง ฮ
+          this.posts.sort((a, b) => a.firstName.localeCompare(b.firstName, 'th'));
+          break;
+
+        case "3": // ชื่อ-นามสกุล จาก ฮ ถึง ก
+          this.posts.sort((a, b) => b.firstName.localeCompare(a.firstName, 'th'));
+          break;
+
+        case "4": // เรียงตาม HN
+          this.posts.sort((a, b) => a.HN.localeCompare(b.HN));
+          break;
+
+        default:
+          console.log("Invalid sort type");
+      }
+    },
     sortAppointInfo() {
       if (this.sortAppoint != "เรียงลำดับตามการนัดหมายล่าสุด") {
         const data = {
@@ -881,7 +827,7 @@ export default {
     },
     cantPostpone(request){
       const requestId = request.requestId
-      axios.post(`http://localhost:3000/cantPostpone/${requestId}`).then((response)=>{
+      axios.post(`http://localhost:3000/cantPostpone/${requestId}/${this.selectedRequest.UserIdLine}`).then((response)=>{
         if (response.data == 'success'){
           Swal.fire({
             title: "สำเร็จ",
@@ -907,7 +853,7 @@ export default {
       };
 
       axios
-        .post(`http://localhost:3000/postponeAppoint/${requestId}`, data)
+        .post(`http://localhost:3000/postponeAppoint/${requestId}/${this.selectedRequest.UserIdLine}`, data)
         .then((response) => {
           if (response.data == 'success'){
             Swal.fire({

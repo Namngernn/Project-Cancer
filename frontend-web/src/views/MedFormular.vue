@@ -375,20 +375,20 @@ export default {
   },
   mounted() {
     let userId = this.$route.params.userId
-    axios.get(`http://localhost:8080/user/${userId}`).then((response) => {
+    axios.get(`http://localhost:3000/user/${userId}`).then((response) => {
       this.user = response.data[0]
     }).catch((error) => {
       console.log(error)
     })
-    axios.get(`http://localhost:8080/formula`).then((response) => {
+    axios.get(`http://localhost:3000/formula`).then((response) => {
       this.posts = response.data;
     }).catch((error) => {
       console.log(error);
     });
-    axios.get(`http://localhost:8080/formula/medicine`).then((response) => {
+    axios.get(`http://localhost:3000/formula/medicine`).then((response) => {
       this.medicine = response.data;
     })
-    axios.get(`http://localhost:8080/AllFormula_Medicine`).then((response) => {
+    axios.get(`http://localhost:3000/AllFormula_Medicine`).then((response) => {
       this.formula_medicine = response.data;
     }).catch((error) => {
       console.log(error)
@@ -426,7 +426,7 @@ export default {
         medId: this.deleteSelectedMed.medId,
         formulaId: this.deleteSelectedMed.formulaId
       }
-      axios.post(`http://localhost:8080/deleteMedFromFormula`, data).then((response) => {
+      axios.post(`http://localhost:3000/deleteMedFromFormula`, data).then((response) => {
         Swal.fire({
           title: "สำเร็จ",
           text: "ลบยาเคมีออกจากสูตรยาสำเร็จ",
@@ -498,7 +498,7 @@ export default {
           numberOfRound: this.addNumberOfRound,
           period: this.addPeriod
         }
-        axios.post(`http://localhost:8080/addFormula`, data).then((response) => {
+        axios.post(`http://localhost:3000/addFormula`, data).then((response) => {
           Swal.fire({
           title: "สำเร็จ",
           text: response.data,
@@ -524,7 +524,7 @@ export default {
       this.$router.push(`/appointmentView/${this.$route.params.userId}`)
     },
     overlayModmed(formula) {
-      axios.get(`http://localhost:8080/medicine/${formula.formulaId}`).then((response) => {
+      axios.get(`http://localhost:3000/medicine/${formula.formulaId}`).then((response) => {
         this.selectedFormula = response.data[0]
         this.editMedName = this.selectedFormula.formulaName
         this.editNumberOfRound = this.selectedFormula.numberOfRound
@@ -543,7 +543,7 @@ export default {
           medicine: this.selectMed
         }
         const formulaId = this.selectedFormula.formulaId
-        axios.post(`http://localhost:8080/updateFormula/${formulaId}`, data).then((response) => {
+        axios.post(`http://localhost:3000/updateFormula/${formulaId}`, data).then((response) => {
           this.editMed = response.data
           this.selectMed = []
         }).catch((error) => {
@@ -566,7 +566,7 @@ export default {
     sortColumn() {
       if (this.sortFormula != 'เรียงลำดับตาม ID') {
         const data = { sortFormula: this.sortFormula }
-        axios.post(`http://localhost:8080/sortFormula`, data).then((response) => {
+        axios.post(`http://localhost:3000/sortFormula`, data).then((response) => {
           this.posts = response.data[0];
         }).catch((error) => {
           console.log(error)
@@ -575,7 +575,7 @@ export default {
     },
     searchFormula() {
       const data = { search: this.search }
-      axios.post(`http://localhost:8080/searchFormula`, data).then((response) => {
+      axios.post(`http://localhost:3000/searchFormula`, data).then((response) => {
         if (response.data == 'ไม่พบสูตรยาที่ค้นหา') {
           Swal.fire({
             title: "",
@@ -591,7 +591,7 @@ export default {
     },
     goYesDelete(selectedFormula) {
       const formulaName = selectedFormula.formulaName
-      axios.delete(`http://localhost:8080/deleteFormula/${formulaName}`).then((response) => {
+      axios.delete(`http://localhost:3000/deleteFormula/${formulaName}`).then((response) => {
         Swal.fire({
           title: "สำเร็จ",
           text: response.data,

@@ -3,7 +3,7 @@
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-10">
+          <div class="col-9">
             <ul class="nav nav-underline">
               <li
                 v-if="user.type == 'nurse'"
@@ -57,7 +57,7 @@
               </li>
             </ul>
           </div>
-          <div class="col-2">
+          <div class="col-3">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
@@ -89,6 +89,27 @@
         </div>
       </div>
     </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none">
         <div class="card" style="margin: 20px">
@@ -138,10 +159,11 @@
               <div class="row g-0">
                 <div class="col-4">
                   <b>ชนิดมะเร็ง</b> :
-                  <!-- มีบัค -->
                   <div v-for="i in patient.cancer" :key="i.cancerId">
                     {{ i.cancerType }} ระยะที่ {{ i.cancerState }}
                   </div>
+                  
+
                 </div>
                 <div class="col-4">
                   <b>แพทย์ผู้ดูแล </b> <div>{{ doctor.firstName }} {{ doctor.lastName }}</div>
@@ -920,36 +942,63 @@ export default {
       return result;
     },
     addAppoint() {
-      const data = {
-        date:
-          moment(this.date).format("YYYY-MM-DD") +
-          " " +
-          this.time.hours +
-          ":" +
-          this.time.minutes +
-          ":00",
-        HN: this.$route.params.HN,
-        treatmentId: this.$route.params.treatmentId,
-      };
-      axios
-        .post(`http://localhost:3000/appointDate`, data)
-        .then((response) => {
-          this.appointment = response.data;
-          for (let i = 0; i < this.appointment.length; i++) {
-            this.appointment[i].thaiAppointDate = this.convertToThaiDate(
-              this.appointment[i].appointDate
-            );
-          }
-          Swal.fire({
-            title: "",
-            text: "เพิ่มนัดหมายสำเร็จ",
-            icon: "success",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
+  // ปิด Swal ถ้ามีการแสดงผลก่อนหน้านี้
+    Swal.close();
+    
+    // ตรวจสอบว่ามีการกำหนดข้อมูลที่จำเป็นครบถ้วนหรือไม่
+    if (!this.date || !this.time || !this.time.hours || !this.time.minutes) {
+      Swal.fire({
+        title: "",
+        text: "ข้อมูลไม่ครบถ้วน กรุณาตรวจสอบ",
+        icon: "warning",
+      });
+      return;
+    }
+
+    const data = {
+      date:
+        moment(this.date).format("YYYY-MM-DD") +
+        " " +
+        this.time.hours +
+        ":" +
+        this.time.minutes +
+        ":00",
+      HN: this.$route.params.HN,
+      treatmentId: this.$route.params.treatmentId,
+    };
+
+    // ใช้สถานะเพื่อไม่ให้มีการเรียกใช้งานซ้ำ
+    if (this.isProcessing) {
+      return; // หากกำลังทำงานอยู่จะไม่ทำอะไร
+    }
+    
+    this.isProcessing = true; // กำหนดสถานะกำลังทำงาน
+
+    // ส่งคำขอ axios
+    axios
+      .post(`http://localhost:3000/appointDate/${this.patient.UserIdLine}`, data)
+      .then((response) => {
+        this.appointment = response.data;
+        for (let i = 0; i < this.appointment.length; i++) {
+          this.appointment[i].thaiAppointDate = this.convertToThaiDate(
+            this.appointment[i].appointDate
+          );
+        }
+        
+        // แสดง Swal เมื่อเพิ่มนัดหมายสำเร็จ
+        Swal.fire({
+          title: "",
+          text: response.data.message,
+          icon: response.data.message === 'เพิ่มนัดหมายสำเร็จ' ? 'success' : (response.data.message === 'ไม่สามารถนัดหมายกรุณาเลือกวันนัดหมายใหม่' ? 'warning' : 'info'),
         });
-    },
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        this.isProcessing = false; // รีเซ็ตสถานะหลังจากการทำงานเสร็จ
+      });
+      },
     logOut() {
       this.$router.replace("/");
     },

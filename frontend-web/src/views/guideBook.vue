@@ -90,31 +90,56 @@
         </div>
       </div>
     </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none">
         <div class="card" style="margin: 20px">
           <div class="card-header" style="background-color: #90eeb7; padding: 20px">
             <nav class="navbar">
               <div class="container-fluid">
-                <form class="d-flex" role="search">
+                <div class="d-flex mb-2">
                   <input
-                    class="form-control me-2 col-md-4"
+                    class="form-control me-2 d-flex"
                     type="search"
                     placeholder="ค้นหา"
                     aria-label="Search"
-                    v-model="search"
+                    v-model="selected"
                   />
                   <button
-                    class="btn"
+                    class="btn d-flex"
                     type="button"
                     style="background-color: #34495e; color: white"
-                    @click="searchGuideBook"
+                    @click="selectedPatient"
                   >
                     ค้นหา
                   </button>
-                </form>
+                </div>
                 <div>
-                  <select class="form-select" v-model="sortFormula" @click="sortColumn()">
+                  <select class="form-select mb-2" v-model="sortFormula" @click="sortColumn()">
                     <option disabled>เรียงลำดับตาม ID</option>
                     <option value="1">เรียงตามลำดับที่ น้อยไปมาก</option>
                     <option value="2">เรียงตามลำดับที่ มากไปน้อย</option>
@@ -449,8 +474,6 @@ export default {
       this.$router.replace("/");
     },
     openQR(f) {
-      console.log("kdsjkskd");
-      console.log(f);
       this.selectedFormula = f;
       this.img = "http://localhost:3000/" + f.QRcode;
     },

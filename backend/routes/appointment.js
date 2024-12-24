@@ -2,14 +2,16 @@ const express = require("express");
 const pool = require("../config.js");
 const app = express();
 const cors = require("cors");
-const axios = require('axios') //1line
+const axios = require("axios"); //1line
 require("dotenv").config();
 
 // app.use(cors());
-app.use(cors({
-  origin: '*', // Frontend URL
-  methods: 'GET, POST, PUT, DELETE'
-}));
+app.use(
+  cors({
+    origin: "*", // Frontend URL
+    methods: "GET, POST, PUT, DELETE",
+  })
+);
 
 router = express.Router();
 
@@ -18,8 +20,6 @@ const headers = {
   "Content-Type": "application/json",
   Authorization: `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`,
 };
-
-
 
 router.post("/newAppointment", async function (req, res, next) {
   const appointDate = req.body.appointDate;
@@ -64,7 +64,8 @@ router.get(`/appointment`, async function (req, res, next) {
   }
 });
 
-router.get(`/thisappointment/:HN/:treatmentId`,
+router.get(
+  `/thisappointment/:HN/:treatmentId`,
   async function (req, res, next) {
     const HN = req.params.HN;
     console.log("aaaaa");
@@ -320,9 +321,8 @@ router.post(`/selectedAppointPatient`, async function (req, res, next) {
   }
 });
 
-
-
-router.get(`/AlltreatmentHistory/:HN/:treatmentId`,
+router.get(
+  `/AlltreatmentHistory/:HN/:treatmentId`,
   async function (req, res, next) {
     const HN = req.params.HN;
     const treatmentId = req.params.treatmentId;
@@ -392,6 +392,30 @@ router.post(`/appointDate/:userIdLine`, async function (req, res, next) {
   const HN = req.body.HN;
   const treatmentId = req.body.treatmentId;
   const userIdLine = req.params.userIdLine; //LINE
+
+  const [doctorcheck] = await pool.query(
+    `SELECT doctorId 
+     FROM treatment 
+     WHERE HN = ? AND treatmentId = ?`,
+    [HN, treatmentId]
+  );
+
+  const doctorId = doctorcheck[0]?.doctorId;
+
+  const [countofdoctorappoint, cd1] = await pool.query(
+    `SELECT COUNT(*) AS count 
+     FROM appointment
+     JOIN treatment ON treatment.treatmentId = appointment.treatmentId
+     WHERE appointment.AppointDate = ? 
+     AND treatment.doctorId = ?`,
+    [date, doctorId]
+  );
+
+  // ถ้าจำนวนการนัดหมาย >= 5, ห้ามนัดหมายในวันนั้น
+  if (countofdoctorappoint[0].count >= 5) {
+    return res.json({ message: "ไม่สามารถนัดหมายกรุณาเลือกวันนัดหมายใหม่" });
+  }
+
   let appoint_no = 0;
   const [row, _] = await pool.query(
     `select max(appoint_no) as appoint_no from appointment join treatment on treatment.treatmentId=appointment.treatmentId where appointment.HN = ?`,
@@ -418,49 +442,59 @@ router.post(`/appointDate/:userIdLine`, async function (req, res, next) {
       `select * from appointment join treatment on treatment.treatmentId=appointment.treatmentId where appointment.HN = ?`,
       HN
     );
-    res.json(rows);
+    // res.json(rows);
+    res.json({ message: "เพิ่มนัดหมายสำเร็จ" });
     // DATE FORMAT
     function formatDate(dateString) {
       // สร้าง object วันที่จาก string
       const date = new Date(dateString);
-      
+
       // สร้าง array ชื่อเดือน
       const months = [
-          "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", 
-          "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", 
-          "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        "มกราคม",
+        "กุมภาพันธ์",
+        "มีนาคม",
+        "เมษายน",
+        "พฤษภาคม",
+        "มิถุนายน",
+        "กรกฎาคม",
+        "สิงหาคม",
+        "กันยายน",
+        "ตุลาคม",
+        "พฤศจิกายน",
+        "ธันวาคม",
       ];
-      
+
       // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
       const day = date.getDate();
       const month = months[date.getMonth()];
       const year = date.getFullYear() + 543;
-  
+
       // ดึงชั่วโมงและนาที
       const hours = date.getHours();
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-  
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+
       // สร้าง string รูปแบบที่ต้องการ
       return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
-  }
-  // END DATE FORMAT
-  const formattedDate = formatDate(date);
+    }
+    // END DATE FORMAT
+    const formattedDate = formatDate(date);
     // LINE
     const body = {
       to: userIdLine,
-      messages:[
-          {
-              type: 'text',
-              text: `คุณมีนัดหมายใหม่วันที่ ${formattedDate}`
-          }
-      ]
-  }
+      messages: [
+        {
+          type: "text",
+          text: `คุณมีนัดหมายใหม่วันที่ ${formattedDate}`,
+        },
+      ],
+    };
     const response = await axios.post(
       `https://api.line.me/v2/bot/message/push`,
       body,
-    {headers}
-    )
-    console.log("response line", response.data)
+      { headers }
+    );
+    console.log("response line", response.data);
     // LINE END
   } catch (error) {
     conn.rollback();
@@ -554,15 +588,14 @@ ORDER BY requestId DESC;
 router.get(`/request2/:appointId`, async function (req, res, next) {
   try {
     const [row, _] = await pool.query(
-      `SELECT * FROM request JOIN appointment ON appointment.appointId = request.appointId JOIN patient ON patient.HN = appointment.HN JOIN treatment ON treatment.HN = appointment.HN WHERE appointment.appointId = ?`, req.params.appointId
+      `SELECT * FROM request JOIN appointment ON appointment.appointId = request.appointId JOIN patient ON patient.HN = appointment.HN JOIN treatment ON treatment.HN = appointment.HN WHERE appointment.appointId = ?`,
+      req.params.appointId
     );
     res.json(row);
   } catch (error) {
     console.log(error);
   }
 });
-
-
 
 router.put(`/request/:requestId`, async function (req, res, next) {
   const requestId = req.params.requestId;
@@ -611,152 +644,172 @@ router.post(`/createRequest`, async function (req, res, next) {
   }
 });
 
-router.post(`/cantPostpone/:requestId/:UserIdLine`, async function (req, res, next) {
-  const requestId = req.params.requestId;
-  const UserIdLine = req.params.UserIdLine; //LINE
-  const conn = await pool.getConnection();
-  try {
-    await conn.query(
-      `update request set requestStatus = 'ไม่สามารถเลื่อนนัดหมายได้' where requestId = ?`,
-      requestId
-    );
+router.post(
+  `/cantPostpone/:requestId/:UserIdLine`,
+  async function (req, res, next) {
+    const requestId = req.params.requestId;
+    const UserIdLine = req.params.UserIdLine; //LINE
+    const conn = await pool.getConnection();
+    try {
+      await conn.query(
+        `update request set requestStatus = 'ไม่สามารถเลื่อนนัดหมายได้' where requestId = ?`,
+        requestId
+      );
 
-    const [oldDate] = await conn.query(
-      `SELECT appointment.appointDate FROM request JOIN appointment ON request.appointId = appointment.appointId WHERE request.requestId = ?`,
-      [requestId]
-    );
+      const [oldDate] = await conn.query(
+        `SELECT appointment.appointDate FROM request JOIN appointment ON request.appointId = appointment.appointId WHERE request.requestId = ?`,
+        [requestId]
+      );
 
-    const [newDate] = await conn.query(
-      `SELECT newAppointDate FROM request WHERE requestId = ?`,
-      [requestId]
-    );
-    //FORMAT DATE
-    function formatDate(dateString) {
-      // สร้าง object วันที่จาก string
-      const date = new Date(dateString);
-      
-      // สร้าง array ชื่อเดือน
-      const months = [
-          "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", 
-          "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", 
-          "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-      ];
-      
-      // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear() + 543;
-  
-      // ดึงชั่วโมงและนาที
-      const hours = date.getHours();
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-  
-      // สร้าง string รูปแบบที่ต้องการ
-      return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
-  }
-  // END FORMAT DATE
-  const formattedNewDate = formatDate(newDate[0].newAppointDate);
-  const formattedOldDate = formatDate(oldDate[0].appointDate);
+      const [newDate] = await conn.query(
+        `SELECT newAppointDate FROM request WHERE requestId = ?`,
+        [requestId]
+      );
+      //FORMAT DATE
+      function formatDate(dateString) {
+        // สร้าง object วันที่จาก string
+        const date = new Date(dateString);
 
-    // LINE
-    const body = {
-      to: UserIdLine,
-      messages:[
+        // สร้าง array ชื่อเดือน
+        const months = [
+          "มกราคม",
+          "กุมภาพันธ์",
+          "มีนาคม",
+          "เมษายน",
+          "พฤษภาคม",
+          "มิถุนายน",
+          "กรกฎาคม",
+          "สิงหาคม",
+          "กันยายน",
+          "ตุลาคม",
+          "พฤศจิกายน",
+          "ธันวาคม",
+        ];
+
+        // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear() + 543;
+
+        // ดึงชั่วโมงและนาที
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+
+        // สร้าง string รูปแบบที่ต้องการ
+        return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
+      }
+      // END FORMAT DATE
+      const formattedNewDate = formatDate(newDate[0].newAppointDate);
+      const formattedOldDate = formatDate(oldDate[0].appointDate);
+
+      // LINE
+      const body = {
+        to: UserIdLine,
+        messages: [
           {
-              type: 'text',
-              text: `ไม่สามารถเลื่อนนัดได้ไป ${formattedNewDate} กรุณามาตามนัดเดิม ${formattedOldDate}`
-          }
-      ]
+            type: "text",
+            text: `ไม่สามารถเลื่อนนัดได้ไป ${formattedNewDate} กรุณามาตามนัดเดิม ${formattedOldDate}`,
+          },
+        ],
+      };
+      const response = await axios.post(
+        `https://api.line.me/v2/bot/message/push`,
+        body,
+        { headers }
+      );
+      console.log("response line", response.data);
+      // LINE END
+      conn.commit();
+      res.send("success");
+    } catch (error) {
+      conn.rollback();
+      console.log(error);
+    } finally {
+      conn.release();
+    }
   }
-    const response = await axios.post(
-      `https://api.line.me/v2/bot/message/push`,
-      body,
-    {headers}
-    )
-    console.log("response line", response.data)
-    // LINE END
-    conn.commit();
-    res.send("success");
-    
-  } catch (error) {
-    conn.rollback();
-    console.log(error);
-  } finally {
-    conn.release();
-  }
-});
+);
 
-router.post(`/postponeAppoint/:requestId/:UserIdLine`, async function (req, res, next) {
-  const requestId = req.params.requestId;
-  const newAppointDate = req.body.newAppointDate;
-  const appointId = req.body.appointId;
-  const UserIdLine = req.params.UserIdLine; //LINE
-  const conn = await pool.getConnection();
-  await conn.beginTransaction();
-  try {
-    await conn.query(
-      `update request set requestStatus = 'เลื่อนนัดหมายสำเร็จ' where requestId = ?`,
-      requestId
-    );
-    await conn.query(
-      `update appointment set appointDate = ? where appointId = ?`,
-      [newAppointDate, appointId]
-    );
-    // DATE FORMAT2
-  function formatDate(dateString) {
-    // สร้าง object วันที่จาก string
-    const date = new Date(dateString);
-    
-    // สร้าง array ชื่อเดือน
-    const months = [
-        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", 
-        "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", 
-        "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-    ];
-    
-    // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear() + 543;
+router.post(
+  `/postponeAppoint/:requestId/:UserIdLine`,
+  async function (req, res, next) {
+    const requestId = req.params.requestId;
+    const newAppointDate = req.body.newAppointDate;
+    const appointId = req.body.appointId;
+    const UserIdLine = req.params.UserIdLine; //LINE
+    const conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+      await conn.query(
+        `update request set requestStatus = 'เลื่อนนัดหมายสำเร็จ' where requestId = ?`,
+        requestId
+      );
+      await conn.query(
+        `update appointment set appointDate = ? where appointId = ?`,
+        [newAppointDate, appointId]
+      );
+      // DATE FORMAT2
+      function formatDate(dateString) {
+        // สร้าง object วันที่จาก string
+        const date = new Date(dateString);
 
-    // ดึงชั่วโมงและนาที
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+        // สร้าง array ชื่อเดือน
+        const months = [
+          "มกราคม",
+          "กุมภาพันธ์",
+          "มีนาคม",
+          "เมษายน",
+          "พฤษภาคม",
+          "มิถุนายน",
+          "กรกฎาคม",
+          "สิงหาคม",
+          "กันยายน",
+          "ตุลาคม",
+          "พฤศจิกายน",
+          "ธันวาคม",
+        ];
 
-    // สร้าง string รูปแบบที่ต้องการ
-    return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
-}
-// END DATE FORMAT2
-const formattedDate = formatDate(newAppointDate);
-    // LINE
-    const body = {
-      to: UserIdLine,
-      messages:[
+        // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear() + 543;
+
+        // ดึงชั่วโมงและนาที
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+
+        // สร้าง string รูปแบบที่ต้องการ
+        return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
+      }
+      // END DATE FORMAT2
+      const formattedDate = formatDate(newAppointDate);
+      // LINE
+      const body = {
+        to: UserIdLine,
+        messages: [
           {
-              type: 'text',
-              text: `เลื่อนนัดสำเร็จ กรุณามาตามนัดวันที่ ${formattedDate}`
-          }
-      ]
+            type: "text",
+            text: `เลื่อนนัดสำเร็จ กรุณามาตามนัดวันที่ ${formattedDate}`,
+          },
+        ],
+      };
+      const response = await axios.post(
+        `https://api.line.me/v2/bot/message/push`,
+        body,
+        { headers }
+      );
+      console.log("response line", response.data);
+      // LINE END
+      conn.commit();
+      res.send("success");
+    } catch (error) {
+      conn.rollback();
+      console.log(error);
+    } finally {
+      conn.release();
+    }
   }
-    const response = await axios.post(
-      `https://api.line.me/v2/bot/message/push`,
-      body,
-    {headers}
-    )
-    console.log("response line", response.data)
-    // LINE END
-    conn.commit();
-    res.send("success");
-  } catch (error) {
-    conn.rollback();
-    console.log(error);
-  } finally {
-    conn.release();
-  }
-});
-
-
-
+);
 
 /// mobile
 router.get(`/PatientAppointment/:HN`, async function (req, res, next) {
@@ -767,7 +820,7 @@ router.get(`/PatientAppointment/:HN`, async function (req, res, next) {
     );
     res.json(row);
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 });
 
@@ -871,123 +924,138 @@ function padWithLeadingZeros(num, totalLength) {
 }
 
 // เลื่อนนัดดอิงใช้อันนี้
-router.post(`/PatientPostpone/:appointId/:userIdLine`, async function (req, res, next) {
-  const newAppointDate = req.body.newAppointDate;
-  const reason = req.body.reason;
-  const email = req.body.email;
-  const appointId = req.params.appointId;
-  const userIdLine = req.params.userIdLine; //LINE
-  const requestPhone = req.body.requestPhone;
-  let date = newAppointDate.split(" ");
-  let split = date[0].split("-");
-  let year = split[0];
-  let month = split[1];
-  let day = split[2];
-  let appointDate =
-    year +
-    "-" +
-    padWithLeadingZeros(month, 2) +
-    "-" +
-    padWithLeadingZeros(day, 2) +
-    " " +
-    date[1];
-  console.log(appointDate, reason, email, appointId);
-  const conn = await pool.getConnection();
-  await conn.beginTransaction();
-  try {
-    await conn.query(
-      `insert into request (newAppointDate, reason, requestPhone, requestStatus, appointId, requestStamp, email) values (?, ?, ?, 'รอดำเนินการเลื่อนนัดหมาย', ? , CURRENT_TIMESTAMP, ?)`,
-      [appointDate, reason, requestPhone, appointId, email]
-    );
-    const [oldDate] = await conn.query(
-      `SELECT appointDate FROM appointment WHERE appointId = ?`,
-      [appointId] // พารามิเตอร์ส่งเป็นอาร์เรย์
-    );
-    //FORMAT DATE1
-    function formatDate(dateString) {
-      // สร้าง object วันที่จาก string
-      const date = new Date(dateString);
-      
-      // สร้าง array ชื่อเดือน
-      const months = [
-          "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", 
-          "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", 
-          "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-      ];
-      
-      // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear() + 543;
-  
-      // ดึงชั่วโมงและนาที
-      const hours = date.getHours();
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-  
-      // สร้าง string รูปแบบที่ต้องการ
-      return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
-  }
-  // END FORMAT DATE1
-  const formattedNewDate = formatDate(oldDate[0].appointDate);
-  // DATE FORMAT2
-  function formatDate(dateString) {
-    // สร้าง object วันที่จาก string
-    const date = new Date(dateString);
-    
-    // สร้าง array ชื่อเดือน
-    const months = [
-        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", 
-        "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", 
-        "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-    ];
-    
-    // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear() + 543;
+router.post(
+  `/PatientPostpone/:appointId/:userIdLine`,
+  async function (req, res, next) {
+    const newAppointDate = req.body.newAppointDate;
+    const reason = req.body.reason;
+    const email = req.body.email;
+    const appointId = req.params.appointId;
+    const userIdLine = req.params.userIdLine; //LINE
+    const requestPhone = req.body.requestPhone;
+    let date = newAppointDate.split(" ");
+    let split = date[0].split("-");
+    let year = split[0];
+    let month = split[1];
+    let day = split[2];
+    let appointDate =
+      year +
+      "-" +
+      padWithLeadingZeros(month, 2) +
+      "-" +
+      padWithLeadingZeros(day, 2) +
+      " " +
+      date[1];
+    console.log(appointDate, reason, email, appointId);
+    const conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+      await conn.query(
+        `insert into request (newAppointDate, reason, requestPhone, requestStatus, appointId, requestStamp, email) values (?, ?, ?, 'รอดำเนินการเลื่อนนัดหมาย', ? , CURRENT_TIMESTAMP, ?)`,
+        [appointDate, reason, requestPhone, appointId, email]
+      );
+      const [oldDate] = await conn.query(
+        `SELECT appointDate FROM appointment WHERE appointId = ?`,
+        [appointId] // พารามิเตอร์ส่งเป็นอาร์เรย์
+      );
+      //FORMAT DATE1
+      function formatDate(dateString) {
+        // สร้าง object วันที่จาก string
+        const date = new Date(dateString);
 
-    // ดึงชั่วโมงและนาที
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+        // สร้าง array ชื่อเดือน
+        const months = [
+          "มกราคม",
+          "กุมภาพันธ์",
+          "มีนาคม",
+          "เมษายน",
+          "พฤษภาคม",
+          "มิถุนายน",
+          "กรกฎาคม",
+          "สิงหาคม",
+          "กันยายน",
+          "ตุลาคม",
+          "พฤศจิกายน",
+          "ธันวาคม",
+        ];
 
-    // สร้าง string รูปแบบที่ต้องการ
-    return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
-}
-// END DATE FORMAT2
-const formattedDate = formatDate(appointDate);
-    // LINE
-    const body = {
-      to: userIdLine,
-      messages:[
+        // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear() + 543;
+
+        // ดึงชั่วโมงและนาที
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+
+        // สร้าง string รูปแบบที่ต้องการ
+        return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
+      }
+      // END FORMAT DATE1
+      const formattedNewDate = formatDate(oldDate[0].appointDate);
+      // DATE FORMAT2
+      function formatDate(dateString) {
+        // สร้าง object วันที่จาก string
+        const date = new Date(dateString);
+
+        // สร้าง array ชื่อเดือน
+        const months = [
+          "มกราคม",
+          "กุมภาพันธ์",
+          "มีนาคม",
+          "เมษายน",
+          "พฤษภาคม",
+          "มิถุนายน",
+          "กรกฎาคม",
+          "สิงหาคม",
+          "กันยายน",
+          "ตุลาคม",
+          "พฤศจิกายน",
+          "ธันวาคม",
+        ];
+
+        // ดึงวันที่, เดือน, และปี (เปลี่ยนเป็นพ.ศ.)
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear() + 543;
+
+        // ดึงชั่วโมงและนาที
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+
+        // สร้าง string รูปแบบที่ต้องการ
+        return `วันที่ ${day} เดือน${month} ${year} เวลา ${hours}:${minutes} น.`;
+      }
+      // END DATE FORMAT2
+      const formattedDate = formatDate(appointDate);
+      // LINE
+
+      const body = {
+        to: userIdLine,
+        messages: [
           {
-              type: 'text',
-              text: `ส่งคำขอเลื่อนนัดแล้ว จากวันที่ ${formattedNewDate} เป็นวันที่ ${formattedDate} รอพยาบาลยืนยันการเลื่อนนัดหมายค่ะ`
-          }
-      ]
+            type: "text",
+            text: `ส่งคำขอเลื่อนนัดแล้ว จากวันที่ ${formattedNewDate} เป็นวันที่ ${formattedDate} รอพยาบาลยืนยันการเลื่อนนัดหมายค่ะ`,
+          },
+        ],
+      };
+      const response = await axios.post(
+        `https://api.line.me/v2/bot/message/push`,
+        body,
+        { headers }
+      );
+      console.log("response line", response.data);
+      // LINE END
+      conn.commit();
+      res.send("insert success");
+    } catch (error) {
+      conn.rollback();
+      console.log(error);
+    } finally {
+      conn.release();
+    }
   }
-    const response = await axios.post(
-      `https://api.line.me/v2/bot/message/push`,
-      body,
-    {headers}
-    )
-    console.log("response line", response.data)
-    // LINE END
-    conn.commit();
-    res.send("insert success");
-  } catch (error) {
-    conn.rollback();
-    console.log(error);
-  } finally {
-    conn.release();
-  }
-});
-
-
-
-
-
-
-
+);
 
 // ING ADD ดึงทุกการนัดหมายของคนๆนั้น
 router.get(`/PatientAppointment2/:IDcard`, async function (req, res, next) {
@@ -999,24 +1067,68 @@ router.get(`/PatientAppointment2/:IDcard`, async function (req, res, next) {
     );
     res.json(row);
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 });
 
 // ING ADD ดึงทุกการนัดหมายแต่ละอัน
-router.get(`/PatientAppointment2/:IDcard/:appointId`, async function (req, res, next) {
+router.get(
+  `/PatientAppointment2/:IDcard/:appointId`,
+  async function (req, res, next) {
+    try {
+      const [row, f] = await pool.query(
+        `select * from appointment join treatment on treatment.treatmentId=appointment.treatmentId where appointment.IDcard = ? and appointment.appointId = ?`,
+        [req.params.IDcard, req.params.appointId]
+      );
+      res.json(row);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// ING ADD NEW 22/11/2567
+router.post("/checkdatecanpostpone", async (req, res) => {
+  // รับค่าจาก body ของ request
+  const { datecheck, doctorId } = req.body;
+  try {
+    const [countofdoctorappoint, dd] = await pool.query(
+      `SELECT COUNT(*) AS count 
+           FROM appointment
+           JOIN treatment ON treatment.treatmentId = appointment.treatmentId
+           WHERE appointment.AppointDate = ? 
+           AND treatment.doctorId = ?`,
+      [datecheck, doctorId]
+    );
+    const appointmentCount = countofdoctorappoint[0].count || 0;
+    res.json({ count: appointmentCount });
+  } catch (error) {
+    console.error("Error:", error);
+    console.log("2");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/getAppointment", async (req, res) => {
   try {
     const [row, f] = await pool.query(
-      `select * from appointment join treatment on treatment.treatmentId=appointment.treatmentId where appointment.IDcard = ? and appointment.appointId = ?`,
-      [req.params.IDcard, req.params.appointId]
+      `SELECT a.appointId, 
+          a.appointDate, 
+          doctor.firstName AS doctorFirstName, 
+          doctor.lastName AS doctorLastName, 
+          patient.firstName AS patientFirstName,
+          patient.lastName AS patientLastName
+          FROM appointment AS a
+          JOIN treatment AS t ON a.treatmentId = t.treatmentId
+          JOIN user AS doctor ON t.doctorId = doctor.userId
+          JOIN user AS patient ON a.IDcard = patient.userName`
     );
     res.json(row);
   } catch (error) {
-      console.log(error);
+    console.error("Error:", error);
+    console.log("2");
+    res.status(500).json({ error: "Internal server error" });
   }
-
 });
-
-
 
 exports.router = router;

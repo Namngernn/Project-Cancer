@@ -89,6 +89,34 @@
         </div>
       </div>
     </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     <div class="col-md-10 offset-md-1">
       <div class="bd-example-snippet bd-code-snippet" style="border: none">
         <!--<div style="margin: 20px; width: 250px; border-radius: 5px; border: 3px solid #1C2939; background-color: white;">
@@ -130,7 +158,7 @@
               <div class="row g-0">
                 <div class="col-4">
                   <b>ชนิดมะเร็ง</b>
-                  <div v-for="i in patient.cancer" :key="i.cancerId">
+                  <div v-for="i in patient2.cancer" :key="i.cancerType">
                     {{ i.cancerType }} ระยะที่ {{  i.cancerState }}
                   </div>
                 </div>
@@ -138,7 +166,7 @@
                   <b>สถานะ</b> <div>{{ patient.status }}</div>
                 </div>
                 <div class="col-4">
-                  <b>หมายเลชโทรศัพท์</b> <div> {{ patient.phoneNumber }}</div>
+                  <b>หมายเลขโทรศัพท์</b> <div> {{ patient.phoneNumber }}</div>
                 </div>
               </div>
             </div>
@@ -406,6 +434,7 @@
                         rows="3"
                         v-model="suggestion"
                       ></textarea>
+                
                     </div>
                   </div>
                   <div
@@ -442,25 +471,26 @@ import axios from "axios";
 import moment from "moment";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-import Toastify from "toastify-js";
+// import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-var io = require("socket.io-client");
-var socket = io("http://localhost:3000");
-socket.on("info", (data) => {
-  //console.log(data)
-  Toastify({
-    text: data,
-    duration: 3000,
-    gravity: "bottom",
-    position: "right",
-  }).showToast();
-});
+// var io = require("socket.io-client");
+// var socket = io("http://localhost:3000");
+// socket.on("info", (data) => {
+//   //console.log(data)
+//   Toastify({
+//     text: data,
+//     duration: 3000,
+//     gravity: "bottom",
+//     position: "right",
+//   }).showToast();
+// });
 
 export default {
   name: "appointInfo",
   data() {
     return {
       patient: [],
+      patient2: [],
       doctor: [],
       bloodresult: [],
       selectedBloodresult: [],
@@ -476,10 +506,10 @@ export default {
     };
   },
   created() {
-    this.socket = io.connect("http://localhost:3000");
+    // this.socket = io.connect("http://localhost:3000");
   },
   unmounted() {
-    this.socket.disconnect();
+    // this.socket.disconnect();
   },
 
   mounted() {
@@ -520,6 +550,16 @@ export default {
       .get(`http://localhost:3000/doctor/${HN}`)
       .then((response) => {
         this.doctor = response.data[0];
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get(`http://localhost:3000/patient/${HN}/${treatmentId}`)
+      .then((response) => {
+        this.patient2 = response.data[0];
+        let page = moment().format("YYYY") - this.patient2.birthDate.split("-")[0];
+        this.patient2["age"] = page;
       })
       .catch((error) => {
         console.log(error);

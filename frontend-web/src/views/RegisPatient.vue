@@ -2024,14 +2024,46 @@ export default {
         return "ok";
       }
     },
+    // validationHN() {
+    //   if (this.HN.length != 6) {
+    //     this.errorMessage.HN = "กรุณากรอกเลข HN 6 หลัก";
+    //   } else if (this.HN.length == 6) {
+    //     this.errorMessage.HN = "";
+    //   } else if (this.HN == "") {
+    //     this.errorMessage.HN = "กรุณากรอกเลข HN 6 หลัก";
+    //   }
+    // },
     validationHN() {
-      if (this.HN.length != 6) {
+      if (!this.HN) {
         this.errorMessage.HN = "กรุณากรอกเลข HN 6 หลัก";
-      } else if (this.HN.length == 6) {
-        this.errorMessage.HN = "";
-      } else if (this.HN == "") {
-        this.errorMessage.HN = "กรุณากรอกเลข HN 6 หลัก";
+        return;
       }
+
+      if (this.HN.length !== 6) {
+        this.errorMessage.HN = "กรุณากรอกเลข HN 6 หลัก";
+        return;
+      }
+
+      // เรียก API เพื่อตรวจสอบ HN กับ backend
+      fetch(`http://localhost:3000/check-hn/${this.HN}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Server error");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.exists) {
+            this.errorMessage.HN = "เลข HN นี้มีอยู่ในระบบแล้ว";
+          } else {
+            this.errorMessage.HN = ""; // ไม่พบข้อผิดพลาด
+          }
+        })
+        .catch((error) => {
+          console.error("Error validating HN:", error);
+          this.errorMessage.HN = "เกิดข้อผิดพลาดในการตรวจสอบ";
+        }
+      );
     },
     validationIDcard() {
       if (this.IDcard.length != 13) {

@@ -4,10 +4,12 @@ const app = express();
 const cors = require("cors");
 
 // app.use(cors());
-app.use(cors({
-  origin: '*', // Frontend URL
-  methods: 'GET, POST, PUT, DELETE'
-}));
+app.use(
+  cors({
+    origin: "*", // Frontend URL
+    methods: "GET, POST, PUT, DELETE",
+  })
+);
 
 router = express.Router();
 
@@ -203,32 +205,29 @@ router.get(`/getBloodresult/:brId`, async function (req, res, next) {
   }
 });
 
-
 // ฝั่งโมบายที่อิงเพิ่มเองงงงงงงงงงง
 // เอาชื่อโรคของแต่ละคน อาจจะมีหลายโรค             มะเร็งลำไส้ใหญ่
 // ชื่อโรค ex. มะเร็งลำไส้
 // select cancer.cancerType from cancer join cancer_patient ON cancer.cancerId = cancer_patient.cancerId where IDcard = 0000000000003
-router.get('/cancerType/:idcard', async function (req, res) {
-
+router.get("/cancerType/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "select cancer.cancerType from cancer join cancer_patient ON cancer.cancerId = cancer_patient.cancerId where IDcard = ?",req.params.idcard
+      "select cancer.cancerType from cancer join cancer_patient ON cancer.cancerId = cancer_patient.cancerId where IDcard = ?",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
     console.log(error);
   }
 });
-
-
 
 // formula Name ex. Cis CCRT Cervix
 // select formula.formulaName from formula join treatment ON formula.formulaId = treatment.formulaId where IDcard = 0000000000003
-router.get('/formulas/:idcard', async function (req, res) {
-
+router.get("/formulas/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "select formula.formulaName from formula join treatment ON formula.formulaId = treatment.formulaId where IDcard = ?",req.params.idcard
+      "select formula.formulaName from formula join treatment ON formula.formulaId = treatment.formulaId where IDcard = ?",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
@@ -236,12 +235,12 @@ router.get('/formulas/:idcard', async function (req, res) {
   }
 });
 
-
 // GET treatmentId where IDcard = ?
-router.get('/treatmentid/:idcard', async function (req, res) {
+router.get("/treatmentid/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "SELECT treatmentID FROM treatment WHERE IDcard = ?",req.params.idcard
+      "SELECT treatmentID FROM treatment WHERE IDcard = ?",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
@@ -250,10 +249,11 @@ router.get('/treatmentid/:idcard', async function (req, res) {
 });
 
 // GET doctorId where IDcard = ?
-router.get('/doctorid/:idcard', async function (req, res) {
+router.get("/doctorid/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "SELECT doctorId FROM treatment WHERE IDcard = ?",req.params.idcard
+      "SELECT doctorId FROM treatment WHERE IDcard = ?",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
@@ -261,17 +261,11 @@ router.get('/doctorid/:idcard', async function (req, res) {
   }
 });
 
-
-
-
 // UPLOAD FILE
-// 
-
-
-
+//
 
 // GET ALL DOCtor ingfah do this
-router.get('/doctorr', async function (req, res) {
+router.get("/doctorr", async function (req, res) {
   try {
     const [rows] = await pool.query(
       `SELECT firstName, lastName FROM user WHERE type = "doctor"`
@@ -279,37 +273,36 @@ router.get('/doctorr', async function (req, res) {
     res.json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while fetching doctors.' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching doctors." });
   }
 });
-
 
 // GET INFO PATIENT
-router.get('/patientss/:idcard', async function (req, res) {
+router.get("/patientss/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "SELECT * FROM `patient` where IDcard = ?", req.params.idcard
+      "SELECT * FROM `patient` where IDcard = ?",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
     console.log(error);
   }
 });
-
-
 
 // ข้อมูลการส่งผลเลือดทั้งหมด
-router.get('/recordbloodresult/:idcard', async function (req, res) {
+router.get("/recordbloodresult/:idcard", async function (req, res) {
   try {
     const [row, f] = await pool.query(
-      "SELECT * FROM `bloodresult` JOIN `treatment` ON treatment.treatmentId = bloodresult.treatmentId where IDcard = ? ORDER BY brId DESC", req.params.idcard
+      "SELECT * FROM `bloodresult` JOIN `treatment` ON treatment.treatmentId = bloodresult.treatmentId where IDcard = ? ORDER BY brId DESC",
+      req.params.idcard
     );
     res.json(row);
   } catch (error) {
     console.log(error);
   }
 });
-
-
 
 exports.router = router;

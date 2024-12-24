@@ -1,7 +1,16 @@
 <template>
-  <router-view/>
-  <vue-snotify />
+  <div id="app">
+    <router-view />
+    <vue-snotify />
+  </div>
 </template>
+
+<script>
+
+export default {
+  name: 'App',
+}
+</script>
 
 <style>
 #app {

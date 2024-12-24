@@ -6,10 +6,12 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 // app.use(cors());
-app.use(cors({
-  origin: 'https://p6l7k2jx-5173.asse.devtunnels.ms', // Frontend URL
-  methods: 'GET, POST, PUT, DELETE'
-}));
+app.use(
+  cors({
+    origin: "https://p6l7k2jx-5173.asse.devtunnels.ms", // Frontend URL
+    methods: "GET, POST, PUT, DELETE",
+  })
+);
 
 router = express.Router();
 
@@ -46,10 +48,10 @@ router.post("/register2", async function (req, res, next) {
   const conn = await pool.getConnection();
   await conn.beginTransaction();
   try {
-    await conn.query(
-      `UPDATE user SET psw = ? WHERE userName = ?`,
-      [encryptedPassword, userName]
-    );
+    await conn.query(`UPDATE user SET psw = ? WHERE userName = ?`, [
+      encryptedPassword,
+      userName,
+    ]);
     conn.commit();
     res.status(200).send("Password updated successfully");
   } catch (error) {
@@ -188,17 +190,19 @@ router.post("/login34", async function (req, res, next) {
       [userName]
     );
     if (rows.length > 0) {
-      await pool.query(
-        `UPDATE user SET UserIdLine = ? WHERE userName = ?`,
-        [UserIdLine, userName]
-      );
+      await pool.query(`UPDATE user SET UserIdLine = ? WHERE userName = ?`, [
+        UserIdLine,
+        userName,
+      ]);
       res.status(200).json(rows[0]);
     } else {
       res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
     console.error("Error details:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 });
 
@@ -207,13 +211,13 @@ router.get(`/useridline/:userName`, async function (req, res, next) {
   let userName = req.params.userName;
   try {
     const [row, f] = await pool.query(
-      `select UserIdLine from user where userName = ?`, userName
+      `select UserIdLine from user where userName = ?`,
+      userName
     );
     res.json(row);
   } catch (error) {
     console.log(error);
   }
 });
-
 
 exports.router = router;
