@@ -4,8 +4,6 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");  
 
-const cron = require("node-cron");
-
 const axios = require("axios");
 // const mysql = require("mysql2");
 
@@ -20,31 +18,15 @@ app.use(cors({
   methods: 'GET, POST, PUT, DELETE'
 }));
 
-// const sendReminder = async (UserIdLine) => {
-//   const headers = {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer {ZKIV+qil3w6DjHJhHfQyQZvLVt3MTbhX7HhoKxku9pNoerxcIBAHVqe761eTlRET+Lf2Bi93YCYFJ9rb+GWg9IBQEM0xgBfvyGbvtqiEHBZOr5Lra5u1tpt+ipv+8skWoXU0FGwrVL/XopAxMcFbTwdB04t89/1O/w1cDnyilFU=}`,
-//   };
-//   const message = {
-//     to: UserIdLine,
-//     messages: [
-//       {
-//         type: "text",
-//         text: "ถึงเวลาบันทึกน้ำหนักของคุณประจำสัปดาห์นี้แล้วค่ะ!",
-//       },
-//     ],
-//   };
+const line = require("@line/bot-sdk");
 
-//   try {
-//     const response = await axios.post("https://api.line.me/v2/bot/message/push", message, { headers });
-//     console.log("ส่งข้อความสำเร็จ:", response.data);
-//   } catch (error) {
-//     console.error("เกิดข้อผิดพลาดในการส่งข้อความ:", error);
-//   }
-// };
+const config = {
+  channelAccessToken: "ZKIV+qil3w6DjHJhHfQyQZvLVt3MTbhX7HhoKxku9pNoerxcIBAHVqe761eTlRET+Lf2Bi93YCYFJ9rb+GWg9IBQEM0xgBfvyGbvtqiEHBZOr5Lra5u1tpt+ipv+8skWoXU0FGwrVL/XopAxMcFbTwdB04t89/1O/w1cDnyilFU=", 
+  channelSecret: "fd252952946a654a1b4c64ee6152d325", 
+};
 
-// // ตัวอย่างการใช้งาน
-// sendReminder("UserIdLine");
+const lineClient = new line.Client(config);
+
 
 const headers = {
     "Content-Type": "application/json",
@@ -60,17 +42,40 @@ router.post("/webhook", async (req, res) => {
     console.log(`Intent: ${intentName}`);
     console.log("Parameters:", parameters);
 
+    function formatThaiDate(dateString) {
+      const months = [
+          "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+          "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+      ];
+      const days = [
+          "วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ",
+          "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"
+      ];
+
+      const date = new Date(dateString);
+
+      const dayName = days[date.getDay()];
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear() + 543;
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+
+      return `${dayName} ${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
+    }
+
     //intent เช็ควันนัดหมาย
     if (intentName === "ตรวจสอบวันนัดหมาย") {
-      const HN = parameters.HN;
-      const treatmentId = parameters.treatmentId;
-  
-      if (!HN || !treatmentId) {
+      // รับ HN จากคุกกี้
+      const cookies = req.cookies;
+      const HN = cookies?.HN || 123456;
+
+      if (!HN) {
         return res.json({
           fulfillmentMessages: [
             {
               text: {
-                text: ["ข้อมูล HN หรือ treatmentId ไม่ถูกต้อง"],
+                text: ["ไม่พบ HN ในระบบ กรุณาลงชื่อเข้าใช้ใหม่"],
               },
             },
           ],
@@ -78,38 +83,22 @@ router.post("/webhook", async (req, res) => {
       }
   
       try {
-        function formatThaiDate(dateString) {
-          const months = [
-              "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-              "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-          ];
-          const days = [
-              "วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ",
-              "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"
-          ];
-  
-          const date = new Date(dateString);
-  
-          const dayName = days[date.getDay()];
-          const day = date.getDate();
-          const month = months[date.getMonth()];
-          const year = date.getFullYear() + 543;
-          const hours = date.getHours().toString().padStart(2, '0');
-          const minutes = date.getMinutes().toString().padStart(2, '0');
-  
-          return `${dayName} ${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
-      }
-        const [rows] = await pool.query(
-          `SELECT appointDate FROM appointment
-           JOIN treatment ON treatment.treatmentId = appointment.treatmentId
-           WHERE appointment.HN = ? AND appointment.treatmentId = ?`,
-          [HN, treatmentId]
+        //เลือกจากนัดล่าสุด
+        const [treatmentRows] = await pool.query(
+        `SELECT appointment.treatmentId, appointment.appointDate
+        FROM appointment
+        WHERE appointment.HN = ?
+        ORDER BY appointment.appointDate DESC
+        LIMIT 1
+      `,
+          [HN]
         );
   
-        console.log("Query Result:", rows);
+        console.log("Query Result:", treatmentRows);
   
-        if (rows.length > 0) {
-          const formattedDate = formatThaiDate(rows[0].appointDate);
+        if (treatmentRows.length > 0) {
+          const { appointDate } = treatmentRows[0];
+          const formattedDate = formatThaiDate(appointDate);
           res.json({
             fulfillmentMessages: [
               {
@@ -147,7 +136,10 @@ router.post("/webhook", async (req, res) => {
       // Intent บันทึกน้ำหนักผู้ป่วย
       else if (intentName === "บันทึกน้ำหนักผู้ป่วย") {
         const weight = parameters['unit-weight'].amount;
-        const HN = parameters.HN;
+        // รับ HN จากคุกกี้
+        const cookies = req.cookies;
+        const HN = cookies?.HN || 123456;
+
         const recorded_at = new Date();
     
         if (!weight || !HN) {
@@ -182,10 +174,11 @@ router.post("/webhook", async (req, res) => {
             });
           }
     
-          const [rows] = await pool.query(
+          // บันทึกน้ำหนักในฐานข้อมูล
+          await pool.query(
             `INSERT INTO weight_records (weight, recorded_at, HN, appointId) 
-             VALUES (?, ?, ?, ?)`,
-            [weight, recorded_at, HN, maxAppointId]
+             VALUES (?, NOW(), ?, ?)`,
+            [weight, HN, maxAppointId]
           );                   
     
           res.json({
@@ -193,7 +186,7 @@ router.post("/webhook", async (req, res) => {
               {
                 text: {
                   text: [
-                    `น้ำหนักล่าสุดของคุณคือ ${weight} กิโลกรัม ถูกบันทึกแล้วเรียบร้อย เมื่อวันที่ ${recorded_at.toLocaleDateString()}`
+                    `น้ำหนักล่าสุดของคุณคือ ${weight} กิโลกรัม ถูกบันทึกแล้วเรียบร้อย เมื่อวันที่ ${formatThaiDate(recorded_at)}`
                   ],
                 },
               },
@@ -212,6 +205,54 @@ router.post("/webhook", async (req, res) => {
           });
         }
       } 
+    // Intent: แจ้งเตือนบันทึกน้ำหนัก
+    else if (intentName === "แจ้งเตือนบันทึกน้ำหนัก") {
+    try {
+      const cookies = req.cookies;
+      const HN = cookies?.HN || 123456;
+
+      if (!HN) {
+        return res.json({
+          fulfillmentMessages: [
+            {
+              text: {
+                text: ["ไม่พบหมายเลข HN ในระบบ กรุณาลงชื่อเข้าใช้ใหม่"],
+              },
+            },
+          ],
+        });
+      }
+
+      // ส่งผ่าน LINE Messaging API
+      const message = {
+        type: "text",
+        text: "กรุณาทำการบันทึกน้ำหนักวันนี้เพื่อช่วยติดตามสุขภาพของคุณ",
+      };
+
+      await lineClient.pushMessage(HN, message);
+
+      return res.json({
+        fulfillmentMessages: [
+          {
+            text: {
+              text: ["แจ้งเตือนให้ผู้ใช้บันทึกน้ำหนักสำเร็จ"],
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      return res.status(500).json({
+        fulfillmentMessages: [
+          {
+            text: {
+              text: ["เกิดข้อผิดพลาดในการส่งการแจ้งเตือน"],
+            },
+          },
+        ],
+      });
+    }
+  }
       else {
         res.json({
           fulfillmentMessages: [
@@ -227,19 +268,40 @@ router.post("/webhook", async (req, res) => {
 
 
 //แจ้งเตือนรายสัปดาห์
-  // cron.schedule("19 18 * * fri", async () => {
-  //   console.log("ส่งข้อความแจ้งเตือนรายสัปดาห์");
-  
-  //   // เรียก API เพื่อส่งข้อความ
-  //   try {
-  //     const response = await axios.post("http://localhost:3000/send-reminder", {
-  //       message: "กรุณาบันทึกน้ำหนักของคุณประจำสัปดาห์นี้ค่ะ",
-  //     });
-  
-  //     console.log("ส่งข้อความสำเร็จ:", response.data);
-  //   } catch (error) {
-  //     console.error("เกิดข้อผิดพลาดในการส่งข้อความ:", error);
-  //   }
-  // });
+const cron = require("node-cron");
+
+// ตั้งเวลาให้ส่งการแจ้งเตือน
+cron.schedule("58 1 * * *", async () => {
+  try {
+    const [users] = await pool.query(`
+      SELECT UserIdLine 
+      FROM user 
+      WHERE type = 'patient'
+    `);
+
+    users.forEach(async (user) => {
+      const { UserIdLine } = user;
+
+      const message = {
+        to: UserIdLine,
+        messages: [
+          {
+            type: "text",
+            text: "กรุณาทำการบันทึกน้ำหนักวันนี้เพื่อช่วยติดตามสุขภาพของคุณ",
+          },
+        ],
+      };
+
+      try {
+        await lineClient.pushMessage(UserIdLine, message.messages);
+        console.log(`ส่งการแจ้งเตือนสำเร็จสำหรับผู้ใช้: ${UserIdLine}`);
+      } catch (lineError) {
+        console.error(`Error sending message to ${UserIdLine}:`, lineError);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending daily notification:", error);
+  }
+});
 
 exports.router = router;

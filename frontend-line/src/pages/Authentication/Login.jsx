@@ -6,6 +6,12 @@ import { Input, Button, Checkbox, Form, Typography } from 'antd';
 import liff from "@line/liff";  
 import Cookies from 'js-cookie';
 
+const state = Math.random().toString(36).substring(2, 15);
+const crypto = require('crypto');
+const codeVerifier = 'randomString123'; // ค่าสุ่ม
+const hash = crypto.createHash('sha256').update(codeVerifier).digest();
+const codeChallenge = hash.toString('base64url');
+
 const onFinish = (values) => {
   console.log('Success:', values);
 };
@@ -29,21 +35,10 @@ const Login = () => {
 
   useEffect(() => {
     const main = async () => {
-      console.log("Starting LIFF initialization...");
-      liff.init({ liffId: "2006367428-DL91peYa" })
-        .then(() => {
-          console.log("LIFF initialized successfully");
-        })
-        .catch((err) => {
-          console.error("Error initializing LIFF:", err.message);
-        });
-      
-
-
-      // await liff.init({ liffId: "2006367428-DL91peYa" });
-      // if (!liff.isLoggedIn()) {
-      //   liff.login();
-      // }
+      await liff.init({ liffId: "2006367428-DL91peYa" });
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      }
 
       const profileData = await liff.getProfile();
       setProfile(profileData);

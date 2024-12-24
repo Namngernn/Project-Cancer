@@ -2,6 +2,23 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+  const navigate = useNavigate();
+  
+
+  const logout = () => {
+    try {
+    localStorage.removeItem('userName')
+    localStorage.removeItem('HN')
+    document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'HN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    alert('ออกจากระบบแล้ว');
+    // ???
+    navigate('/login');
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
   return (
     <div>
       {/* header */}
