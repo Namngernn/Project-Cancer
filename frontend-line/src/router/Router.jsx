@@ -14,7 +14,6 @@ import FillResults from "../pages/BloodResults/FillResults";
 import AddEffects from "../pages/Effects/AddEffects";
 import DisplayBloodResults from "../pages/BloodResults/DisplayBloodResults";
 import DisplayOtherResults from "../pages/BloodResults/DisplayOtherResults";
-import DetailEffect from "../pages/Effects/DetailEffect";
 
 const router = createBrowserRouter([
     {
@@ -23,7 +22,7 @@ const router = createBrowserRouter([
       children: [
         {
             path: "/",
-            element: <Home/>
+            element: <Login/>
         },
         {
           path: "/BloodResults",
@@ -50,7 +49,7 @@ const router = createBrowserRouter([
           element: <AppointmentDetails/>,
         },
         {
-          path: "/Appointment/PostponeAppointment",
+          path: "/Appointment/PostponeAppointment/:appointId",
           element: <PostponeAppointment/>,
         },
         {
@@ -66,10 +65,6 @@ const router = createBrowserRouter([
           element: <Effects/>
         },
         {
-          path: "/DetailEffect",
-          element: <DetailEffect/>
-        },
-        {
           path: "/PatientManual",
           element: <PatientManual/>
         },
@@ -81,7 +76,10 @@ const router = createBrowserRouter([
           path: "/Register",
           element: <Register/>,
         },
-        
+        {
+          path: "/menu",
+          element: <Home/>,
+        },
       ]
     }
   ]);

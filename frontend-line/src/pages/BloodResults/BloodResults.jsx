@@ -72,7 +72,7 @@ const BloodResults = () => {
   }, [username]); // ดึงข้อมูลประเภทมะเร็งทุกครั้งที่ username เปลี่ยน
 
   return (
-    <div className='p-4'>
+    <div className='p-4 mt-4'>
       {/* <h1>เลือกแผนการรักษา</h1> */}
 
       <Link to={"/BloodResults/FillResults"}>

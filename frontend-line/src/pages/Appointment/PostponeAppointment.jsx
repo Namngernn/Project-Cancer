@@ -271,44 +271,66 @@ const PostponeAppointment = () => {
   // console.log(appointmentCounts)
   return (
     <div>
-      <div className="p-4 space-y-12">
-        <div className="">
-          <h2 className="text-lg">นัดหมายเดิม{appointments[0].appointDate} {appointments[0].doctorId} {appointments[0].HN}</h2>
-          {datecheck} {doctorId} {test}
+        <div className="container mx-auto p-6 bg-white shadow-md rounded-md">
+          <h2 className="text-lg font-bold mb-6">นัดหมายเดิม </h2>
+          {/* {appointments[0].appointDate} {appointments[0].doctorId} {appointments[0].HN} */}
+          <div className="mb-4">
+            <h3 className="text-md font-medium">รหัสผู้ป่วย: {appointments[0]?.HN}</h3>
+          </div>
+          {/* {datecheck} {doctorId} {test} */}
           {/* {appointmentCount}  */}
           {/* <h1>User ID Line: {userIdLine}</h1>
           <h1>UserName: {username}</h1> */}
-          {appointments.map((appointment) => (
-            <div key={appointment.appointId} className="pt-2">
-              <h3 className="text-md">{new Date(appointment.appointDate).toLocaleDateString('th-TH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}</h3>
-              <div className="">{new Date(appointment.appointDate).toLocaleTimeString('th-TH', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })} น.</div>
-            </div>
-          ))}
-        </div>
-        <div className="">
-          <h2 className="text-lg">นัดหมายใหม่</h2>
-          <ul>
-            {appointmentCounts
-              .filter((appointment) => appointment.count < 5)
-              // .slice(1)
-              .map((appointment) => (
-                <li key={appointment.datecheck}>
-                  Date: {appointment.datecheck} - Count: {appointment.count}
-                </li>
+{/* Appointments List */}
+          <div className="space-y-4">
+              {appointments.map((appointment) => (
+                <div 
+                  key={appointment.appointId} 
+                  className="p-4 border border-gray-200 rounded-md bg-gray-50"
+                >
+                  <h3 className="text-md font-semibold text-gray-700">
+                    วันนัดหมายล่าสุด: {new Date(appointment.appointDate).toLocaleDateString('th-TH', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    เวลา: {new Date(appointment.appointDate).toLocaleTimeString('th-TH', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })} น.
+                  </div>
+                </div>
               ))}
-          </ul>
-
-          <Radio.Group onChange={onChangenewAppointDate} value={newAppointDate}>
+          </div>
+        <div className="">
+          {/* <ul>
+            {appointmentCounts
+            .filter((appointment) => appointment.count < 5)
+            // .slice(1)
+            .map((appointment) => (
+              <li key={appointment.datecheck}>
+              Date: {appointment.datecheck} - Count: {appointment.count}
+              </li>
+              ))}
+              </ul> */}
+      <div className="container mx-auto p-6 bg-white shadow-md rounded-md">
+        <h2 className="text-lg font-bold mb-6">นัดหมายใหม่ ที่ต้องการขอเลื่อน</h2>
+    
+        <div className="mb-6">
+          <Radio.Group 
+            onChange={onChangenewAppointDate} 
+            value={newAppointDate} 
+            className="space-y-3"
+          >
             {newAppointments.length > 0 ? (
               newAppointments.slice(1).map((date, index) => (
-                <Radio key={index} className="pt-2 w-11/12" value={formatDateForValue(date)}>
+                <Radio 
+                  key={index} 
+                  className="pt-2 w-full border border-gray-200 rounded-md p-3 bg-gray-50" 
+                  value={formatDateForValue(date)}
+                >
                   {date.toLocaleDateString('th-TH', {
                     year: 'numeric',
                     month: 'long',
@@ -320,34 +342,53 @@ const PostponeAppointment = () => {
                 </Radio>
               ))
             ) : (
-              <p>ไม่มีวันนัดหมายใหม่ที่ตรงกัน</p>
+              <p className="text-gray-500">ไม่มีวันนัดหมายใหม่ที่ตรงกัน</p>
             )}
           </Radio.Group>
-          {/* <h1>Appointment ID: {appointId}</h1> */}
-          <div className="mt-8"></div>
+        </div>
 
-          <div className="space-y-4">
-            <div>
-              <div>เหตุผล</div>
-              <Input placeholder="เหตุผล" onChange={e => setReason(e.target.value)} />
-            </div>
-            <div>
-              <div>อีเมลล์</div>
-              <Input placeholder="อีเมลล์" onChange={e => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <div>เบอร์โทร</div>
-              <Input placeholder="เบอร์โทร" onChange={e => setRequestPhone(e.target.value)} />
-            </div>
+          {/* <h1>Appointment ID: {appointId}</h1> */}
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">เหตุผล</label>
+            <Input 
+              placeholder="เหตุผล" 
+              onChange={e => setReason(e.target.value)} 
+              className="w-full border border-gray-300 rounded-md p-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">อีเมลล์</label>
+            <Input 
+              placeholder="อีเมลล์" 
+              onChange={e => setEmail(e.target.value)} 
+              className="w-full border border-gray-300 rounded-md p-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">เบอร์โทร</label>
+            <Input 
+              placeholder="เบอร์โทร" 
+              onChange={e => setRequestPhone(e.target.value)} 
+              className="w-full border border-gray-300 rounded-md p-2"
+            />
+          </div>
+          
           </div>
         </div>
       </div>
-
-      <div className="flex justify-center items-center">
-        <button className="bt-blue" onClick={handleSubmit}>ยืนยันการเลื่อนการนัดหมาย</button>
+      <div className="flex justify-center items-center mt-8">
+        <button 
+          className="bt-blue text-white font-semibold py-2 px-6 rounded-md shadow hover:bg-blue-600 transition"
+          onClick={handleSubmit}
+        >
+          ยืนยันการเลื่อนการนัดหมาย
+        </button>
       </div>
+      
     </div>
+  </div>
   );
 };
-
 export default PostponeAppointment;

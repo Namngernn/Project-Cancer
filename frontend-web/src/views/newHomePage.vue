@@ -22,7 +22,7 @@
 
 
 
-
+    <!-- nav bar -->
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
@@ -84,11 +84,10 @@
               >
                 <a class="nav-link" href="http://localhost:3000/dashboardview" target="_blank" style="color: #ffffff">แดชบอร์ด</a>
               </li>
-
-
-
             </ul>
           </div>
+
+
           <div class="col-3">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button

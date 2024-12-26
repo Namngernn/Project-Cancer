@@ -758,20 +758,20 @@ router.get("/patient/:HN/:treatmentId", async function (req, res, next) {
     //   HN
     // );
     const [row1, f1] = await pool.query(
-      `SELECT patient.HN, patient.prefix, patient.firstName, patient.lastName, patient.birthDate, patient.phoneNumber, 
-        patient.IDcard AS patient_IDcard, patient.gender, patient.doctorId AS patient_doctorId, patient.allergy, 
-        MAX(cancer_patient.cancerId) AS cancer_patient_cancerId, MAX(cancer_patient.cancerState) AS cancerState, 
-        MAX(cancer.cancerId) AS cancer_cancerId, cancer.cancerType AS cancerType, 
-        MAX(treatment.treatmentId) AS treatmentId, MAX(treatment.formulaId) AS formulaId, 
-        MAX(treatment.treatmentStatus) AS treatmentStatus, 
-        MAX(bloodresult.brId) AS brId, MAX(bloodresult.date) AS date, 
+      `SELECT patient.HN, patient.firstName, patient.lastName, patient.birthDate, patient.phoneNumber,
+        patient.IDcard AS patient_IDcard, patient.gender, patient.doctorId AS patient_doctorId, patient.allergy,
+        MAX(cancer_patient.cancerId) AS cancer_patient_cancerId, MAX(cancer_patient.cancerState) AS cancerState,
+        MAX(cancer.cancerId) AS cancer_cancerId, cancer.cancerType AS cancerType,
+        MAX(treatment.treatmentId) AS treatmentId, MAX(treatment.formulaId) AS formulaId,
+        MAX(treatment.treatmentStatus) AS treatmentStatus,
+        MAX(bloodresult.brId) AS brId, MAX(bloodresult.date) AS date,
         MAX(bloodresult.suggestion) AS suggestion, MAX(bloodresult.status) AS status
-        FROM patient 
-        JOIN cancer_patient ON patient.HN = cancer_patient.HN 
-        JOIN cancer ON cancer.cancerId = cancer_patient.cancerId 
-        JOIN treatment ON treatment.HN = patient.HN 
-        JOIN bloodresult ON treatment.treatmentId = bloodresult.treatmentId 
-        WHERE treatment.HN = ? 
+        FROM patient
+        JOIN cancer_patient ON patient.HN = cancer_patient.HN
+        JOIN cancer ON cancer.cancerId = cancer_patient.cancerId
+        JOIN treatment ON treatment.HN = patient.HN
+        JOIN bloodresult ON treatment.treatmentId = bloodresult.treatmentId
+        WHERE treatment.HN = ?
         GROUP BY cancer.cancerType;
         `,
       HN
@@ -1022,17 +1022,6 @@ router.post("/selectedPatient", async function (req, res, next) {
       }
       data.push(row);
     }
-    /*if (selected == '') {
-            for (let i = 0; i < rows.length; i++) {
-                const [row, _] = await pool.query(`select * from treatment join patient on patient.HN=treatment.HN join bloodresult on treatment.treatmentId=bloodresult.treatmentId where brId = ?`, [rows[i].brId])
-                const [row1, f1] = await pool.query(`select * from patient join cancer_patient on patient.HN=cancer_patient.HN join cancer on cancer.cancerId=cancer_patient.cancerId join treatment on treatment.HN=patient.HN join bloodresult on treatment.treatmentId=bloodresult.treatmentId where brId = ?`, rows[i].brId)
-                for (j = 0; j < row1.length; j++) {
-                    cancer.push(row1[j])
-                }
-                row[i].cancer = cancer
-                data.push(row)
-            }
-        }*/
     if (data.length != 0) {
       res.json(data);
     } else {
@@ -1043,6 +1032,7 @@ router.post("/selectedPatient", async function (req, res, next) {
   }
 });
 
+//add patients guidebook QRCode on web
 router.post(
   `/addQRcode`,
   imgUpload.single("image"),
@@ -1070,6 +1060,7 @@ router.post(
   }
 );
 
+//add patients guidebook on web
 router.post(
   `/savePDF`,
   imgUpload.single("file"),

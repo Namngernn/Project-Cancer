@@ -1,4 +1,5 @@
 <template>
+  <!-- nav bar -->
   <div class="row g-0 text-center">
     <nav style="background-color: #1c2939">
       <div class="container">
@@ -57,6 +58,8 @@
               </li>
             </ul>
           </div>
+
+
           <div class="col-3">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button

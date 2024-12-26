@@ -59,37 +59,60 @@ const FillResults = () => {
   }
 
   return (
-    // <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
-    <div className="">
-      {/* <h1>{username}</h1> */}
-      <div className="flex items-center justify-center m-4">
-        <label for="file-upload" class="custom-file-upload">
+  <div>
+    {/* // <div className="flex items-center justify-center min-h-[calc(100vh-64px)]"> */}
+    <div className="p-4">
+      <div className="flex flex-col justify-center mb-6">
+        <h2 className="text-lg font-bold pb-4">ส่งผลตรวจเลือด</h2>
+        <label 
+          htmlFor="file-upload" 
+          className="cursor-pointer m-7 bg-blue-400 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600 transition duration-300"
+        >
           เลือกรูปผลเลือด
         </label>
         <input
           type="file"
           id="file-upload"
           multiple
+          className="hidden"
           onChange={(e) => setFiles(Array.from(e.target.files))}
         />
       </div>
-
-      <div className="flex items-center justify-center flex-col">
-        <div>{progress.started && <progress max="100" value={progress.pc}></progress>}</div>
-        <div>{msg && <div>{msg}</div>}</div>
+      {files.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-md font-medium mb-2">ไฟล์ที่เลือก:</h3>
+          <ul className="list-disc list-inside text-gray-700">
+            {files.map((file, index) => (
+              <li key={index} className="text-sm">{file.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div className="flex flex-col items-center justify-center space-y-4 mb-6">
+        {progress.started && (
+          <progress 
+            max="100" 
+            value={progress.pc} 
+            className="w-full h-4 rounded-md overflow-hidden"
+          ></progress>
+        )}
+        {msg && (
+          <div className="text-center text-gray-700">
+            {msg}
+          </div>
+        )}
       </div>
-
 
       <div className="flex items-center justify-center">
         <button
-          className=' bg-blue-700 border-collapse hover:bg-blue-600 duration-300 hover:drop-shadow-lg w-11/12 m-2 p-3 rounded-full text-white'
+          className="bt-blue text-white font-semibold py-2 px-6 rounded-md shadow hover:bg-blue-600 transition"
           onClick={handleUpload}
         >
           ส่งผลเลือด
         </button>
       </div>
     </div>
-    // </div>
+  </div>
   );
 }
 
