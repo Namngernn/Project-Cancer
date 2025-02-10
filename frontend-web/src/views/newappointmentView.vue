@@ -3,7 +3,7 @@
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
               <li v-if="user.type == 'nurse'"
                 class="nav-item"
@@ -19,7 +19,7 @@
                 @click="goTonewHome()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ผลเลือด</a>
+                <a class="nav-link" href="#" style="color: #ffffff">การอนุมัติผลเลือด</a>
               </li>
               <li
                 class="nav-item"
@@ -56,11 +56,24 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
               </li>
-            </ul>
-          </div>
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button @click="logOut()"
+              <li
+                class="nav-item"
+                @click="goToExportimport()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
+              </li>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
+
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button
+                @click="logOut()"
                 class="btn btn-light me-md-2"
                 type="button"
                 style="margin-top: 15px; margin-bottom: 10px"
@@ -85,7 +98,9 @@
                 ออกจากระบบ
               </button>
             </div>
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -493,6 +508,8 @@
                             >Next</a
                           >
                         </li>
+
+                        
                       </ul>
                     </nav>
                   </div>
@@ -507,8 +524,10 @@
 
 
 
-    <h1>CALENDAR EIEI KWAI</h1>
-    <a class="nav-link" href="http://localhost:8081/calendarappointment" >CALENDAR</a>
+
+    <a class="nav-link" href="http://localhost:3000/calendarappointment" target="_blank">
+      <h1 >CALENDAR</h1>
+    </a>
 
 
   </div>
@@ -964,6 +983,9 @@ export default {
     },
     overlayAddapp() {
       this.showOverlay = !this.showOverlay;
+    },
+    goToExportimport() {
+            this.$router.push(`/ExportImport/${this.$route.params.userId}`);
     },
     selectMed(formula) {
       if (this.formula != "") {

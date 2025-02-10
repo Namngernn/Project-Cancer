@@ -118,7 +118,7 @@ class AddChemoDetail3  : AppCompatActivity() {
             artDialogBuilder.setCancelable(false)
             artDialogBuilder.setPositiveButton("ตกลง") {_,_ ->
                 savePatientSideEffect(result)
-//                val mSocket = IO.socket("http://10.50.8.3:3000")
+//                val mSocket = IO.socket("http://10.50.8.3:8080")
 //                if (!mSocket.connected()){
 //                    mSocket.connect()
 //                    mSocket.emit("CH03", HN)

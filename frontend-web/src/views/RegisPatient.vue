@@ -1,10 +1,9 @@
 <template>
-  <!-- nav bar -->
   <div class="row g-0 text-center">
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
               <li
                 v-if="user.type == 'nurse'"
@@ -25,7 +24,7 @@
                 @click="goTonewHome()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ผลเลือด</a>
+                <a class="nav-link" href="#" style="color: #ffffff">การอนุมัติผลเลือด</a>
               </li>
               <li
                 class="nav-item"
@@ -56,12 +55,22 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
               </li>
-            </ul>
-          </div>
+              <li
+                class="nav-item"
+                @click="goToExportimport()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
+              </li>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
 
 
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
                 class="btn btn-light me-md-2"
@@ -88,7 +97,12 @@
                 ออกจากระบบ
               </button>
             </div>
+
+
+
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -97,7 +111,25 @@
         <div class="card" style="margin: 20px">
           <div class="card-body" style="text-align: left; padding: 30px">
             <div>
-              <h5><b>ระบุข้อมูลส่วนบุคคล</b></h5>
+              <h5 style="width: 200px;"><b>ระบุข้อมูลส่วนบุคคล</b></h5>
+              <!-- <div class="d-flex justify-content-end" style="margin-left: 50px; height: 50px;">
+                
+                
+                <div style="margin-right: 10px;">
+                  <label for="file-upload" class="btn btn-success">
+                     เลือกไฟล์ข้อมูลผู้ป่วย
+                  </label>
+                  <input id="file-upload" type="file" class="d-none" @change="handleFileChange" multiple />
+                  
+                  <div class="text-center">
+                    <p v-if="fileCount > 0">คุณเลือก {{ fileCount }} ไฟล์</p>
+                  </div>
+                </div>
+                
+                <button class="btn btn-success text-white" type="button" style="margin-right: 10px;" @click="submitFile">นำเข้าข้อมูลผู้ป่วย</button>
+                <button class="btn btn-success text-white" type="button" @click="exportCSV">ส่งออกข้อมูลผู้ป่วย</button>
+              </div> -->
+              
               <hr />
               <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>บันทึกข้อความ: </strong> กรุณากรอกข้อมูลตามความเป็นจริง
@@ -854,7 +886,7 @@
                   >
                     <div class="row justify-content-md-center">
                       <div class="col-8">
-                        <label>บันทึกประวัติการแพ้</label>
+                        <label>บันทึกประวัติการแพ้ยาและอาหาร</label>
                       </div>
                       <div class="col-4">
                         <button
@@ -949,7 +981,7 @@
                             id="exampleModalLabel"
                             style="color: #1c2939"
                           >
-                            <b>ประวัติการแพ้</b>
+                            <b>ประวัติการแพ้ยาและอาหาร</b>
                           </h1>
                           <button
                             type="button"
@@ -1244,8 +1276,8 @@
               </div>
             </div>
             <!--ปุ่มลงทะเบียน-->
-            <div class="d-grid gap-2 col-6 mx-auto" style="margin-top: 30px">
-              <button class="btn btn-success" type="button" @click="registerPatient()">
+            <div class="d-grid gap-2 col-6 mx-auto " style="margin-top: 30px">
+              <button class="btn btn-success text-white" type="button" @click="registerPatient()">
                 ลงทะเบียน
               </button>
             </div>
@@ -1360,6 +1392,8 @@ export default {
   data() {
     return {
       cancerType: "",
+      fileCount: 0,
+      file: null,
       cancerState: "",
       formula: "",
       formulas: [],
@@ -1713,6 +1747,36 @@ export default {
       });
   },
   methods: {
+    handleFileChange(event) {
+      // เมื่อมีการเลือกไฟล์ใหม่
+      this.fileCount = event.target.files.length;
+      this.file = event.target.files[0];
+    },
+    async submitFile() {
+      if (!this.file) {
+        alert("Please select a file first!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", this.file);
+
+      try {
+        const response = await axios.post("http://localhost:3000/import-csv", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert(response.data.message);
+        this.fileCount = 0;
+      } catch (error) {
+        console.error(error);
+        alert("Error uploading file");
+      }
+    },
+    exportCSV() {
+      window.location.href = "http://localhost:3000/export/csv";
+    },
     logOut() {
       this.$router.replace("/");
     },
@@ -1734,6 +1798,9 @@ export default {
     },
     goTonewAppoint() {
       this.$router.push(`/appointmentView/${this.$route.params.userId}`);
+    },
+    goToExportimport() {
+      this.$router.push(`/ExportImport/${this.$route.params.userId}`);
     },
     addToAllergy() {
       if (this.allerType && this.allerDetail != "") {

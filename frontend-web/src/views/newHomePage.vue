@@ -22,11 +22,11 @@
 
 
 
-    <!-- nav bar -->
+
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
               <li
                 v-if="user.type == 'nurse'"
@@ -46,7 +46,7 @@
                   aria-current="page"
                   href="#"
                   style="color: #ffffff; font-size: large"
-                  >ผลเลือด</a
+                  >การอนุมัติผลเลือด</a
                 >
               </li>
               <li
@@ -80,16 +80,20 @@
               
               <li
                 class="nav-item"
+                @click="goToExportimport()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="http://localhost:3000/dashboardview" target="_blank" style="color: #ffffff">แดชบอร์ด</a>
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
               </li>
-            </ul>
-          </div>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
 
 
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
                 class="btn btn-light me-md-2"
@@ -116,7 +120,12 @@
                 ออกจากระบบ
               </button>
             </div>
+
+
+
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -751,6 +760,9 @@ export default {
       for (let index = 1; index <= numberOfPages; index++) {
         this.pages.push(index);
       }
+    },
+    goToExportimport() {
+            this.$router.push(`/ExportImport/${this.$route.params.userId}`);
     },
     paginate(posts) {
       let page = this.page;

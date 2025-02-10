@@ -17,8 +17,10 @@ const formatThaiDate = (dateString) => {
 //หน้าประวัติผลข้างเคียง
 const Effects =  () => {
   const [history, setHistory] = useState([]);
-  const HN = '444444'; //test user
-  const appointId = 34; //test user
+  // ดึงค่า HN จาก cookies
+  const HN = Cookies.get("HN").HN;
+  console.log('HN from cookies:', HN);
+  const appointId = req.params.appointId;
 
   useEffect(() => {
     const fetchHistory = async () => {

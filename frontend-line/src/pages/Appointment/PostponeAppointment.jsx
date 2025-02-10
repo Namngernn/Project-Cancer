@@ -55,7 +55,7 @@ const PostponeAppointment = () => {
     const fetchAppointments = async () => {
       if (username) {
         try {
-          const response = await fetch(`http://localhost:3000/PatientAppointment2/${username}/${appointId}`);
+          const response = await fetch(`http://localhost:8080/PatientAppointment2/${username}/${appointId}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -89,7 +89,7 @@ const PostponeAppointment = () => {
               const formattedNewDate = newDate.toISOString().slice(0, 19).replace('T', ' ');
   
               try {
-                const res = await axios.post('http://localhost:3000/checkdatecanpostpone', {
+                const res = await axios.post('http://localhost:8080/checkdatecanpostpone', {
                   datecheck: formattedNewDate,
                   doctorId: firstAppointment.doctorId,
                 });
@@ -132,7 +132,7 @@ const PostponeAppointment = () => {
     const fetchUserIdLine = async () => {
       console.log(username)
       try {
-        const response = await axios.get(`http://localhost:3000/useridline/${username}`);
+        const response = await axios.get(`http://localhost:8080/useridline/${username}`);
         console.log(response.data[0].UserIdLine);
         if (response.data) {
           setUserIdLine(response.data[0].UserIdLine);
@@ -173,7 +173,7 @@ const PostponeAppointment = () => {
   // useEffect(() => {
   //   const fetchAppointmentData = async () => {
   //     try {
-  //       const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
+  //       const response = await axios.post('http://localhost:8080/checkdatecanpostpone', {
   //         datecheck,
   //         doctorId
   //       });
@@ -194,7 +194,7 @@ const PostponeAppointment = () => {
 //       // สร้าง array ของ Promise สำหรับแต่ละวันที่เราต้องการเรียก API
 //       const promises = formattedAppointments.map(async (date) => {
 //         try {
-//           const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
+//           const response = await axios.post('http://localhost:8080/checkdatecanpostpone', {
 //             datecheck: date,  // ส่ง datecheck เป็นวันที่
 //             doctorId: doctorId // ส่ง doctorId ไปด้วย
 //           });
@@ -245,7 +245,7 @@ const PostponeAppointment = () => {
   
 
   const handleSubmit = () => {
-    fetch(`http://localhost:3000/PatientPostpone/${appointId}/${userIdLine}`, {
+    fetch(`http://localhost:8080/PatientPostpone/${appointId}/${userIdLine}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ const BloodResults = () => {
     const fetchFormula = async () => {
       try {
         // console.log(`Fetching formula for user: ${username}`);
-        const response = await fetch(`http://localhost:3000/formulas/${username}`);
+        const response = await fetch(`http://localhost:8080/formulas/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('Data received from API:', data);
@@ -53,7 +53,7 @@ const BloodResults = () => {
     const fetchCancerTypes = async () => {
       try {
         console.log(`Fetching cancer types for user: ${username}`);
-        const response = await fetch(`http://localhost:3000/cancerType/${username}`);
+        const response = await fetch(`http://localhost:8080/cancerType/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('Cancer types received from API:', data);

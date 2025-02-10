@@ -114,7 +114,7 @@ const PatientManual = () => {
     setHN(Cookies.get('HN'));
     const fetchPatientManual = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/PatientManual/${HN}`);
+        const response = await axios.get(`http://localhost:8080/PatientManual/${HN}`);
         setManualData(response.data);
         console.log('Manual Data:', response.data);
       } catch (err) {
@@ -126,7 +126,7 @@ const PatientManual = () => {
 
     const fetchFormulaName = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/getFormulaName/${HN}`);
+        const response = await axios.get(`http://localhost:8080/getFormulaName/${HN}`);
         const data = response.data;
     
         // แมชเอาข้อมูลสูตรยาที่ตรงกัน
@@ -427,7 +427,7 @@ const PatientManual = () => {
       <div className="p-10 text-center">
         {manualData.pdf ? (
           <a
-            href={`http://localhost:3000/${manualData.pdf}`}
+            href={`http://localhost:8080/${manualData.pdf}`}
             className="items-center text-white bt-blue"
             target="_blank"
             rel="noopener noreferrer"

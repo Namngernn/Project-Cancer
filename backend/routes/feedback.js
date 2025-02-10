@@ -6,7 +6,7 @@ const { router } = require("./patients");
 
 app.use(cors());
 
-  let sideEfrouter = express.Router();
+let sideEfrouter = express.Router();
 
 // Line app
 //ผู้ป่วยบันทึกผลข้างเคียง
@@ -74,14 +74,14 @@ router.get("/selectedFeedback/:appointId", async function (req, res, next) {
 });
 
 // เรียกดู allSideEffects
-router.get('/allsideeffects/:side_effect_id', async(req, res) => {
+router.get("/allsideeffects/:side_effect_id", async (req, res) => {
   const side_effect_id = req.params.side_effect_id;
   try {
     const [row] = await pool.query(
       "SELECT side_effect_name FROM allsideeffects where side_effect_id = ?",
       [side_effect_id]
     );
-  res.json(row);
+    res.json(row);
   } catch (error) {
     console.log(error);
   }
@@ -90,66 +90,68 @@ router.get('/allsideeffects/:side_effect_id', async(req, res) => {
 //นงเพิ่ม ฟังก์ชันเพิ่มผลข้างเคียงลงตาราง allsideeffects
 const addSideEffectIfNotExists = async (sideEffectName) => {
   const [rows] = await pool.query(
-      'SELECT side_effect_id FROM allsideeffects WHERE side_effect_name = ?',
-      [sideEffectName]
+    "SELECT side_effect_id FROM allsideeffects WHERE side_effect_name = ?",
+    [sideEffectName]
   );
   if (rows.length > 0) {
-      return rows[0].side_effect_id;
+    return rows[0].side_effect_id;
   } else {
-      const [result] = await pool.query(
-          'INSERT INTO allsideeffects (side_effect_name) VALUES (?)',
-          [sideEffectName]
-      );
-      return result.insertId;
+    const [result] = await pool.query(
+      "INSERT INTO allsideeffects (side_effect_name) VALUES (?)",
+      [sideEffectName]
+    );
+    return result.insertId;
   }
 };
 
 //นงเพิ่ม ดึง patientSideEffect แยกผลข้างเคียง
-router.get('/process-sideeffects/:feedbackId', async (req, res) => {
+router.get("/process-sideeffects/:feedbackId", async (req, res) => {
   const feedbackId = req.params.feedbackId;
   try {
-      const [feedbackRows] = await pool.query(
-          `SELECT f.patientSideEffect, a.HN
+    const [feedbackRows] = await pool.query(
+      `SELECT f.patientSideEffect, a.HN
            FROM feedback f
            JOIN appointment a ON f.appointId = a.appointId
            WHERE f.feedbackId = ?`,
-          [feedbackId]
+      [feedbackId]
+    );
+    if (feedbackRows.length === 0) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+    const patientSideEffect = feedbackRows[0].patientSideEffect;
+    const HN = feedbackRows[0].HN;
+    if (!patientSideEffect) {
+      return res.status(400).json({ message: "No side effects to process" });
+    }
+    const sideEffectsArray = patientSideEffect
+      .split(",")
+      .map((effect) => effect.trim()); // แยกผลข้างเคียงที่คั่นด้วยเครื่องหมาย ,
+    const sideEffectIds = [];
+    for (let effect of sideEffectsArray) {
+      const sideEffectId = await addSideEffectIfNotExists(effect);
+      sideEffectIds.push(sideEffectId);
+    }
+    for (let sideEffectId of sideEffectIds) {
+      const [existingRows] = await pool.query(
+        "SELECT * FROM patientsideeffects WHERE HN = ? AND side_effect_id = ?",
+        [HN, sideEffectId]
       );
-      if (feedbackRows.length === 0) {
-          return res.status(404).json({ message: 'Feedback not found' });
+      if (existingRows.length === 0) {
+        await pool.query(
+          "INSERT INTO patientsideeffects (HN, side_effect_id, feedbackId, has_side_effect) VALUES (?, ?, ?, ?)",
+          [HN, sideEffectId, feedbackId, 1] // เพิ่มผลข้างเคียงค่า 1=มีผลข้างเคียง
+        );
+      } else {
+        await pool.query(
+          "UPDATE patientsideeffects SET has_side_effect = 1 WHERE HN = ? AND side_effect_id = ?",
+          [HN, sideEffectId]
+        );
       }
-      const patientSideEffect = feedbackRows[0].patientSideEffect;
-      const HN = feedbackRows[0].HN;
-      if (!patientSideEffect) {
-          return res.status(400).json({ message: 'No side effects to process' });
-      }
-      const sideEffectsArray = patientSideEffect.split(',').map(effect => effect.trim()); // แยกผลข้างเคียงที่คั่นด้วยเครื่องหมาย ,
-      const sideEffectIds = [];
-      for (let effect of sideEffectsArray) {
-          const sideEffectId = await addSideEffectIfNotExists(effect);
-          sideEffectIds.push(sideEffectId);
-      }
-      for (let sideEffectId of sideEffectIds) {
-          const [existingRows] = await pool.query(
-              'SELECT * FROM patientsideeffects WHERE HN = ? AND side_effect_id = ?',
-              [HN, sideEffectId]
-          );
-          if (existingRows.length === 0) {
-              await pool.query(
-                  'INSERT INTO patientsideeffects (HN, side_effect_id, feedbackId, has_side_effect) VALUES (?, ?, ?, ?)',
-                  [HN, sideEffectId, feedbackId, 1] // เพิ่มผลข้างเคียงค่า 1=มีผลข้างเคียง
-              );
-          } else {
-              await pool.query(
-                  'UPDATE patientsideeffects SET has_side_effect = 1 WHERE HN = ? AND side_effect_id = ?',
-                  [HN, sideEffectId]
-              );
-          }
-      }
-      res.json({ message: 'Side effects processed successfully', sideEffectIds });
+    }
+    res.json({ message: "Side effects processed successfully", sideEffectIds });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'An error occurred', error });
+    console.error(error);
+    res.status(500).json({ message: "An error occurred", error });
   }
 });
 

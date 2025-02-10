@@ -1,37 +1,44 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
-const pool = require("./config").default;
 const http = require("http");
 const { Server } = require("socket.io");
+const pool = require("./config").default;
+
+const app = express();
+const port = 3000; // กำหนดพอร์ตที่ใช้
 const server = http.createServer(app);
 
-// ingadd
-app.set("port", 3000);
-const port = app.get("port")
-app.get("/", function (req, res) {
-  res.send("hello world");
-});
+// ตั้งค่า CORS
+const corsOptions = {
+  origin: "http://localhost:8080", // URL ของ Frontend
+  methods: ["GET", "POST"],
+  credentials: true, // อนุญาตให้ส่ง Cookies
+};
+app.use(cors(corsOptions));
 
+// ตั้งค่า Body Parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Static Files
+app.use(express.static("uploads"));
+
+// ตั้งค่า Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:8080",
     methods: ["GET", "POST"],
   },
 });
 
-
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 io.on("connection", (socket) => {
-  socket.on("CH01", function (msg) {
+  console.log("A user connected");
+  socket.on("CH01", (msg) => {
     socket.broadcast.emit("info", msg);
   });
 });
 
+// Routes
 const doctorRouter = require("./routes/doctor");
 const patientsRouter = require("./routes/patients");
 const formulaRouter = require("./routes/formula");
@@ -49,14 +56,45 @@ app.use(appointmentRouter.router);
 app.use(bloodResultRouter.router);
 app.use(feedbackRouter.router);
 app.use(userRouter.router);
-app.use(express.static("uploads"));
-//app.use(ocrRouter.router)
 
-// server.listen(3000, function () {
-//     console.log('Example app listening on port 3000')
-// })
-
-// ingadd
-app.listen(port, function () {
-  console.log(`Server is running on port ${port}`)
+// Root Route
+app.get("/", (req, res) => {
+  res.send("CORS updated to allow localhost:3000");
 });
+
+// Start Server
+server.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
+// // ingadd
+// app.set("port", 3000);
+// const port = app.get("port");
+// app.get("/", function (req, res) {
+//   res.send("hello world");
+// });
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
+
+// // nxg add
+// const corsOptions = {
+//   origin: 'http://localhost:8080',
+// };
+
+// app.get('/', (req, res) => {
+//   res.send('CORS updated to allow localhost:8080');
+// });
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// io.on("connection", (socket) => {
+//   socket.on("CH01", function (msg) {
+//     socket.broadcast.emit("info", msg);
+//   });
+// });

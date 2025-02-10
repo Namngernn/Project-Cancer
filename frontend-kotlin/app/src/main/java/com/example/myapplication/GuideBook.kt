@@ -108,8 +108,8 @@ class GuideBook : AppCompatActivity() {
                             val handler = Handler(Looper.getMainLooper())
                             var image:Bitmap? = null
                             executor.execute{
-                                pdfDocument = "http://10.50.8.3:3000/".plus(i.pdf)
-                                val imageUrl = "http://10.50.8.3:3000/".plus(i.QRcode)
+                                pdfDocument = "http://10.50.8.3:8080/".plus(i.pdf)
+                                val imageUrl = "http://10.50.8.3:8080/".plus(i.QRcode)
                                 Log.d("image", imageUrl)
                                 try {
                                     val `in` = java.net.URL(imageUrl).openStream()

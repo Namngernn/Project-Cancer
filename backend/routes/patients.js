@@ -4,6 +4,8 @@ const app = express();
 const cors = require("cors");
 const moment = require("moment");
 const path = require("path");
+const { Parser } = require("json2csv");
+const csv = require("csv-parser");
 
 const fileUpload = require("express-fileupload");
 const uploadOpts = {
@@ -758,20 +760,20 @@ router.get("/patient/:HN/:treatmentId", async function (req, res, next) {
     //   HN
     // );
     const [row1, f1] = await pool.query(
-      `SELECT patient.HN, patient.firstName, patient.lastName, patient.birthDate, patient.phoneNumber,
-        patient.IDcard AS patient_IDcard, patient.gender, patient.doctorId AS patient_doctorId, patient.allergy,
-        MAX(cancer_patient.cancerId) AS cancer_patient_cancerId, MAX(cancer_patient.cancerState) AS cancerState,
-        MAX(cancer.cancerId) AS cancer_cancerId, cancer.cancerType AS cancerType,
-        MAX(treatment.treatmentId) AS treatmentId, MAX(treatment.formulaId) AS formulaId,
-        MAX(treatment.treatmentStatus) AS treatmentStatus,
-        MAX(bloodresult.brId) AS brId, MAX(bloodresult.date) AS date,
+      `SELECT patient.HN, patient.prefix, patient.firstName, patient.lastName, patient.birthDate, patient.phoneNumber, 
+        patient.IDcard AS patient_IDcard, patient.gender, patient.doctorId AS patient_doctorId, patient.allergy, 
+        MAX(cancer_patient.cancerId) AS cancer_patient_cancerId, MAX(cancer_patient.cancerState) AS cancerState, 
+        MAX(cancer.cancerId) AS cancer_cancerId, cancer.cancerType AS cancerType, 
+        MAX(treatment.treatmentId) AS treatmentId, MAX(treatment.formulaId) AS formulaId, 
+        MAX(treatment.treatmentStatus) AS treatmentStatus, 
+        MAX(bloodresult.brId) AS brId, MAX(bloodresult.date) AS date, 
         MAX(bloodresult.suggestion) AS suggestion, MAX(bloodresult.status) AS status
-        FROM patient
-        JOIN cancer_patient ON patient.HN = cancer_patient.HN
-        JOIN cancer ON cancer.cancerId = cancer_patient.cancerId
-        JOIN treatment ON treatment.HN = patient.HN
-        JOIN bloodresult ON treatment.treatmentId = bloodresult.treatmentId
-        WHERE treatment.HN = ?
+        FROM patient 
+        JOIN cancer_patient ON patient.HN = cancer_patient.HN 
+        JOIN cancer ON cancer.cancerId = cancer_patient.cancerId 
+        JOIN treatment ON treatment.HN = patient.HN 
+        JOIN bloodresult ON treatment.treatmentId = bloodresult.treatmentId 
+        WHERE treatment.HN = ? 
         GROUP BY cancer.cancerType;
         `,
       HN
@@ -1022,6 +1024,17 @@ router.post("/selectedPatient", async function (req, res, next) {
       }
       data.push(row);
     }
+    /*if (selected == '') {
+            for (let i = 0; i < rows.length; i++) {
+                const [row, _] = await pool.query(`select * from treatment join patient on patient.HN=treatment.HN join bloodresult on treatment.treatmentId=bloodresult.treatmentId where brId = ?`, [rows[i].brId])
+                const [row1, f1] = await pool.query(`select * from patient join cancer_patient on patient.HN=cancer_patient.HN join cancer on cancer.cancerId=cancer_patient.cancerId join treatment on treatment.HN=patient.HN join bloodresult on treatment.treatmentId=bloodresult.treatmentId where brId = ?`, rows[i].brId)
+                for (j = 0; j < row1.length; j++) {
+                    cancer.push(row1[j])
+                }
+                row[i].cancer = cancer
+                data.push(row)
+            }
+        }*/
     if (data.length != 0) {
       res.json(data);
     } else {
@@ -1032,7 +1045,6 @@ router.post("/selectedPatient", async function (req, res, next) {
   }
 });
 
-//add patients guidebook QRCode on web
 router.post(
   `/addQRcode`,
   imgUpload.single("image"),
@@ -1060,7 +1072,6 @@ router.post(
   }
 );
 
-//add patients guidebook on web
 router.post(
   `/savePDF`,
   imgUpload.single("file"),
@@ -1208,6 +1219,288 @@ router.get(`/check-hn/:newhn`, async function (req, res, next) {
   } catch (error) {
     console.error("Error checking HN:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// DASHBOARD แดชบอร์ด
+
+// กราฟ2
+router.get("/age-groups", async (req, res) => {
+  try {
+    // Query ข้อมูลจากตาราง patient
+    const [rows] = await pool.query(`
+          SELECT 
+              gender,
+              FLOOR(DATEDIFF(CURDATE(), birthDate) / 365) AS age
+          FROM patient;
+      `);
+
+    // จัดกลุ่มข้อมูลตามช่วงอายุและเพศ
+    const ageGroups = {
+      "0-4Male": 0,
+      "0-4Female": 0,
+      "5-14Male": 0,
+      "5-14Female": 0,
+      "15-19Male": 0,
+      "15-19Female": 0,
+      "20-59Male": 0,
+      "20-59Female": 0,
+      "60+Male": 0,
+      "60+Female": 0,
+    };
+
+    rows.forEach((row) => {
+      const { gender, age } = row;
+      if (age <= 4) {
+        gender === "Male" ? ageGroups["0-4Male"]++ : ageGroups["0-4Female"]++;
+      } else if (age <= 14) {
+        gender === "Male" ? ageGroups["5-14Male"]++ : ageGroups["5-14Female"]++;
+      } else if (age <= 19) {
+        gender === "Male"
+          ? ageGroups["15-19Male"]++
+          : ageGroups["15-19Female"]++;
+      } else if (age <= 59) {
+        gender === "Male"
+          ? ageGroups["20-59Male"]++
+          : ageGroups["20-59Female"]++;
+      } else {
+        gender === "Male" ? ageGroups["60+Male"]++ : ageGroups["60+Female"]++;
+      }
+    });
+    res.json(ageGroups);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error" });
+  }
+});
+
+// กราฟ 1
+// router.get("/cancer-summary", async (req, res) => {
+//   try {
+//     const [rows] = await pool.query(`
+//           SELECT c.cancerType, g.gender, COUNT(p.IDcard) AS total
+//           FROM (SELECT 'ชาย' AS gender UNION SELECT 'หญิง') g
+//           CROSS JOIN cancer c
+//           LEFT JOIN cancer_patient cp ON c.cancerId = cp.cancerId
+//           LEFT JOIN patient p ON cp.IDcard = p.IDcard AND p.gender = g.gender
+//           GROUP BY c.cancerType, g.gender
+//           ORDER BY c.cancerType, g.gender;
+//       `);
+//     res.json(rows);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Error" });
+//   }
+// });
+
+// graph1 ingfah
+router.get("/cancer-summary", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+          SELECT
+              c.cancerType,
+              g.gender,
+              COUNT(p.IDcard) AS total
+          FROM
+              (SELECT 'ชาย' AS gender UNION SELECT 'หญิง') g
+          CROSS JOIN
+              cancer c
+          LEFT JOIN
+              cancer_patient cp ON c.cancerId = cp.cancerId
+          LEFT JOIN
+              patient p ON cp.IDcard = p.IDcard AND p.gender = g.gender
+          GROUP BY
+              c.cancerType, g.gender
+          ORDER BY
+              c.cancerType, g.gender;
+      `);
+    // แปลงข้อมูลเป็น JSON ในรูปแบบที่ต้องการ
+    const result = {};
+    rows.forEach((row) => {
+      const key = `${row.cancerType} ${row.gender}`;
+      result[key] = row.total;
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error" });
+  }
+});
+
+// graph 4 ผลข้างเคียง
+router.get("/graph-feedback", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+          a.side_effect_name,
+          c.cancerType
+      FROM patientsideeffects p
+      INNER JOIN allsideeffects a ON p.side_effect_id = a.side_effect_id
+      INNER JOIN cancer_patient cp ON p.HN = cp.HN
+      INNER JOIN cancer c ON cp.cancerId = c.cancerId;
+      `);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error" });
+  }
+});
+
+// EXPORT ข้อมูล
+router.get("/export/csv", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM patient");
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No data found" });
+    }
+
+    const fields = Object.keys(rows[0]);
+    const json2csv = new Parser({ fields });
+    const csv = json2csv.parse(rows);
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("data_patient.csv");
+    res.send(csv);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// IMPORT DATA
+router.post("/import-csv", upload.single("file"), async (req, res) => {
+  const filePath = req.file.path;
+
+  try {
+    const data = [];
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("data", (row) => {
+        data.push(row);
+      })
+      .on("end", async () => {
+        // นำข้อมูลเข้าสู่ฐานข้อมูล
+        const query = `
+          INSERT INTO patient (HN, prefix, firstName, lastName, birthDate, phoneNumber, IDcard, gender, doctorId, allergy)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const conn = await pool.getConnection();
+        try {
+          await Promise.all(
+            data.map((row) =>
+              conn.query(query, [
+                row.HN,
+                row.prefix,
+                row.firstName,
+                row.lastName,
+                row.birthDate,
+                row.phoneNumber,
+                row.IDcard,
+                row.gender,
+                row.doctorId,
+                row.allergy,
+              ])
+            )
+          );
+          res.status(200).json({ message: "Data imported successfully!" });
+        } catch (error) {
+          console.error("Error inserting data:", error);
+          res.status(500).json({ error: "Failed to insert data" });
+        } finally {
+          conn.release();
+        }
+        fs.unlinkSync(filePath); // ลบไฟล์หลังจากใช้งานเสร็จ
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to process file" });
+  }
+});
+
+router.get("/fomula-summary", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT appointment.HN, GROUP_CONCAT(feedback.patientSideEffect SEPARATOR '*') AS patientSideEffects, appointment.appointId, cancer_patient.cancerId, GROUP_CONCAT(cancer.cancerType SEPARATOR '*') AS cancerTypes, formula.formulaName FROM feedback JOIN appointment ON appointment.appointId = feedback.appointId JOIN cancer_patient ON cancer_patient.HN = appointment.HN JOIN cancer ON cancer.cancerId = cancer_patient.cancerId JOIN treatment ON treatment.HN = cancer_patient.HN JOIN formula ON formula.formulaId = treatment.formulaId GROUP BY appointment.HN, formula.formulaName;
+    `);
+    // รายการอาการทั้งหมด
+    const sideEffectsList = [
+      "กดการทำงานของไขกระดูก หรือภูมิต้านทานต่ำ",
+      "เยื่อบุปากอักเสบ",
+      "ผมร่วง/ ผมบาง",
+      "อ่อนเพลีย / ครั่นเนื้อครั่นตัว",
+      "ผิวหนังสีเข้มขึ้น",
+      "ใจสั่น / หอบเหนื่อยง่าย",
+      "กระเพาะปัสสาวะอักเสบ",
+    ];
+    // รายการ Fomula ทั้งหมด
+    const formulaNamesList = [
+      "AC",
+      "FAC",
+      "Cis CCRT Cervix",
+      "Carbo CCRT Cervix",
+      "5FU-Leucovorin",
+      "Pac-Carbo",
+    ];
+    const result = {};
+    rows.forEach((row) => {
+      const patientSideEffects = row.patientSideEffects
+        ? row.patientSideEffects
+            .split("*")
+            .flatMap((effect) => effect.split(","))
+            .map((effect) => effect.trim())
+        : [];
+
+      const effectCounts = sideEffectsList.reduce((acc, effect) => {
+        acc[effect] = patientSideEffects.filter(
+          (sideEffect) => sideEffect === effect
+        ).length;
+        return acc;
+      }, {});
+      const formulaName = row.formulaName;
+
+      if (!result[formulaName]) {
+        result[formulaName] = sideEffectsList.reduce((acc, effect) => {
+          acc[effect] = 0;
+          return acc;
+        }, {});
+        result[formulaName].patients = new Set();
+      }
+      result[formulaName].patients.add(row.HN);
+      sideEffectsList.forEach((effect) => {
+        result[formulaName][effect] += effectCounts[effect];
+      });
+    });
+    // เติมข้อมูลสำหรับ formula ที่ไม่มีข้อมูล
+    formulaNamesList.forEach((formulaName) => {
+      if (!result[formulaName]) {
+        result[formulaName] = sideEffectsList.reduce((acc, effect) => {
+          acc[effect] = 0;
+          return acc;
+        }, {});
+        result[formulaName].patients = new Set();
+      }
+    });
+    // คำนวณอัตราส่วนในแต่ละอาการ
+    Object.keys(result).forEach((formulaName) => {
+      const totalSideEffects = sideEffectsList.reduce(
+        (sum, effect) => sum + result[formulaName][effect],
+        0
+      );
+      const totalPatients = result[formulaName].patients.size;
+      sideEffectsList.forEach((effect) => {
+        if (totalSideEffects > 0) {
+          result[formulaName][effect] =
+            (result[formulaName][effect] / totalSideEffects) * 100;
+        }
+      });
+      delete result[formulaName].patients;
+    });
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error" });
   }
 });
 

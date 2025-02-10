@@ -1,39 +1,40 @@
+
 <template>
   <div class="row g-0 text-center">
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
-              <li
-                v-if="user.type == 'nurse'"
+              <li v-if="user.type == 'nurse'"
                 class="nav-item"
                 @click="goToRegis()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ลงทะเบียนผู้ป่วย</a>
+                <a class="nav-link" href="#" style="color: #ffffff"
+                  >ลงทะเบียนผู้ป่วย</a
+                >
               </li>
               <li
                 class="nav-item"
                 @click="goTonewHome()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a
-                  class="nav-link"
-                  aria-current="page"
-                  href="#"
-                  style="color: #ffffff; font-size: large"
-                  >ผลเลือด</a
-                >
+                <a class="nav-link" href="#" style="color: #ffffff">การอนุมัติผลเลือด</a>
               </li>
               <li
                 class="nav-item"
                 @click="goTonewAppoint()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link active" href="#" style="color: #ffffff">นัดหมาย</a>
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="#"
+                  style="color: #ffffff; font-size: large"
+                  >นัดหมาย</a
+                >
               </li>
-
               <li
                 class="nav-item"
                 @click="goToPatient()"
@@ -41,6 +42,7 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">ประวัติการรักษา</a>
               </li>
+
               <li
                 class="nav-item"
                 @click="goToMedFor()"
@@ -55,12 +57,22 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
               </li>
-            </ul>
-          </div>
+              <li
+                class="nav-item"
+                @click="goToExportimport()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
+              </li>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8081/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
 
-          
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
                 class="btn btn-light me-md-2"
@@ -87,7 +99,9 @@
                 ออกจากระบบ
               </button>
             </div>
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -696,7 +710,7 @@ export default {
     const HN = this.$route.params.HN;
     const treatmentId = this.$route.params.treatmentId;
     axios
-      .get(`http://localhost:3000/user/${this.$route.params.userId}`)
+      .get(`http://localhost:8080/user/${this.$route.params.userId}`)
       .then((response) => {
         this.user = response.data[0];
       })
@@ -704,7 +718,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/thisappointment/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/thisappointment/${HN}/${treatmentId}`)
       .then((response) => {
         this.appointment = response.data;
         for (let i = 0; i < this.appointment.length; i++) {
@@ -713,7 +727,7 @@ export default {
           );
           axios
             .get(
-              `http://localhost:3000/myformula/${
+              `http://localhost:8080/myformula/${
                 this.appointment[i].HN / this.appointment[i].treatmentId
               }`
             )
@@ -729,7 +743,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/giveMed/${treatmentId}`)
+      .get(`http://localhost:8080/giveMed/${treatmentId}`)
       .then((response) => {
         this.giveMed = response.data;
       })
@@ -737,7 +751,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/patient/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/patient/${HN}/${treatmentId}`)
       .then((response) => {
         this.patient = response.data[0];
         let page = moment().format("YYYY") - this.patient.birthDate.split("-")[0];
@@ -747,7 +761,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/doctor/${HN}`)
+      .get(`http://localhost:8080/doctor/${HN}`)
       .then((response) => {
         this.doctor = response.data[0];
       })
@@ -755,13 +769,13 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/currentTreatment/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/currentTreatment/${HN}/${treatmentId}`)
       .then((response) => {
         this.treatment = response.data;
         this.patient["numberOfRound"] = response.data[0].numberOfRound;
         for (let i = 0; i < this.treatment.length; i++) {
           axios
-            .get(`http://localhost:3000/treatmentDoctor/${this.treatment[i].doctorId}`)
+            .get(`http://localhost:8080/treatmentDoctor/${this.treatment[i].doctorId}`)
             .then((response) => {
               this.treatment[i]["doctor"] =
                 response.data[0].firstName + " " + response.data[0].lastName;
@@ -775,7 +789,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/chemist`)
+      .get(`http://localhost:8080/chemist`)
       .then((response) => {
         this.chemist = response.data;
       })
@@ -783,7 +797,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/treatmentFeedback/${treatmentId}`)
+      .get(`http://localhost:8080/treatmentFeedback/${treatmentId}`)
       .then((response) => {
         this.feedbacks = response.data;
         for (let i = 0; i < this.feedbacks.length; i++) {
@@ -792,7 +806,7 @@ export default {
           );
           axios
             .get(
-              `http://localhost:3000/myformula/${this.feedbacks[i].HN}/${this.feedbacks[i].treatmentId}`
+              `http://localhost:8080/myformula/${this.feedbacks[i].HN}/${this.feedbacks[i].treatmentId}`
             )
             .then((response) => {
               this.feedbacks[i].formulaName = response.data[0].formulaName;
@@ -819,7 +833,7 @@ export default {
           HN: this.$route.params.HN,
         };
         axios
-          .post(`http://localhost:3000/saveGiveMed`, data)
+          .post(`http://localhost:8080/saveGiveMed`, data)
           .then((response) => {
             this.appointment = response.data;
             for (let i = 0; i < this.appointment.length; i++) {
@@ -845,7 +859,7 @@ export default {
         treatmentId: appoint.treatmentId,
       };
       axios
-        .post(`http://localhost:3000/appointment/giveMed`, data)
+        .post(`http://localhost:8080/appointment/giveMed`, data)
         .then((response) => {
           this.selectGiveMed = response.data;
         })
@@ -860,7 +874,7 @@ export default {
         appointId: this.selectAppoint.appointId,
       };
       axios
-        .post(`http://localhost:3000/completeAppoint`, data)
+        .post(`http://localhost:8080/completeAppoint`, data)
         .then((response) => {
           this.appointment = response.data;
           for (let i = 0; i < this.appointment.length; i++) {
@@ -886,7 +900,7 @@ export default {
           treatmentId: this.$route.params.treatmentId,
         };
         axios
-          .post(`http://localhost:3000/completeFeedback`, data)
+          .post(`http://localhost:8080/completeFeedback`, data)
           .then((response) => {
             this.feedbacks = response.data;
             for (let i = 0; i < this.feedbacks.length; i++) {
@@ -895,7 +909,7 @@ export default {
               );
               axios
                 .get(
-                  `http://localhost:3000/myformula/${this.feedbacks[i].HN}/${this.feedbacks.treatmentId}`
+                  `http://localhost:8080/myformula/${this.feedbacks[i].HN}/${this.feedbacks.treatmentId}`
                 )
                 .then((response) => {
                   this.feedbacks[i].formulaName = response.data[0].formulaName;
@@ -978,7 +992,7 @@ export default {
 
     // ส่งคำขอ axios
     axios
-      .post(`http://localhost:3000/appointDate/${this.patient.UserIdLine}`, data)
+      .post(`http://localhost:8080/appointDate/${this.patient.UserIdLine}`, data)
       .then((response) => {
         this.appointment = response.data;
         for (let i = 0; i < this.appointment.length; i++) {

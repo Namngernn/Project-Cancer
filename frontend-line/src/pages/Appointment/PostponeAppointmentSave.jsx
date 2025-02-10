@@ -51,7 +51,7 @@ const PostponeAppointment = () => {
 
   useEffect(() => {
     if (username) {
-      fetch(`http://localhost:3000/PatientAppointment2/${username}/${appointId}`)
+      fetch(`http://localhost:8080/PatientAppointment2/${username}/${appointId}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -102,7 +102,7 @@ const PostponeAppointment = () => {
     const fetchUserIdLine = async () => {
       console.log(username)
       try {
-        const response = await axios.get(`http://localhost:3000/useridline/${username}`);
+        const response = await axios.get(`http://localhost:8080/useridline/${username}`);
         console.log(response.data[0].UserIdLine);
         if (response.data) {
           setUserIdLine(response.data[0].UserIdLine);
@@ -143,7 +143,7 @@ const PostponeAppointment = () => {
   useEffect(() => {
     const fetchAppointmentData = async () => {
       try {
-        const response = await axios.post('http://localhost:3000/checkdatecanpostpone', {
+        const response = await axios.post('http://localhost:8080/checkdatecanpostpone', {
           datecheck,
           doctorId
         });
@@ -180,7 +180,7 @@ const PostponeAppointment = () => {
   }
 
   const handleSubmit = () => {
-    fetch(`http://localhost:3000/PatientPostpone/${appointId}/${userIdLine}`, {
+    fetch(`http://localhost:8080/PatientPostpone/${appointId}/${userIdLine}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1131,4 +1131,28 @@ router.get("/getAppointment", async (req, res) => {
   }
 });
 
+router.get("/weight/:HN", async (req, res) => {
+  const HN = req.params.HN;
+
+  try {
+    // คำสั่ง SQL
+    const query = "SELECT NUMWEIGHT FROM weight WHERE HN = ?";
+
+    // ใช้ pool.query เพื่อดึงข้อมูล
+    const [results] = await pool.query(query, [HN]);
+
+    // ตรวจสอบว่าพบข้อมูลหรือไม่
+    if (results.length === 0) {
+      return res.status(404).json({ message: "ไม่พบข้อมูล" });
+    }
+
+    // ส่งค่าลิสต์ของ NUMWEIGHT กลับ
+    const numweights = results.map((row) => row.NUMWEIGHT);
+    res.json({ numweights });
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูล" });
+  }
+});
+
 exports.router = router;

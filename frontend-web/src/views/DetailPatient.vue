@@ -28,7 +28,7 @@
                   padding-right: 20px;
                 "
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ผลเลือด</a>
+                <a class="nav-link" href="#" style="color: #ffffff">การอนุมัติผลเลือด</a>
               </li>
               <li
                 class="nav-item"
@@ -217,7 +217,7 @@
             <div class="container" style="margin-bottom: 20px">
               <div class="row g-0">
                 <div class="col-2">
-                  <b>ประวัติการแพ้</b>
+                  <b>ประวัติการแพ้ยาและอาหาร</b>
                 </div>
                 <div class="col">
                   <label v-if="patient.allergy == 'ไม่เคยแพ้'"
@@ -456,11 +456,318 @@
       </div>
     </div>
 
-    <h1>กราฟ</h1>
+
+
+
+
+    <div class="col-md-5 card" style="margin-left: 145px">
+              <div class="card-header" style="background-color: #90eeb7">
+                <b>ผลเลือด</b>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr class="table">
+                      <th scope="col">ผลเลือด</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="table">
+                    <tr v-for="blood in bloodresult" :key="blood.brId">
+                      <td>{{ blood.picture }}</td>
+                      <td>
+                        <a
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal4"
+                          @click="openIMG(blood)"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-eye-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                            <path
+                              d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"
+                            />
+                          </svg>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              class="modal fade"
+              id="exampleModal4"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">ผลเลือด</h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="card-body" style="text-align: left">
+                      <h5 class="col-sm-3" style="color: #0a6b3a"><b>รายงานผล</b></h5>
+                      <div
+                        class="mb-3"
+                        style="
+                          width: 80%;
+                          height: 450px;
+                          margin: auto;
+                          background-color: white;
+                          border: 1px solid #0a6b3a;
+                        "
+                      >
+                        <img style="width: 100%; height: 100%" :src="this.img" />
+                      </div>
+                      <form style="margin-top: 10px">
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label"><b>สถานะ : </b></label>
+                          <div class="col-sm-4" style="text-align: left">
+                            <div
+                              class="col"
+                              v-if="selectedBloodresult.status == 'รออนุมัติผลเลือด'"
+                            >
+                              <label
+                                v-if="selectedBloodresult.status == 'อนุมัติผลเลือด'"
+                                >{{ selectedBloodresult.status }}</label
+                              >
+                              <select
+                                v-if="selectedBloodresult.status != 'อนุมัติผลเลือด'"
+                                class="form-select"
+                                v-model="status"
+                              >
+                                <option selected disabled>
+                                  {{ selectedBloodresult.status }}
+                                </option>
+                                <option
+                                  value="yes"
+                                  :disabled="
+                                    selectedBloodresult.status == 'อนุมัติผลเลือด'
+                                  "
+                                >
+                                  อนุมัติผลเลือด
+                                </option>
+                                <option
+                                  value="no"
+                                  :disabled="
+                                    selectedBloodresult.status == 'ส่งผลเลือดอีกครั้ง'
+                                  "
+                                >
+                                  ส่งผลเลือดอีกครั้ง
+                                </option>
+                              </select>
+                            </div>
+                            <div
+                              class="col"
+                              v-if="
+                                selectedBloodresult.status == 'อนุมัติผลเลือด' ||
+                                selectedBloodresult.status == 'ส่งผลเลือดอีกครั้ง'
+                              "
+                            >
+                              <label>{{ selectedBloodresult.status }}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="row mb-3"
+                          v-if="
+                            status == 'yes' ||
+                            selectedBloodresult.status == 'อนุมัติผลเลือด'
+                          "
+                        >
+                          <label class="col-sm-2 col-form-label"><b>สูตรยา : </b></label>
+                          <div class="col-sm-4" style="text-align: left">
+                            {{ patient.formulaName }}
+                            <div class="col"></div>
+                          </div>
+                        </div>
+                        <div
+                          class="row mb-3"
+                          v-if="
+                            status == 'yes' ||
+                            selectedBloodresult.status == 'อนุมัติผลเลือด'
+                          "
+                        >
+                          <label class="col-sm-2 col-form-label"><b>ชนิดยา : </b></label>
+                          <div class="col-sm-10" style="text-align: left">
+                            <div class="col">
+                              <div class="form-check form-check-inline">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="inlineRadioOptions"
+                                  id="inlineRadio1"
+                                  v-model="medType"
+                                  value="ฉีดเข้าเส้นเลือด"
+                                />
+                                <label class="form-check-label" for="inlineRadio1"
+                                  >ชนิดฉีด</label
+                                >
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="inlineRadioOptions"
+                                  id="inlineRadio2"
+                                  v-model="medType"
+                                  value="รับประทาน"
+                                />
+                                <label class="form-check-label" for="inlineRadio2"
+                                  >ชนิดรับประทาน</label
+                                >
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="row mb-3"
+                          v-if="
+                            status == 'yes' ||
+                            selectedBloodresult.status == 'อนุมัติผลเลือด'
+                          "
+                        >
+                          <div
+                            class="col-sm-10"
+                            style="text-align: left"
+                            v-for="(med, index) in medicine"
+                            :key="med.medId"
+                          >
+                            <div class="row g-3 align-items-center">
+                              <div class="col-sm-4">
+                                <label for="inputPassword6" class="col-form-label">{{
+                                  med.medName
+                                }}</label>
+                              </div>
+                              <div class="col-sm-3">
+                                <div class="input-group mb-3">
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="ปริมาณ"
+                                    aria-label="Recipient's username"
+                                    aria-describedby="basic-addon2"
+                                    v-model="amount[index]"
+                                  />
+                                  <span class="input-group-text" id="basic-addon2"
+                                    >มก.</span
+                                  >
+                                </div>
+                              </div>
+                              <div class="col-sm-2" v-if="medType == 'รับประทาน'">
+                                <div class="input-group mb-3">
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="จำนวน"
+                                    aria-label="Recipient's username"
+                                    aria-describedby="basic-addon2"
+                                    v-model="tab[index]"
+                                  />
+                                  <span class="input-group-text" id="basic-addon2"
+                                    >เม็ด</span
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <label class="col-sm-3 col-form-label"><b>ข้อเสนอแนะ</b></label
+                      ><br />
+                      <label
+                        class="form-control"
+                        v-if="
+                          selectedBloodresult.status != 'รออนุมัติผลเลือด' &&
+                          selectedBloodresult.suggestion == null
+                        "
+                        >-</label
+                      >
+                      <label
+                        class="form-control"
+                        v-else-if="selectedBloodresult.status != 'รออนุมัติผลเลือด'"
+                        >{{ selectedBloodresult.suggestion }}</label
+                      >
+                      <textarea
+                        v-else-if="selectedBloodresult.status == 'รออนุมัติผลเลือด'"
+                        class="form-control"
+                        id="exampleFormControlTextarea1"
+                        rows="3"
+                        v-model="suggestion"
+                      ></textarea>
+                
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                    v-if="
+                      selectedBloodresult.status == 'รออนุมัติผลเลือด' &&
+                      user.type == 'doctor'
+                    "
+                  >
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                      ยกเลิก
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      data-bs-dismiss="modal"
+                      @click="saveComment()"
+                    >
+                      ตกลง
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h3>กราฟแสดงข้อมูลผู้ป่วย</h3>
+    <h4>{{ patient.prefix }}{{ patient.firstName }} {{ patient.lastName }}</h4>
     <div class="line-chart-container">
-      <Line :data="datachartweight" :options="optionchartweight" />
-      <Line :data="datacharteffect" :options="optioncharteffect" />
+      <!-- <Line :data="datachartweight" :options="optioncharteffect" /> -->
+      <Line :data="datacharteffect" :options="optionchartweight" />
+      
+      
     </div>
+
+<!-- แปะไว้เฉยๆ -->
+    <Bar id="my-chart-id-1" :options="chartOptions1" :data="chartData1" />
+    <Radar :data="radarData" :options="radarOptions" />
+
+
+
+
+
+
+
+    
   </div>
 </template>
 
@@ -470,32 +777,135 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "vue-chartjs";
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    RadialLinearScale,
+    Filler,
+  } from "chart.js";
+import { Line, Radar, Bar } from "vue-chartjs";
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    RadialLinearScale,
+    Filler
+  );
 export default {
   name: "DetailPatient",
   components: {
     Line,
+    Radar,
+    Bar
   },
   data() {
     return {
+      chartOptions1: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom",
+            },
+            title: {
+              display: true,
+              text: "กราฟแท่งแสดงจำนวนผู้ป่วยแยกตามชนิดมะเร็ง",
+            },
+          },
+        },
+        chartData1: {
+          labels: [
+            "ครั้งที่1",
+            "ครั้งที่2",
+            "ครั้งที่3",
+            "ครั้งที่4",
+            "ครั้งที่5",
+          ],
+          datasets: [
+            {
+              label: "ผมร่วง",
+              backgroundColor: "rgba(54, 162, 235, 0.6)",
+              data: [0, 1, 0, 0, 1],
+            },
+            {
+              label: "ใจสั่น",
+              backgroundColor: "rgba(255, 99, 132, 0.6)",
+              data: [0, 1, 0, 0, 1],
+            },
+            {
+              label: "ครั่นเนื้อครั่นตัว",
+              backgroundColor: "rgba(179,181,198,0.2)",
+              data: [10, 1, 1, 1, 10],
+            },
+            {
+              label: "เหนื่อยง่าย",
+              backgroundColor: "rgba(255,99,132,0.2)",
+              data: [10, 1, 10, 10, 10],
+            },
+            {
+              label: "ใจสั่น",
+              backgroundColor: "rgba(255,206,86,0.2)",
+              data: [1, 10, 10, 10, 10],
+            },
+            {
+              label: "วิงเวียนศีรษะ",
+              backgroundColor: "rgba(75,192,192,0.2)",
+              data: [1, 10, 10, 1, 1],
+            },
+            {
+              label: "อาเจียน",
+              backgroundColor: "rgba(153,102,255,0.2)",
+              data: [10, 1, 10, 1, 1],
+            },
+          ],
+        },
+      radarData: {
+          labels: [
+            "ผมร่วง",
+            "ใจสั่น",
+            "ครั่นเนื้อครั่นตัว",
+            "เหนื่อยง่าย",
+            "วิงเวียนศีรษะ",
+            "อาเจียน",
+            "ผิวหนังสีเข้ม",
+          ],
+          datasets: [
+            {
+              label: "บันทึกผลข้างเคียงครั้งที่1",
+              backgroundColor: "rgba(179,181,198,0.2)",
+              borderColor: "rgba(179,181,198,1)",
+              pointBackgroundColor: "rgba(179,181,198,1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(179,181,198,1)",
+              data: [0,0,1,0,1,0,1],
+            },
+            {
+              label: "บันทึกผลข้างเคียงครั้งที่2",
+              backgroundColor: "rgba(255,99,132,0.2)",
+              borderColor: "rgba(255,99,132,1)",
+              pointBackgroundColor: "rgba(255,99,132,1)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgba(255,99,132,1)",
+              data: [1,1,0,1,0,0,1],
+            },
+          ],
+        },
+        radarOptions: {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
       patient: [],
       formula: "",
       doctor: "",
@@ -539,27 +949,27 @@ export default {
       ],
       user: [],
       datachartweight: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: ['เดือนที่ 1', 'เดือนที่ 2', 'เดือนที่ 3', 'เดือนที่ 4', 'เดือนที่ 5', 'เดือนที่ 6', 'เดือนที่ 7'],
                 datasets: [
                     {
-                        label: 'จำนวนผู้ป่วย',
+                        label: 'ระดับความรุนแรง',
                         backgroundColor: 'rgba(75,192,192,0.2)',
                         borderColor: 'rgba(75,192,192,1)',
-                        data: [65, 59, 80, 81, 56, 55, 40],
+                        data: [1, 4, 4, 3, 3, 2, 1],
                         fill: true
                     }
                 ]
       },
       datacharteffect: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: ['สัปดาห์ที่ 1', 'สัปดาห์ที่ 2', 'สัปดาห์ที่ 3', 'สัปดาห์ที่ 4', 'สัปดาห์ที่ 5', 'สัปดาห์ที่ 6', 'สัปดาห์ที่ 7', 'สัปดาห์ที่ 8', 'สัปดาห์ที่ 9', 'สัปดาห์ที่ 10'],
                 datasets: [
                     {
-                        label: 'จำนวนผู้ป่วย',
-                        backgroundColor: 'rgba(75,192,192,0.2)',
+                        label: 'น้ำหนัก',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
                         borderColor: 'rgba(75,192,192,1)',
-                        data: [65, 59, 80, 81, 56, 55, 40],
+                        data: [1,1,1,0,1,1,1,0,1,0],
                         fill: true
-                    }
+                    },
                 ]
       },
       optionchartweight: {
@@ -570,7 +980,7 @@ export default {
                     },
                     title: {
                         display: true,
-                        text: 'กราฟเส้นแสดงจำนวนผู้ป่วยรายเดือน'
+                        text: 'กราฟเส้นแสดงแนวโน้มน้ำหนักของผู้ป่วย'
                     }
                 }
       },
@@ -582,7 +992,7 @@ export default {
                     },
                     title: {
                         display: true,
-                        text: 'กราฟเส้นแสดงจำนวนผู้ป่วยรายเดือน'
+                        text: 'กราฟเส้นแสดงระดับความรุนแรงของผลข้างเคียง'
                     }
                 }
       },
@@ -591,7 +1001,7 @@ export default {
   mounted() {
     let userId = this.$route.params.userId;
     axios
-      .get(`http://localhost:3000/user/${userId}`)
+      .get(`http://localhost:8080/user/${userId}`)
       .then((response) => {
         this.user = response.data[0];
       })
@@ -601,7 +1011,7 @@ export default {
     const HN = this.$route.params.HN;
     const treatmentId = this.$route.params.treatmentId;
     axios
-      .get(`http://localhost:3000/patient/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/patient/${HN}/${treatmentId}`)
       .then((response) => {
         for (let i = 0; i < response.data.length; i++) {
           if (response.data[i].treatmentId == treatmentId) {
@@ -612,7 +1022,7 @@ export default {
           moment().format("YYYY") - this.patient.birthDate.split("-")[0];
         this.patient["age"] = page;
         axios
-          .get(`http://localhost:3000/appointment/${HN}`)
+          .get(`http://localhost:8080/appointment/${HN}`)
           .then((response) => {
             this.patient["doctorName"] = response.data;
           })
@@ -624,14 +1034,14 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/myformula/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/myformula/${HN}/${treatmentId}`)
       .then((response) => {
         this.patient["formulaName"] = response.data[0].formulaName;
       })
       .catch((error) => {
         console.log(error);
       });
-    axios.get(`http://localhost:3000/getDiseases/${HN}`).then((response) => {
+    axios.get(`http://localhost:8080/getDiseases/${HN}`).then((response) => {
       if (response.data.length == 0) {
         this.patientDisease = [];
       } else {
@@ -639,7 +1049,7 @@ export default {
       }
     });
     axios
-      .get(`http://localhost:3000/AlltreatmentHistory/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/AlltreatmentHistory/${HN}/${treatmentId}`)
       .then((response) => {
         this.appointment = response.data;
         for (let i = 0; i < this.appointment.length; i++) {
@@ -647,7 +1057,7 @@ export default {
             this.appointment[i].appointDate
           );
           /*axios
-            .get(`http://localhost:3000/myformula/${this.appointment[i].HN}/${this.appointment[i].treatmentId}`)
+            .get(`http://localhost:8080/myformula/${this.appointment[i].HN}/${this.appointment[i].treatmentId}`)
             .then((response) => {
               this.appointment[i].formulaName = response.data[0].formulaName;
             })
@@ -660,7 +1070,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/giveMed/${HN}`)
+      .get(`http://localhost:8080/giveMed/${HN}`)
       .then((response) => {
         this.giveMed = response.data;
       })
@@ -668,13 +1078,13 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/currentTreatment/${HN}/${treatmentId}`)
+      .get(`http://localhost:8080/currentTreatment/${HN}/${treatmentId}`)
       .then((response) => {
         this.treatment = response.data;
         for (let i = 0; i < this.treatment.length; i++) {
           axios
             .get(
-              `http://localhost:3000/treatmentDoctor/${this.treatment[i].doctorId}`
+              `http://localhost:8080/treatmentDoctor/${this.treatment[i].doctorId}`
             )
             .then((response) => {
               this.treatment[i]["doctorName"] =
@@ -689,7 +1099,7 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/doctor`)
+      .get(`http://localhost:8080/doctor`)
       .then((response) => {
         this.doctors = response.data;
       })
@@ -697,15 +1107,62 @@ export default {
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/Allformula`)
+      .get(`http://localhost:8080/Allformula`)
       .then((response) => {
         this.formulas = response.data;
       })
       .catch((error) => {
         console.log(error);
       });
+      axios
+      .get(`http://localhost:8080/bloodresult/patient/${HN}/${treatmentId}`)
+      .then((response) => {
+        if (response.data == "not found") {
+          this.bloodresult = [];
+        } else {
+          this.bloodresult = response.data.filter((r) => {
+            return r.status != "ยังไม่ส่งผลเลือด";
+          });
+          this.patient["status"] = this.bloodresult[0].status;
+        }
+        if (this.bloodresult[0].status == "อนุมัติผลเลือด") {
+          axios
+            .get(`http://localhost:8080/treatment/giveMed/${treatmentId}`)
+            .then((response) => {
+              console.log(response.data);
+              for (let i = 0; i < response.data.length; i++) {
+                this.amount.push(response.data[i].unit);
+              }
+              this.medType = response.data[0].medType;
+              this.note = this.bloodresult[0].suggestion;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   methods: {
+    openIMG(blood) {
+      this.img = "http://localhost:8080/" + blood.picture;
+      axios.get(`http://localhost:8080/getBloodresult/${blood.brId}`).then((response) => {
+        this.selectedBloodresult = response.data;
+        this.status = this.selectedBloodresult.status;
+        this.suggestion = this.selectedBloodresult.suggestion;
+      });
+      const formulaId = this.patient.formulaId;
+      axios
+        .get(`http://localhost:8080/medicine/${formulaId}`)
+        .then((response) => {
+          this.medicine = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     changeFormula(t) {
       const treatmentId = t.treatmentId;
       if (
@@ -715,7 +1172,7 @@ export default {
         this.doctor != ""
       ) {
         axios
-          .put(`http://localhost:3000/endTreatment/${treatmentId}`)
+          .put(`http://localhost:8080/endTreatment/${treatmentId}`)
           .then((response) => {
             console.log(response.data);
             this.historyTreatment = response.data;
@@ -732,7 +1189,7 @@ export default {
           doctor: this.doctor,
         };
         axios
-          .post(`http://localhost:3000/createTreatment`, data)
+          .post(`http://localhost:8080/createTreatment`, data)
           .then((response) => {
             console.log(response.data);
           })
@@ -752,7 +1209,7 @@ export default {
       let text = "คุณยืนยันที่จะจบแผนการรักษาหรือไม่";
       if (confirm(text) == true) {
         axios
-          .put(`http://localhost:3000/endTreatment/${treatmentId}`)
+          .put(`http://localhost:8080/endTreatment/${treatmentId}`)
           .then((response) => {
             Swal.fire({
               title: "",

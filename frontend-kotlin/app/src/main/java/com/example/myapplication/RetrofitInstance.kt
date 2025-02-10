@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface RetrofitInstance {
     companion object {
-        var mainURL = "http://10.50.8.3:3000"
+        var mainURL = "http://10.50.8.3:8080"
 
         fun getRetrofitInstance(): Retrofit{
             return Retrofit.Builder().baseUrl(mainURL)

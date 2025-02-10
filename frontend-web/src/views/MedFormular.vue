@@ -3,7 +3,7 @@
     <nav style="background-color: #1C2939;">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
               <li class="nav-item" @click="goToRegis()" v-if="user.type == 'nurse'"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
@@ -11,7 +11,7 @@
               </li>
               <li class="nav-item" @click="goTonewHome()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
-                <a class="nav-link" href="#" style="color: #ffffff;">ผลเลือด</a>
+                <a class="nav-link" href="#" style="color: #ffffff;">การอนุมัติผลเลือด</a>
               </li>
               <li class="nav-item" @click="goTonewAppoint()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
@@ -31,22 +31,51 @@
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px;">
                 <a class="nav-link" href="#" style="color: #ffffff;">คู่มือผู้ป่วย</a>
               </li>
-            </ul>
-          </div>
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button @click="logOut()" class="btn btn-light me-md-2" type="button" style="margin-top: 15px; margin-bottom: 10px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                  class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd"
-                    d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z" />
-                  <path fill-rule="evenodd"
-                    d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+              <li
+                class="nav-item"
+                @click="goToExportimport()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
+              </li>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
+
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button
+                @click="logOut()"
+                class="btn btn-light me-md-2"
+                type="button"
+                style="margin-top: 15px; margin-bottom: 10px"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-box-arrow-in-right"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
+                  />
                 </svg>
                 ออกจากระบบ
               </button>
             </div>
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -459,6 +488,9 @@ export default {
     },
     overlayAddmed() {
       this.showOverlay = !this.showOverlay;
+    },
+    goToExportimport() {
+            this.$router.push(`/ExportImport/${this.$route.params.userId}`);
     },
     goYes() {
       if (this.addMedName == '') {
