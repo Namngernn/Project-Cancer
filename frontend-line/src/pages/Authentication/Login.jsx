@@ -58,11 +58,11 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/login34', userData)
+      const response = await axios.post('http://localhost:3000/login34', userData)
       if (response.status === 200){
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('HN', response.data.HN);
-        localStorage.setItem('userId', userId);
+        // localStorage.setItem('userName', userName);
+        // localStorage.setItem('HN', response.data.HN);
+        // localStorage.setItem('userId', userId);
         Cookies.set('userName', userName, { expires: 7 });
         Cookies.set('HN', response.data.HN, { expires: 7 });
         Cookies.set('userId',userId, { expires: 7 });
@@ -70,7 +70,7 @@ const Login = () => {
         navigate('/menu');
       }
     } catch (error) {
-      console.error(error)
+      console.error(error, "Login error")
       alert(error);
     }
   }

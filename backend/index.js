@@ -1,16 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const http = require("http");
 const { Server } = require("socket.io");
 const pool = require("./config").default;
 
 const app = express();
-const port = 3000; // กำหนดพอร์ตที่ใช้
+// const port = 3000; // กำหนดพอร์ตที่ใช้
+// const server = http.createServer(app);
+const http = require("http");
 const server = http.createServer(app);
 
 // ตั้งค่า CORS
 const corsOptions = {
-  origin: "http://localhost:8080", // URL ของ Frontend
+  origin: ["http://localhost:8080", "http://localhost:5173"], // URL ของ Frontend
   methods: ["GET", "POST"],
   credentials: true, // อนุญาตให้ส่ง Cookies
 };
@@ -26,7 +27,7 @@ app.use(express.static("uploads"));
 // ตั้งค่า Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:8080",
+    origin: ["http://localhost:8080", "http://localhost:5173"],
     methods: ["GET", "POST"],
   },
 });
@@ -63,38 +64,6 @@ app.get("/", (req, res) => {
 });
 
 // Start Server
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+server.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
-
-// // ingadd
-// app.set("port", 3000);
-// const port = app.get("port");
-// app.get("/", function (req, res) {
-//   res.send("hello world");
-// });
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// // nxg add
-// const corsOptions = {
-//   origin: 'http://localhost:8080',
-// };
-
-// app.get('/', (req, res) => {
-//   res.send('CORS updated to allow localhost:8080');
-// });
-
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// io.on("connection", (socket) => {
-//   socket.on("CH01", function (msg) {
-//     socket.broadcast.emit("info", msg);
-//   });
-// });

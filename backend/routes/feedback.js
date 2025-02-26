@@ -10,8 +10,8 @@ let sideEfrouter = express.Router();
 
 // Line app
 //ผู้ป่วยบันทึกผลข้างเคียง
-router.post("/feedback/:HN", async function (req, res, next) {
-  const HN = req.params.HN;
+router.post("/feedback/:IDcard", async function (req, res, next) {
+  const IDcard = req.params.IDcard;
   const sideEffect = req.body.sideEffect;
   const appointId = req.body.appointId;
   const date = req.body.date;
@@ -24,8 +24,8 @@ router.post("/feedback/:HN", async function (req, res, next) {
   //เลือกการนัดหมายครั้งล่าสุด
   try {
     const [maxAppointRows] = await pool.query(
-      "SELECT MAX(appointId) AS max_appointId FROM appointment WHERE HN = ?",
-      [HN]
+      "SELECT MAX(appointId) AS max_appointId FROM appointment WHERE IDcard = ?",
+      [IDcard]
     );
 
     if (maxAppointRows[0].max_appointId == null) {
@@ -55,21 +55,73 @@ router.post("/feedback/:HN", async function (req, res, next) {
   }
 });
 
-//ดูประวัติผลข้างเคียง
+// router.get("/selectedFeedback/:feedbackId", async function (req, res, next) {
+//   const feedbackId = req.params.feedbackId;
+//   console.log("Received feedbackId:", feedbackId);
+//   try {
+//     // ค้นหาค่า maxAppointId ที่ตรงกับ feedbackId
+//     const [maxAppointRows] = await pool.query(
+//       `SELECT MAX(appointId) AS maXappointId
+//        FROM appointment
+//        WHERE feedback.feedbackId = ?`,
+//       [feedbackId]
+//     );
+
+//     if (maxAppointRows[0].maXappointId == null) {
+//       return res.status(404).send("Appointment not found");
+//     }
+
+//     // ถ้าพบ maxAppointId ให้ส่งกลับมา
+//     res.json({ maxAppointId: maxAppointRows[0].maXappointId });
+//   } catch (error) {
+//     console.error("Database Error:", error);
+//     res.status(500).send("Database Error");
+//   }
+// });
+
+//นงเพิ่ม ดึง max appointId
+router.get("/maxAppoint/:IDcard", async function (req, res) {
+  const IDcard = req.params.IDcard;
+
+  try {
+    const [maxAppointRows] = await pool.query(
+      "SELECT MAX(appointId) AS max_appointId FROM appointment WHERE IDcard = ?",
+      [IDcard]
+    );
+
+    if (!maxAppointRows.length || !maxAppointRows[0].max_appointId) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    res.json({ max_appointId: maxAppointRows[0].max_appointId });
+  } catch (error) {
+    console.error("Database Error:", error);
+    res.status(500).send("Database Error");
+  }
+});
+
+//นงเพิ่ม ดึงประวัติผลข้างเคียง
 router.get("/selectedFeedback/:appointId", async function (req, res, next) {
   let appointId = req.params.appointId;
   try {
-    const [row, _] = await pool.query(
-      "select * from feedback where appointId = ?",
-      appointId
+    const conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    const [row] = await conn.query(
+      "SELECT * FROM feedback WHERE appointId = ?",
+      [appointId]
     );
-    if (row.length != 0) {
+    await conn.commit();
+    conn.release();
+
+    if (row.length > 0) {
       res.json(row);
     } else {
-      res.send("not found");
+      res.status(404).send("Feedback not found");
     }
   } catch (error) {
-    console.log(error);
+    console.error("Database Error:", error);
+    res.status(500).send("Database Error");
   }
 });
 

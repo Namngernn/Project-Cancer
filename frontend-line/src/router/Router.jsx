@@ -4,7 +4,6 @@ import Home from "../pages/Home/Home";
 import BloodResults from "../pages/BloodResults/BloodResults";
 import Appointment from "../pages/Appointment/Appointment";
 import Contacts from "../pages/Contacts/Contacts";
-import Effects from "../pages/Effects/Effects";
 import PatientManual from "../pages/PatientManual/PatientManual";
 import Login from "../pages/Authentication/Login";
 import Register from "../pages/Authentication/Register";
@@ -12,6 +11,8 @@ import AppointmentDetails from "../pages/Appointment/AppointmentDetails";
 import PostponeAppointment from "../pages/Appointment/PostponeAppointment";
 import FillResults from "../pages/BloodResults/FillResults";
 import AddEffects from "../pages/Effects/AddEffects";
+import Effects from "../pages/Effects/Effects";
+import DetailEffect from "../pages/Effects/DetailEffect";
 import DisplayBloodResults from "../pages/BloodResults/DisplayBloodResults";
 import DisplayOtherResults from "../pages/BloodResults/DisplayOtherResults";
 
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
         {
           path: "/Effects",
           element: <Effects/>
+        },
+        {
+          path: "/DetailEffect/:feedbackId",
+          element: <DetailEffect/>
         },
         {
           path: "/PatientManual",

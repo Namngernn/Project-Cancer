@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { AxiosClient } from '../../apiClient';
+// หน้าประวัติการบันทึกผลข้างเคียง
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AxiosClient from "../../AxiosClient";
+import Cookies from 'js-cookie';
+
 
 const thaiMonthNames = [
   'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -17,46 +21,80 @@ const formatThaiDate = (dateString) => {
 //หน้าประวัติผลข้างเคียง
 const Effects =  () => {
   const [history, setHistory] = useState([]);
-  // ดึงค่า HN จาก cookies
-  const HN = Cookies.get("HN").HN;
-  console.log('HN from cookies:', HN);
-  const appointId = req.params.appointId;
+  const navigateDetailHistory = useNavigate();
+  const [username, setUsername] = useState('');
+  const [userIdLine, setUserIdLine] = useState('');
+  const [appointId, setAppointId] = useState('');
 
   useEffect(() => {
     const fetchHistory = async () => {
-        try {
-            const response = await AxiosClient.get(`/selectedFeedback/${appointId}`);
-            setHistory(response.data);
-        } catch (error) {
-            console.error('Error fetching history:', error);
+      const user = Cookies.get('userName', { expires: 7 });
+      console.log("User from Cookies:", user);
+      if (user) {
+        setUsername(user);
+      }else {
+        console.error("No username found in cookies");
+        return;
+      }
+
+      try {
+        // ดึง max appointId ตาม username (IDcard)
+        const appointResponse = await AxiosClient.get(`/maxAppoint/${user}`);
+        if (!appointResponse.data.max_appointId) {
+          console.error("No appointment found");
+          return;
         }
+
+        const latestAppointId = appointResponse.data.max_appointId;
+        setAppointId(latestAppointId);
+        console.log("Last appoint ID :", latestAppointId);
+
+        // ดึงข้อมูล feedback โดยใช้ appointId ที่ได้มา
+        const feedbackResponse = await AxiosClient.get(
+          `/selectedFeedback/${latestAppointId}`
+        );
+        setHistory(feedbackResponse.data);
+      } catch (error) {
+        console.error("Error fetching history:", error);
+      }
     };
     fetchHistory();
-}, [HN]);
+  }, [username]);
+
+
   return (
-<div className='p-4'>
-  <div className="pt-6">
-    <h3 className='pb-4 text-center'>ประวัติการบันทึกผลข้างเคียง</h3>
-    {history.length > 0 ? (
-      [...history].reverse().map((record, index) => (
-        <div key={`${record.id}-${index}`} className="mt-6 entry">
-          <div className="entry-left">
-            <p className='text-sm text-center'>บันทึกครั้งที่</p>
-            <h2 className='text-4xl text-blue700'>{history.length - index}</h2>
+    <div className="p-4">
+    <div className="pt-6">
+      {history.length > 0 && (
+        <h3 className="pb-4 text-center">ประวัติการบันทึกผลข้างเคียง</h3>
+      )}
+      {history.length > 0 ? (
+        [...history].reverse().map((record, index) => (
+          <div 
+          key={`${record.id}-${index}`} 
+          className="mt-6 entry"
+          > 
+          {/* onClick={() => navigateDetailHistory(/DetailEffect/${record.appointId})} */}
+            <div className="entry-left">
+              <p className="text-sm text-center">บันทึกครั้งที่</p>
+              <h2 className="text-4xl text-blue700">{history.length - index}</h2>
+            </div>
+            <div className="entry-right">
+              <h3 className="text-md font-bold">
+                วันที่ {formatThaiDate(record.sendAt)}
+              </h3>
+              <p className="text-sm whitespace-pre-wrap">
+                {record.patientSideEffect}
+              </p>
+            </div>
           </div>
-          <div className="entry-right">
-            <h3 className='text-md font-bold'>
-              วันที่ {formatThaiDate(record.sendAt)}
-            </h3>
-            <p>{record.patientSideEffect}</p>
-          </div>
-        </div>
-      ))
-    ) : (
-      <p className="text-center">ไม่พบประวัติการบันทึกผลข้างเคียง</p>
-    )}
-  </div>   
-</div>
+        ))
+      ) : (
+        <p className="text-center">ไม่พบประวัติการบันทึกผลข้างเคียง</p>
+      )}
+    </div>
+  </div>
+  
 
   )
 }
