@@ -59,7 +59,7 @@ function formatThaiDate(dateString) {
     ];
     const day = date.getDate();
     const month = thaiMonths[date.getMonth()];
-    const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+    const year = date.getFullYear() + 543;
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
 
@@ -104,7 +104,7 @@ router.post("/webhook", async (req, res) => {
         console.error("❌ ไม่พบค่าพารามิเตอร์น้ำหนัก");
         return res.json({
           fulfillmentText:
-            "กรุณาบอกน้ำหนักของคุณเป็นตัวเลข เช่น 'น้ำหนัก 54 กก.'",
+            "กรุณาบอกน้ำหนักของคุณเป็นตัวเลข เช่น 54 กิโลกรัม 54kg",
         });
       }
 
@@ -141,38 +141,6 @@ router.post("/webhook", async (req, res) => {
     return res.json({ fulfillmentText: "เกิดข้อผิดพลาด: " + error.message });
   }
 });
-
-// ฟังก์ชันแจ้งเตือนผ่าน LINE API
-async function sendLineNotification(userId, message) {
-  try {
-    const messageData = {
-      to: userId,
-      messages: [
-        {
-          type: "text",
-          text: message,
-        },
-      ],
-    };
-
-    const response = await axios.post(
-      "https://api.line.me/v2/bot/message/push",
-      messageData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
-        },
-      }
-    );
-    console.log("✅ ส่งข้อความสำเร็จ");
-  } catch (error) {
-    console.error(
-      "❌ ส่งข้อความล้มเหลว",
-      error.response?.data || error.message
-    );
-  }
-}
 
 // ฟังก์ชันบันทึกน้ำหนัก
 async function recordWeight(userId, queryResult) {
@@ -224,11 +192,14 @@ async function recordWeight(userId, queryResult) {
     console.log("✅ ค่าน้ำหนักที่ได้รับ:", weight);
 
     const [userRows] = await pool.query(
-      `SELECT userName FROM user WHERE UserIdLine = ? OR userName = ? LIMIT 1`,
+      `SELECT u.userName, a.HN 
+       FROM user u
+       INNER JOIN appointment a ON u.userName = a.IDcard
+       WHERE u.UserIdLine = ? OR u.userName = ?
+       LIMIT 1`,
       [userId, userId]
     );
     console.log("userIdLine:", userId);
-    console.log("🔹 ค้นหาผู้ใช้:", userRows);
 
     if (userRows.length === 0) {
       throw new Error("ไม่พบข้อมูลผู้ใช้ในระบบ");
@@ -236,6 +207,8 @@ async function recordWeight(userId, queryResult) {
 
     const userName = userRows[0].userName;
     console.log("IDcard :", userName);
+    const HN = userRows[0].HN;
+    console.log("HN :", HN);
 
     // ดึง Appointment ล่าสุด
     const [appointmentRows] = await pool.query(
@@ -253,8 +226,8 @@ async function recordWeight(userId, queryResult) {
 
     // บันทึกน้ำหนักลง Database
     await pool.query(
-      `INSERT INTO weight_records (HN, weight, recorded_at, appointId) VALUES (?, ?, NOW(), ?)`,
-      [userName, weight, latestAppointId]
+      `INSERT INTO weight (HN, weight, recorded_at, appointId) VALUES (?, ?, NOW(), ?)`,
+      [HN, weight, latestAppointId]
     );
 
     console.log("Last Appointment :", latestAppointId);
@@ -306,11 +279,11 @@ async function checkAppointment(userId) {
     // เลือกวันนัดล่าสุด
     const [treatmentRows] = await pool.query(
       `SELECT appointment.treatmentId, appointment.appointDate
-          FROM appointment
-          WHERE appointment.IDcard = ?
-          ORDER BY appointment.appointDate DESC
-          LIMIT 1
-          `,
+      FROM appointment
+      WHERE appointment.IDcard = ?
+      ORDER BY appointment.appointDate DESC
+      LIMIT 1
+      `,
       [userName]
     );
 
@@ -356,6 +329,38 @@ async function checkAppointment(userId) {
         },
       ],
     };
+  }
+}
+
+// ฟังก์ชันแจ้งเตือนผ่าน LINE API
+async function sendLineNotification(userId, message) {
+  try {
+    const messageData = {
+      to: userId,
+      messages: [
+        {
+          type: "text",
+          text: message,
+        },
+      ],
+    };
+
+    const response = await axios.post(
+      "https://api.line.me/v2/bot/message/push",
+      messageData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
+        },
+      }
+    );
+    console.log("✅ ส่งข้อความสำเร็จ");
+  } catch (error) {
+    console.error(
+      "❌ ส่งข้อความล้มเหลว",
+      error.response?.data || error.message
+    );
   }
 }
 exports.router = router;
