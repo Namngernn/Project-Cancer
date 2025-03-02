@@ -10,7 +10,7 @@ const AppointmentDetails = () => {
   useEffect(() => {
     const fetchCancerTypes = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/request2/${appointId}`);
+        const response = await fetch(`http://localhost:3000/request2/${appointId}`);
         if (response.ok) {
           const data = await response.json();
           console.log('postponeDetail received from API:', data);

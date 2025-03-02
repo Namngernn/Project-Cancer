@@ -29,7 +29,7 @@ const DisplayBloodResults = () => {
     const fetchFormula = async () => {
       try {
         console.log(`Fetching formula for user: ${username}`);
-        const response = await fetch(`http://localhost:8080/patientss/${username}`);
+        const response = await fetch(`http://localhost:3000/patientss/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('Data received from API:', data);
@@ -54,7 +54,7 @@ const DisplayBloodResults = () => {
     const fetchFormula = async () => {
       try {
         console.log(`Fetching formula for user: ${username}`);
-        const response = await fetch(`http://localhost:8080/formulas/${username}`);
+        const response = await fetch(`http://localhost:3000/formulas/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('Data received from API:', data);
@@ -79,7 +79,7 @@ const DisplayBloodResults = () => {
     const fetchCancerTypes = async () => {
       try {
         console.log(`Fetching cancer types for user: ${username}`);
-        const response = await fetch(`http://localhost:8080/cancerType/${username}`);
+        const response = await fetch(`http://localhost:3000/cancerType/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('Cancer types received from API:', data);
@@ -101,7 +101,7 @@ const DisplayBloodResults = () => {
     const fetchCancerTypes = async () => {
       try {
         console.log(`Fetching cancer types for user: ${username}`);
-        const response = await fetch(`http://localhost:8080/recordbloodresult/${username}`);
+        const response = await fetch(`http://localhost:3000/recordbloodresult/${username}`);
         if (response.ok) {
           const data = await response.json();
           console.log('RecordBlooadResult received from API:', data);
@@ -168,8 +168,8 @@ const DisplayBloodResults = () => {
               <div className="box-sd mb-2">
                 <div className="">
                   {/* <img src="/ing/img.png" alt="" /> */}
-                  <img src={"http://localhost:8080/" + recordBlooad.picture} className="w-20 h-20" 
-                  onClick={() => openPopup("http://localhost:8080/" + recordBlooad.picture)}
+                  <img src={"http://localhost:3000/" + recordBlooad.picture} className="w-20 h-20" 
+                  onClick={() => openPopup("http://localhost:3000/" + recordBlooad.picture)}
                   />
                   
                 </div>
