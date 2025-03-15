@@ -3,35 +3,36 @@
     <nav style="background-color: #1c2939">
       <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12">
             <ul class="nav nav-underline">
-              <li
+              <li v-if="user.type == 'nurse'"
                 class="nav-item"
                 @click="goToRegis()"
-                v-if="user.type == 'nurse'"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="#" style="color: #ffffff">ลงทะเบียนผู้ป่วย</a>
+                <a class="nav-link" href="#" style="color: #ffffff"
+                  >ลงทะเบียนผู้ป่วย</a
+                >
               </li>
               <li
                 class="nav-item"
                 @click="goTonewHome()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a
-                  class="nav-link active"
-                  aria-current="page"
-                  href="#"
-                  style="color: #ffffff; font-size: large"
-                  >การอนุมัติผลเลือด</a
-                >
+                <a class="nav-link active" href="#" style="color: #ffffff; font-size: large">การอนุมัติผลเลือด</a>
               </li>
               <li
                 class="nav-item"
                 @click="goTonewAppoint()"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="#" style="color: #ffffff">นัดหมาย</a>
+                <a
+                  class="nav-link "
+                  aria-current="page"
+                  href="#"
+                  style="color: #ffffff; "
+                  >นัดหมาย</a
+                >
               </li>
               <li
                 class="nav-item"
@@ -55,10 +56,22 @@
               >
                 <a class="nav-link" href="#" style="color: #ffffff">คู่มือผู้ป่วย</a>
               </li>
-            </ul>
-          </div>
-          <div class="col-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <li
+                class="nav-item"
+                @click="goToExportimport()"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="#" style="color: #ffffff">นำเข้าส่งออกข้อมูล</a>
+              </li>
+              <li
+                class="nav-item"
+                style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
+              >
+                <a class="nav-link" href="http://localhost:8081/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+              </li>
+
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button
                 @click="logOut()"
                 class="btn btn-light me-md-2"
@@ -85,7 +98,9 @@
                 ออกจากระบบ
               </button>
             </div>
+            </ul>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -191,13 +206,13 @@
 
             <div class="col-md-5 card" style="margin-bottom: 50px">
               <div class="card-header" style="background-color: #90eeb7">
-                <b>ผลเลือดกก</b>
+                <b>ผลเลือด</b>
               </div>
               <div class="card-body">
                 <table class="table">
                   <thead>
                     <tr class="table">
-                      <th scope="col">ผลเลือดก</th>
+                      <th scope="col">ผลเลือด</th>
                       <th scope="col"></th>
                     </tr>
                   </thead>

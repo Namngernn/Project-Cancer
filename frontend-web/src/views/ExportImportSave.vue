@@ -408,7 +408,7 @@ export default {
     mounted() {
         let userId = this.$route.params.userId;
         axios
-            .get(`http://localhost:8080/user/${userId}`)
+            .get(`http://localhost:3000/user/${userId}`)
             .then((response) => {
                 this.user = response.data[0];
             })
@@ -416,7 +416,7 @@ export default {
                 console.log(error);
             });
         axios
-            .get(`http://localhost:8080/doctor`)
+            .get(`http://localhost:3000/doctor`)
             .then((response) => {
                 this.doctors = response.data;
             })
@@ -424,7 +424,7 @@ export default {
                 console.log(error);
             });
         axios
-            .get(`http://localhost:8080/Allformula`)
+            .get(`http://localhost:3000/Allformula`)
             .then((response) => {
                 this.formulas = response.data;
                 console.log(response.data);
@@ -449,7 +449,7 @@ export default {
             formData.append("file", this.file);
 
             try {
-                const response = await axios.post("http://localhost:8080/import-csv", formData, {
+                const response = await axios.post("http://localhost:3000/import-csv", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -462,7 +462,7 @@ export default {
             }
         },
         exportCSV() {
-            window.location.href = "http://localhost:8080/export/csv";
+            window.location.href = "http://localhost:3000/export/csv";
         },
         logOut() {
             this.$router.replace("/");
@@ -593,7 +593,7 @@ export default {
             let check = this.validateData(data);
             if (check == "ok") {
                 axios
-                    .post(`http://localhost:8080/newPatient`, data)
+                    .post(`http://localhost:3000/newPatient`, data)
                     .then((response) => {
                         if (response.data == "success") {
                             Swal.fire({
@@ -802,7 +802,7 @@ export default {
             }
 
             // เรียก API เพื่อตรวจสอบ HN กับ backend
-            fetch(`http://localhost:8080/check-hn/${this.HN}`)
+            fetch(`http://localhost:3000/check-hn/${this.HN}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Server error");

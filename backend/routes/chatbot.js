@@ -224,10 +224,26 @@ async function recordWeight(userId, queryResult) {
 
     const latestAppointId = appointmentRows[0].appointId;
 
+    //เช็คบันทึกซ้ำ
+    const [existingWeight] = await pool.query(
+      `SELECT * FROM weight 
+       WHERE IDcard = ? 
+       AND YEARWEEK(createAt, 1) = YEARWEEK(NOW(), 1)`,
+      [userName]
+    );
+
+    if (existingWeight.length > 0) {
+      console.log("❌ ผู้ใช้บันทึกน้ำหนักของสัปดาห์นี้แล้ว:", userName);
+      return {
+        fulfillmentText:
+          "✅ คุณได้บันทึกน้ำหนักของสัปดาห์นี้เรียบร้อยแล้ว กรุณาบันทึกอีกครั้งในสัปดาห์หน้านะคะ 😊",
+      };
+    }
+
     // บันทึกน้ำหนักลง Database
     await pool.query(
-      `INSERT INTO weight (HN, weight, recorded_at, appointId) VALUES (?, ?, NOW(), ?)`,
-      [HN, weight, latestAppointId]
+      `INSERT INTO weight (IDcard, numWeight, createAt, appointId) VALUES (?, ?, NOW(), ?)`,
+      [userName, weight, latestAppointId]
     );
 
     console.log("Last Appointment :", latestAppointId);
@@ -237,8 +253,18 @@ async function recordWeight(userId, queryResult) {
       fulfillmentText: `✅ บันทึกน้ำหนัก ${weight} กิโลกรัม สำเร็จแล้ว`,
     };
   } catch (error) {
-    console.error("เกิดข้อผิดพลาด:", error.message);
-    return { fulfillmentText: `เกิดข้อผิดพลาด: ${error.message}` };
+    if (error.code === "ER_DUP_ENTRY") {
+      console.log("❌ Duplicate entry detected:", error.message);
+      return {
+        fulfillmentText:
+          "✅ คุณได้บันทึกน้ำหนักของสัปดาห์นี้เรียบร้อยแล้ว กรุณาบันทึกอีกครั้งในสัปดาห์หน้านะคะ 😊",
+      };
+    } else {
+      console.error("❌ เกิดข้อผิดพลาด:", error.message);
+      return {
+        fulfillmentText: "❌ ระบบขัดข้อง กรุณาลองใหม่ภายหลังค่ะ",
+      };
+    }
   }
 }
 
@@ -307,7 +333,7 @@ async function checkAppointment(userId) {
       });
 
       return {
-        userName, // 🟢 ส่ง userName กลับไปด้วย
+        userName,
         formattedDate,
       };
     } else {

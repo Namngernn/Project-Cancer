@@ -89,7 +89,7 @@
                 class="nav-item"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+                <a class="nav-link" href="http://localhost:8081/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
               </li>
 
 
@@ -588,7 +588,7 @@ export default {
       this.posts = response.data;
     });
     axios
-      .get(`http://localhost:3000/doctor`)
+      .get(`http://localhost:3000/doctorr`)
       .then((response) => {
         this.doctors = response.data;
       })

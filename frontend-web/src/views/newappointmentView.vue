@@ -67,7 +67,7 @@
                 class="nav-item"
                 style="margin-top: 10px; margin-bottom: 10px; padding-right: 20px"
               >
-                <a class="nav-link" href="http://localhost:8080/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
+                <a class="nav-link" href="http://localhost:8081/dashboardview" target="_blank" style="color: #ffffff">ข้อมูลสถิติผู้ป่วย</a>
               </li>
 
 
@@ -110,6 +110,11 @@
           <div class="card-body" style="text-align: left; padding: 30px">
             <div class="container">
               <div class="row" v-if="user.type=='nurse'">
+                <a class="nav-link" href="http://localhost:8081/calendarappointment" target="_blank" 
+                  style="display: inline-block; margin-left: auto; text-align: right;  padding: 10px 20px; text-decoration: none; border-radius: 5px; width: auto; background-color: #0A6B3A; color: white;">
+                  ดูตารางการนัดหมาย
+                </a>
+
                 <div class="col-12">
                   <h6>
                     <b><u>ขอเลื่อนนัดหมาย</u></b>
@@ -525,9 +530,7 @@
 
 
 
-    <a class="nav-link" href="http://localhost:3000/calendarappointment" target="_blank">
-      <h1 >CALENDAR</h1>
-    </a>
+    
 
 
   </div>

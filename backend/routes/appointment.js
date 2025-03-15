@@ -3,6 +3,7 @@ const pool = require("../config.js");
 const app = express();
 const cors = require("cors");
 const axios = require("axios"); //1line
+const moment = require("moment");
 require("dotenv").config();
 
 // app.use(cors());
@@ -1152,6 +1153,25 @@ router.get("/weight/:HN", async (req, res) => {
   } catch (err) {
     console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูล" });
+  }
+});
+
+router.put("/changeAppointment/:appointId", async (req, res) => {
+  const conn = await pool.getConnection();
+  const appointId = req.params.appointId;
+  let newDate = req.body.newDate;
+  console.log(newDate, "newDate");
+  try {
+    // คำสั่ง SQL
+    await conn.query(
+      `update appointment set appointDate = ? where appointId = ?`,
+      [newDate, appointId]
+    );
+
+    res.json({ message: "เลื่อนวันนัดหมายสำเร็จ" });
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", err);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการแก้ไขข้อมูล" });
   }
 });
 

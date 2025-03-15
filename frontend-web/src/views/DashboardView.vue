@@ -1,236 +1,308 @@
 <template>
   <div>
-    <!-- หัวข้อ -->
-    <h2>ข้อมูลสถิติของผู้ป่วยโรงพยาบาลมะเร็งชลบุรี</h2>
+    
 
-    <!-- Filter -->
-    <div class="d-flex justify-content-center gap-5">
-      <!-- GENDER -->
-      <div>
-        <label for="" class="d-flex justify-content-center">เพศของผู้ป่วย</label>
-        <div class="dropdown">
-          <button
-            class="btn btn-primary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            style="background-color: #0A6B3A; color: white;"
-          >
-            เพศของผู้ป่วย
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="gender in genders" :key="gender.value">
-              <label class="dropdown-item">
-                <input
-                  type="checkbox"
-                  :value="gender.value"
-                  v-model="showGender"
-                />
-                {{ gender.label }}
-              </label>
-            </li>
-          </ul>
-          <!-- <div class="mt-3">
-            <strong>เพศที่เลือก:</strong> {{ selectedGenders }}
-          </div> -->
-        </div>
-      </div>
-      <!-- CANCER TYPE -->
-      <div>
-      <label for="" class="d-flex justify-content-center">ประเภทมะเร็ง</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-          ประเภทมะเร็ง
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="cancer in cancers" :key="cancer.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="cancer.value"
-                v-model="showCancer"
-              />
-              {{ cancer.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>ประเภทมะเร็งที่เลือก:</strong> {{ selectedCancers }}
-        </div> -->
-      </div>
-    </div>
-    <!-- RANGE AGE -->
-    <div>
-      <label for="" class="d-flex justify-content-center">ช่วงอายุ</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-          ช่วงอายุ
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="rangeage in rangeages" :key="rangeage.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="rangeage.value"
-                v-model="showRangeage"
-              />
-              {{ rangeage.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>ช่วงอายุที่เลือก:</strong> {{ selectedRangeages }}
-        </div> -->
-      </div>
-    </div>
-    <!-- CANCER STATE -->
-    <div>
-      <label for="" class="d-flex justify-content-center"> ระยะของมะเร็ง</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-          ระยะของมะเร็ง
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="cancerstate in cancerstates" :key="cancerstate.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="cancerstate.value"
-                v-model="showCancerstate"
-              />
-              {{ cancerstate.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>ช่วงอายุที่เลือก:</strong> {{ selectedCancerstates }}
-        </div> -->
-      </div>
-    </div>
-    <!-- FEEDBACK -->
-    <div>
-      <label for="" class="d-flex justify-content-center"> ผลข้างเคียง</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-        ผลข้างเคียง
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="feedback in feedbacks" :key="feedback.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="feedback.value"
-                v-model="showFeedback"
-              />
-              {{ feedback.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>ผลข้างเคียง:</strong> {{ selectedFeedbacks }}
-        </div> -->
-      </div>
-    </div>
-    <!-- DISEASE -->
-    <div>
-      <label for="" class="d-flex justify-content-center">โรคประจำตัว</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-        โรคประจำตัว
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="disease in diseases" :key="disease.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="disease.value"
-                v-model="showDisease"
-              />
-              {{ disease.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>โรคประจำตัว:</strong> {{ selectedDiseases }}
-        </div> -->
-      </div>
-    </div>
-    <!-- FOMULA -->
-    <div>
-      <label for="" class="d-flex justify-content-center">สูตรยา</label>
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="background-color: #0A6B3A; color: white;"
-        >
-        สูตรยา
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="fomula in fomulas" :key="fomula.value" >
-            <label class="dropdown-item">
-              <input
-                type="checkbox"
-                :value="fomula.value"
-                v-model="showFomula"
-              />
-              {{ fomula.label }}
-            </label>
-          </li>
-        </ul>
-        <!-- <div class="mt-3">
-          <strong>สูตรยา:</strong> {{ selectedFomulas }}
-        </div> -->
-      </div>
-    </div>
-    </div>
-    <!--END Filter -->
+    <!-- NAV -->
+    <div class="nav">
+<!-- หัวข้อ -->
+<h3 class="sc1">ข้อมูลสถิติของผู้ป่วยโรงพยาบาลมะเร็งชลบุรี</h3>
 
+<!-- Filter -->
+<div class="d-flex justify-content-center gap-2 sc2">
+<!-- GENDER -->
+<div>
+  <label for="" class="d-flex">เพศของผู้ป่วย</label>
+  <div class="dropdown">
+    <button
+      class="btn btn-primary dropdown-toggle"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      style="background-color: #fff; color: #000;"
+    >
+      เพศของผู้ป่วย
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <label class="dropdown-item">
+          <input type="checkbox" v-model="selectAllGender" @change="toggleAllGender" />
+          เลือกทั้งหมด
+        </label>
+      </li>
+      <li v-for="gender in genders" :key="gender.value">
+        <label class="dropdown-item">
+          <input
+            type="checkbox"
+            :value="gender.value"
+            v-model="showGender"
+          />
+          {{ gender.label }}
+        </label>
+      </li>
+    </ul>
+    <!-- <div class="mt-3">
+      <strong>เพศที่เลือก:</strong> {{ selectedGenders }}
+    </div> -->
+  </div>
+</div>
+<!-- CANCER TYPE -->
+<div>
+<label for="" class="d-flex">ประเภทมะเร็ง</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+    ประเภทมะเร็ง
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllCancer" @change="toggleAllCancer" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="cancer in cancers" :key="cancer.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="cancer.value"
+          v-model="showCancer"
+        />
+        {{ cancer.label }}
+      </label>
+    </li>
+  </ul>
+  <!-- <div class="mt-3">
+    <strong>ประเภทมะเร็งที่เลือก:</strong> {{ selectedCancers }}
+  </div> -->
+</div>
+</div>
+<!-- RANGE AGE -->
+<div>
+<label for="" class="d-flex">ช่วงอายุ</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+    ช่วงอายุ
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllRangeage" @change="toggleAllRangeage" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="rangeage in rangeages" :key="rangeage.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="rangeage.value"
+          v-model="showRangeage"
+        />
+        {{ rangeage.label }}
+      </label>
+    </li>
+  </ul>
+  <!-- <div class="mt-3">
+    <strong>ช่วงอายุที่เลือก:</strong> {{ selectedRangeages }}
+  </div> -->
+</div>
+</div>
+<!-- CANCER STATE -->
+<div>
+<label for="" class="d-flex"> ระยะของมะเร็ง</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+    ระยะของมะเร็ง
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllState" @change="toggleAllState" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="cancerstate in cancerstates" :key="cancerstate.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="cancerstate.value"
+          v-model="showCancerstate"
+          @change="setCancerState"
+        />
+        {{ cancerstate.label }}
+      </label>
+    </li>
+  </ul>
+  <!-- <div class="mt-3">
+    <strong>ช่วงอายุที่เลือก:</strong> {{ selectedCancerstates }}
+  </div> -->
+</div>
+</div>
+<!-- FEEDBACK -->
+<div>
+<label for="" class="d-flex"> ผลข้างเคียง</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+  ผลข้างเคียง
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllFeedback" @change="toggleAllFeedback" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="feedback in feedbacks" :key="feedback.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="feedback.value"
+          v-model="showFeedback"
+        />
+        {{ feedback.label }}
+      </label>
+    </li>
+  </ul>
+  <!-- <div class="mt-3">
+    <strong>ผลข้างเคียง:</strong> {{ selectedFeedbacks }}
+  </div> -->
+</div>
+</div>
+<!-- DISEASE -->
+<!-- <div>
+<label for="" class="d-flex">โรคประจำตัว</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+  โรคประจำตัว
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllDisease" @change="toggleAllDisease" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="disease in diseases" :key="disease.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="disease.value"
+          v-model="showDisease"
+        />
+        {{ disease.label }}
+      </label>
+    </li>
+  </ul>
+  <div class="mt-3">
+    <strong>โรคประจำตัว:</strong> {{ selectedDiseases }}
+  </div>
+</div>
+</div> -->
+<!-- FOMULA -->
+<div>
+<label for="" class="d-flex">สูตรยา</label>
+<div class="dropdown">
+  <button
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    style="background-color: #fff; color: #000;"
+  >
+  สูตรยา
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <label class="dropdown-item">
+        <input type="checkbox" v-model="selectAllFomula" @change="toggleAllFomula" />
+        เลือกทั้งหมด
+      </label>
+    </li>
+    <li v-for="fomula in fomulas" :key="fomula.value" >
+      <label class="dropdown-item">
+        <input
+          type="checkbox"
+          :value="fomula.value"
+          v-model="showFomula"
+        />
+        {{ fomula.label }}
+      </label>
+    </li>
+  </ul>
+  <!-- <div class="mt-3">
+    <strong>สูตรยา:</strong> {{ selectedFomulas }}
+  </div> -->
+</div>
+</div>
+</div>
+<!--END Filter -->
 
+    </div>
+    <!-- END NAV -->
 
+    <div class="con-chart">
+      <h4>กราฟแท่งแสดงจำนวนผู้ป่วยแยกตามชนิดมะเร็ง</h4>
+      <Bar id="my-chart-id-1" :options="chartOptions1" :data="chartData1" />
+    </div>
+    <div class="con-chart">
+      <h4>กราฟแท่งแสดงจำนวนผู้ป่วยแยกตามกลุ่มอายุ</h4>
+      <Bar id="my-chart-id-2" :options="chartOptions2" :data="chartData2" />
+    </div>
+    <div class="con-chart">
+      <h4>กราฟแสดงอัตราส่วนของผลข้างเคียงตามมะเร็งแต่ละชนิด</h4>
+      <Radar :data="radarData" :options="radarOptions" />
+    </div>
+    <div class="con-chart">
+      <h4>กราฟแสดงอัตราส่วนของผลข้างเคียงตามสูตรยา</h4>
+      <Radar :data="radarData2" :options="radarOptions2" />
+    </div>
 
     <!-- กราฟ -->
+    <!-- <div class="con-chart">
+      <h4>กราฟแสดงผู้ป่วยแยกตามชนิดมะเร็ง</h4>
+      <Bar id="my-chart-id-1" :options="chartOptions1" :data="chartData1" />
+      <Bar id="my-chart-id-2" :options="chartOptions2" :data="chartData2" />
+    </div>
     <div class="con-chart">
       <Bar id="my-chart-id-1" :options="chartOptions1" :data="chartData1" />
       <Bar id="my-chart-id-2" :options="chartOptions2" :data="chartData2" />
     </div>
     <div class="line-chart-container">
-      <!-- <Line :data="lineChartData" :options="lineChartOptions" /> -->
       <Radar :data="radarData2" :options="radarOptions2" />
       <Radar :data="radarData" :options="radarOptions" />
     </div>
+    <div class="line-chart-container">
+      <Radar :data="radarData2" :options="radarOptions2" />
+      <Radar :data="radarData" :options="radarOptions" />
+    </div> -->
   </div>
 </template>
 
@@ -269,6 +341,14 @@ export default {
   components: { Bar, Radar },
   data() {
     return {
+      StringState: "",
+      selectAllGender: true,
+      selectAllFomula: true,
+      selectAllDisease: true,
+      selectAllFeedback: true,
+      selectAllState: true,
+      selectAllRangeage: true,
+      selectAllCancer: true,
       // เพิ่มมาตอนทำ Filter
       genders: [
         { label: "เพศชาย", value: "เพศชาย" },
@@ -311,10 +391,12 @@ export default {
       ],
       showRangeage: ["อายุ 0-18", "อายุ 19-35", "อายุ 36-50", "อายุ 51-65", "อายุ 65+"],
       cancerstates: [
-        { label: "cancerstate 1", value: "cancerstate 1" },
-        { label: "cancerstate 2", value: "cancerstate 2" },
+        { label: "มะเร็งระยะที่ 1", value: "มะเร็งระยะที่ 1" },
+        { label: "มะเร็งระยะที่ 2", value: "มะเร็งระยะที่ 2" },
+        { label: "มะเร็งระยะที่ 3", value: "มะเร็งระยะที่ 3" },
+        { label: "มะเร็งระยะที่ 4", value: "มะเร็งระยะที่ 4" },
       ],
-      showCancerstate: ["cancerstate 1", "cancerstate 2"],
+      showCancerstate: ["มะเร็งระยะที่ 1", "มะเร็งระยะที่ 2", "มะเร็งระยะที่ 3", "มะเร็งระยะที่ 4"],
       feedbacks: [
         { label: "กดการทำงานของไขกระดูก หรือภูมิต้านทานต่ำ", value: "กดการทำงานของไขกระดูก หรือภูมิต้านทานต่ำ" },
         { label: "เยื่อบุปากอักเสบ", value: "เยื่อบุปากอักเสบ" },
@@ -334,6 +416,7 @@ export default {
 
       ageGroups: {}, // เก็บข้อมูลอายุผู้ป่วย
       cancerSummary: {}, // เก็บข้อมูลอายุผู้ป่วย
+      cancerStateSummary: {}, // cancerStateSummary
       feedbackSummary: {}, // เก็บข้อมูลผลข้างเคียงไว้ทำกราฟ
       fomulaSummary:{},
       // chartData1: {
@@ -601,7 +684,81 @@ export default {
     };
   },
   methods: {
-      async fetchAgeGroups() {
+    generateCancerStateString() {
+      // สร้าง object ที่จับคู่ระหว่างข้อความกับหมายเลข
+      const cancerStateMapping = {
+          "มะเร็งระยะที่ 1": 1,
+          "มะเร็งระยะที่ 2": 2,
+          "มะเร็งระยะที่ 3": 3,
+          "มะเร็งระยะที่ 4": 4
+      };
+
+      // กรอง selectedCancerstates และ map ให้เป็นตัวเลขตาม mapping
+      const cancerStateNumbers = this.selectedCancerstates
+          .map(state => cancerStateMapping[state])
+          .filter(state => state !== undefined); // กรองค่า undefined ถ้ามี
+
+      // แปลงเป็น string ที่คั่นด้วย comma
+      const cancerStateString = cancerStateNumbers.join(',');
+      
+      // เก็บผลลัพธ์ใน StringState
+      this.StringState = `cancerState=${cancerStateString}`;
+      console.log("StringStateStringState2", this.StringState);
+  },
+    toggleAllGender() {
+      if (this.selectAllGender) {
+        this.showGender = this.genders.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showGender = []; // ยกเลิกทั้งหมด
+      }
+    },
+    toggleAllCancer() {
+      if (this.selectAllCancer) {
+        this.showCancer = this.cancers.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showCancer = []; // ยกเลิกทั้งหมด
+      }
+    },
+    toggleAllRangeage() {
+      if (this.selectAllRangeage) {
+        this.showRangeage = this.rangeages.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showRangeage = []; // ยกเลิกทั้งหมด
+      }
+    },
+    toggleAllState() {
+      this.fetchCancerData();
+      if (this.selectAllState) {
+        this.showCancerstate = this.cancerstates.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showCancerstate = []; // ยกเลิกทั้งหมด
+      }
+    },
+    setCancerState() {
+      this.fetchCancerData();
+    },
+    toggleAllFeedback() {
+      if (this.selectAllFeedback) {
+        this.showFeedback = this.feedbacks.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showFeedback = []; // ยกเลิกทั้งหมด
+      }
+    },
+    toggleAllDisease() {
+      if (this.selectAllDisease) {
+        this.showDisease = this.diseases.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showDisease = []; // ยกเลิกทั้งหมด
+      }
+    },
+    toggleAllFomula() {
+      if (this.selectAllFomula) {
+        this.showFomula = this.fomulas.map(g => g.value); // เลือกทั้งหมด
+      } else {
+        this.showFomula = []; // ยกเลิกทั้งหมด
+      }
+    },
+  async fetchAgeGroups() {
       try {
       const response = await axios.get("http://localhost:3000/age-groups");
       this.ageGroups = response.data;
@@ -612,13 +769,24 @@ export default {
     },
     async fetchCancerData() {
         try {
-        const response = await axios.get("http://localhost:3000/cancer-summary");
+        const response = await axios.get(`http://localhost:3000/cancerstate-cancer-summary?${this.StringState}`);
         this.cancerSummary = response.data;
 
-        console.log(this.cancerSummary); // ตรวจสอบข้อมูลใน console
+        console.log("StringStateeiei", this.StringState);
         
       } catch (error) {
         console.error("Error fetching cancerSummary", error);
+      }
+    },
+    async fetchCancerStateData() {
+        try {
+        const response = await axios.get("http://localhost:3000/cancerstate-cancer-summary?cancerState=1,2,3,4");
+        this.cancerStateSummary = response.data;
+
+        console.log(this.cancerStateSummary);
+        
+      } catch (error) {
+        console.error("Error fetching cancerStateSummary", error);
       }
     },
     async fetchFeedbackData() {
@@ -643,11 +811,23 @@ export default {
       }
     },
   },
+  watch: {
+  // ติดตามการเปลี่ยนแปลงของ selectedCancerstates
+  selectedCancerstates() {
+    // เรียกใช้ฟังก์ชัน generateCancerStateString ทุกครั้งที่ selectedCancerstates เปลี่ยนแปลง
+    this.generateCancerStateString();
+  }
+  },
+  mounted() {
+  // เมื่อ component โหลด ฟังก์ชันนี้จะทำงาน
+  this.generateCancerStateString();
+  },
   created() {
     this.fetchAgeGroups(); // เรียกใช้ฟังก์ชันเมื่อ component ถูกสร้าง
     this.fetchCancerData(); //chart1
     this.fetchFeedbackData();
     this.fetchFomulaData();
+    this.fetchCancerStateData();
   },
   computed: {
     // แปลงค่าที่เลือก (showGender) กลับมาเป็นชื่อภาษาไทย
@@ -1116,20 +1296,41 @@ export default {
     }
 
   },
+  
+  
 };
 </script>
 
 <style scoped>
 canvas {
-  max-width: 45%;
-  height: 400px !important;
+  max-width: 80%;
+  height: 700px !important;
 }
 
 .con-chart {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  border: 2px solid #90EEB7;
+  margin: 20px 150px;
+  border-radius: 15px;
 }
+
+.con-chart h4 {
+  width: 100%;
+  background-color: #90EEB7;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1C2939;
+  font-size: 18px;
+  font-weight: bold;
+  
+  border-radius: 15px  15px 0px 0px;
+}
+
 
 .line-chart-container {
   margin-top: 30px;
@@ -1142,4 +1343,29 @@ h2 {
   text-align: center;
   margin: 20px 0;
 }
+
+.nav {
+display: flex;
+justify-content: space-between; /* จัดให้อยู่ซ้าย-ขวา */
+align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+width: 100%; /* ให้เต็มความกว้าง */
+padding: 10px 20px; /* เพิ่มระยะห่างด้านใน */
+background-color: #1C2939; /* สีพื้นหลัง (ปรับได้) */
+color: white;
+
+}
+
+.sc1, .sc2 {
+  flex: 1; /* ให้แต่ละ div ยืดได้ */
+}
+.sc1 {
+  text-align: left; /* ชิดซ้าย */
+}
+.sc2 {
+  text-align: right; /* ชิดขวา */
+}
+
+
+
+
 </style>
