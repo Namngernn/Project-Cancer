@@ -31,6 +31,7 @@ const Home = () => {
         <Link to={"/Appointment"} className='bt-blue'>การนัดหมาย</Link>
         <Link to={"/Contacts"} className='bt-blue'>ติดต่อโรงพยาบาล</Link>
         <Link to={"/AddEffects"} className='bt-blue'>ผลข้างเคียง</Link>
+        <Link to={"/weight"} className='bt-blue'>บันทึกน้ำหนัก</Link>
         <Link to={"/PatientManual"} className='bt-blue'>คู่มือผู้ป่วย</Link>
         <Link className='bt-blue' onClick={logout}>ออกจากระบบ</Link>
     </div>

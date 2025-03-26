@@ -15,6 +15,7 @@ import Effects from "../pages/Effects/Effects";
 import DetailEffect from "../pages/Effects/DetailEffect";
 import DisplayBloodResults from "../pages/BloodResults/DisplayBloodResults";
 import DisplayOtherResults from "../pages/BloodResults/DisplayOtherResults";
+import Weight from "../pages/Effects/Weight";
 
 const router = createBrowserRouter([
     {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
         {
           path: "/menu",
           element: <Home/>,
+        },
+        {
+          path: "/weight",
+          element: <Weight/>,
         },
       ]
     }

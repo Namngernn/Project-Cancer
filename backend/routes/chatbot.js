@@ -12,6 +12,94 @@ app.use(cookieParser());
 require("dotenv").config();
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 
+//ประวัติบันทึกน้ำหนัก
+router.get(`/weight-history/:userName`, async (req, res) => {
+  const userName = req.params.userName;
+  if (!userName) {
+    return res.status(400).json({ message: "กรุณาระบุ userName" });
+  }
+  console.log("userName:", userName);
+
+  try {
+    // ดึงประวัติน้ำหนักของผู้ใช้
+    const [history] = await pool.query(
+      `SELECT numWeight, createAt 
+       FROM weight 
+       WHERE IDcard = ? 
+       ORDER BY createAt DESC`,
+      [userName] // ใช้ userName เป็นค่า IDcard ถ้ามันเก็บค่าตรงกัน
+    );
+
+    console.log("Fetched history:", history);
+
+    res.json(history);
+  } catch (error) {
+    console.error("Error fetching weight history:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูล" });
+  }
+});
+
+//บันทึกน้ำหนัก
+router.post(`/weight/:userName`, async (req, res) => {
+  const { weight } = req.body;
+  const userId = req.params.UserIdLine;
+  const { userName } = req.params;
+
+  if (!weight || !userName) {
+    return res.status(400).json({ message: "ข้อมูลไม่ครบถ้วน" });
+  }
+
+  try {
+    const [userRows] = await pool.query(
+      `SELECT u.userName, a.HN 
+       FROM user u
+       INNER JOIN appointment a ON u.userName = a.IDcard
+       WHERE u.UserIdLine = ? OR u.userName = ?
+       LIMIT 1`,
+      [userName, userName]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้" });
+    }
+
+    const dbUserName = userRows[0].userName;
+
+    const [appointmentRows] = await pool.query(
+      `SELECT appointId FROM appointment WHERE IDcard = ? ORDER BY appointDate DESC LIMIT 1`,
+      [dbUserName]
+    );
+
+    const latestAppointId =
+      appointmentRows.length > 0 ? appointmentRows[0].appointId : null;
+
+    // ตรวจสอบว่าสัปดาห์นี้เคยบันทึกหรือยัง
+    const [existingWeight] = await pool.query(
+      `SELECT * FROM weight 
+       WHERE IDcard = ? 
+       AND YEARWEEK(createAt, 1) = YEARWEEK(NOW(), 1)`,
+      [dbUserName]
+    );
+
+    if (existingWeight.length > 0) {
+      return res
+        .status(400)
+        .json({ message: "คุณบันทึกน้ำหนักในสัปดาห์นี้แล้ว" });
+    }
+
+    await pool.query(
+      `INSERT INTO weight (IDcard, numWeight, createAt, appointId) VALUES (?, ?, NOW(), ?) 
+      ON DUPLICATE KEY UPDATE numWeight = VALUES(numWeight), createAt = NOW()`,
+      [dbUserName, weight, latestAppointId]
+    );
+
+    res.json({ message: "บันทึกน้ำหนักเรียบร้อย" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  }
+});
+
 //เวลาแจ้งเตือน
 cron.schedule("0 9 * * SUN", async () => {
   try {
@@ -76,9 +164,10 @@ function formatThaiDate(dateString) {
 
 router.post("/webhook", async (req, res) => {
   const authHeader = req.headers["authorization"];
-  if (!authHeader || authHeader !== "Bearer YOUR_SECRET_API_KEY") {
+  if (!authHeader || authHeader !== `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`) {
     return res.status(403).json({ message: "Unauthorized" });
   }
+  console.log(process.env.SECRET_API_KEY);
 
   // map intent
   try {
